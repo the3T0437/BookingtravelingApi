@@ -1,0 +1,194 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\work\\02_code\\csharp\\BookingTravelApi\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{8CA80CC4-A264-4037-A2C5-E19D07BE338A}|BookingTravelApi\\BookingTravelApi.csproj|d:\\work\\02_code\\csharp\\bookingtravelapi\\bookingtravelapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8CA80CC4-A264-4037-A2C5-E19D07BE338A}|BookingTravelApi\\BookingTravelApi.csproj|solutionrelative:bookingtravelapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8CA80CC4-A264-4037-A2C5-E19D07BE338A}|BookingTravelApi\\BookingTravelApi.csproj|d:\\work\\02_code\\csharp\\bookingtravelapi\\bookingtravelapi\\dockerfile||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{8CA80CC4-A264-4037-A2C5-E19D07BE338A}|BookingTravelApi\\BookingTravelApi.csproj|solutionrelative:bookingtravelapi\\dockerfile||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8CA80CC4-A264-4037-A2C5-E19D07BE338A}|BookingTravelApi\\BookingTravelApi.csproj|d:\\work\\02_code\\csharp\\bookingtravelapi\\bookingtravelapi\\domains\\activityatlocationactivity.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8CA80CC4-A264-4037-A2C5-E19D07BE338A}|BookingTravelApi\\BookingTravelApi.csproj|solutionrelative:bookingtravelapi\\domains\\activityatlocationactivity.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8CA80CC4-A264-4037-A2C5-E19D07BE338A}|BookingTravelApi\\BookingTravelApi.csproj|d:\\work\\02_code\\csharp\\bookingtravelapi\\bookingtravelapi\\domains\\tourimage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8CA80CC4-A264-4037-A2C5-E19D07BE338A}|BookingTravelApi\\BookingTravelApi.csproj|solutionrelative:bookingtravelapi\\domains\\tourimage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8CA80CC4-A264-4037-A2C5-E19D07BE338A}|BookingTravelApi\\BookingTravelApi.csproj|d:\\work\\02_code\\csharp\\bookingtravelapi\\bookingtravelapi\\domains\\role.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8CA80CC4-A264-4037-A2C5-E19D07BE338A}|BookingTravelApi\\BookingTravelApi.csproj|solutionrelative:bookingtravelapi\\domains\\role.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8CA80CC4-A264-4037-A2C5-E19D07BE338A}|BookingTravelApi\\BookingTravelApi.csproj|d:\\work\\02_code\\csharp\\bookingtravelapi\\bookingtravelapi\\domains\\notification.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8CA80CC4-A264-4037-A2C5-E19D07BE338A}|BookingTravelApi\\BookingTravelApi.csproj|solutionrelative:bookingtravelapi\\domains\\notification.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8CA80CC4-A264-4037-A2C5-E19D07BE338A}|BookingTravelApi\\BookingTravelApi.csproj|d:\\work\\02_code\\csharp\\bookingtravelapi\\bookingtravelapi\\domains\\booking.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8CA80CC4-A264-4037-A2C5-E19D07BE338A}|BookingTravelApi\\BookingTravelApi.csproj|solutionrelative:bookingtravelapi\\domains\\booking.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8CA80CC4-A264-4037-A2C5-E19D07BE338A}|BookingTravelApi\\BookingTravelApi.csproj|d:\\work\\02_code\\csharp\\bookingtravelapi\\bookingtravelapi\\domains\\status.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8CA80CC4-A264-4037-A2C5-E19D07BE338A}|BookingTravelApi\\BookingTravelApi.csproj|solutionrelative:bookingtravelapi\\domains\\status.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8CA80CC4-A264-4037-A2C5-E19D07BE338A}|BookingTravelApi\\BookingTravelApi.csproj|d:\\work\\02_code\\csharp\\bookingtravelapi\\bookingtravelapi\\domains\\staff.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8CA80CC4-A264-4037-A2C5-E19D07BE338A}|BookingTravelApi\\BookingTravelApi.csproj|solutionrelative:bookingtravelapi\\domains\\staff.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8CA80CC4-A264-4037-A2C5-E19D07BE338A}|BookingTravelApi\\BookingTravelApi.csproj|d:\\work\\02_code\\csharp\\bookingtravelapi\\bookingtravelapi\\domains\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8CA80CC4-A264-4037-A2C5-E19D07BE338A}|BookingTravelApi\\BookingTravelApi.csproj|solutionrelative:bookingtravelapi\\domains\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\work\\02_code\\csharp\\BookingTravelApi\\BookingTravelApi\\Program.cs",
+              "RelativeDocumentMoniker": "BookingTravelApi\\Program.cs",
+              "ToolTip": "D:\\work\\02_code\\csharp\\BookingTravelApi\\BookingTravelApi\\Program.cs*",
+              "RelativeToolTip": "BookingTravelApi\\Program.cs*",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-13T07:12:19.657Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Dockerfile",
+              "DocumentMoniker": "D:\\work\\02_code\\csharp\\BookingTravelApi\\BookingTravelApi\\Dockerfile",
+              "RelativeDocumentMoniker": "BookingTravelApi\\Dockerfile",
+              "ToolTip": "D:\\work\\02_code\\csharp\\BookingTravelApi\\BookingTravelApi\\Dockerfile",
+              "RelativeToolTip": "BookingTravelApi\\Dockerfile",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2025-10-13T07:12:08.292Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "ActivityAtLocationActivity.cs",
+              "DocumentMoniker": "D:\\work\\02_code\\csharp\\BookingTravelApi\\BookingTravelApi\\Domains\\ActivityAtLocationActivity.cs",
+              "RelativeDocumentMoniker": "BookingTravelApi\\Domains\\ActivityAtLocationActivity.cs",
+              "ToolTip": "D:\\work\\02_code\\csharp\\BookingTravelApi\\BookingTravelApi\\Domains\\ActivityAtLocationActivity.cs",
+              "RelativeToolTip": "BookingTravelApi\\Domains\\ActivityAtLocationActivity.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-13T07:11:32.033Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "TourImage.cs",
+              "DocumentMoniker": "D:\\work\\02_code\\csharp\\BookingTravelApi\\BookingTravelApi\\Domains\\TourImage.cs",
+              "RelativeDocumentMoniker": "BookingTravelApi\\Domains\\TourImage.cs",
+              "ToolTip": "D:\\work\\02_code\\csharp\\BookingTravelApi\\BookingTravelApi\\Domains\\TourImage.cs",
+              "RelativeToolTip": "BookingTravelApi\\Domains\\TourImage.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAhAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-13T05:45:12.876Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Role.cs",
+              "DocumentMoniker": "D:\\work\\02_code\\csharp\\BookingTravelApi\\BookingTravelApi\\Domains\\Role.cs",
+              "RelativeDocumentMoniker": "BookingTravelApi\\Domains\\Role.cs",
+              "ToolTip": "D:\\work\\02_code\\csharp\\BookingTravelApi\\BookingTravelApi\\Domains\\Role.cs",
+              "RelativeToolTip": "BookingTravelApi\\Domains\\Role.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-13T05:44:26.13Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "Booking.cs",
+              "DocumentMoniker": "D:\\work\\02_code\\csharp\\BookingTravelApi\\BookingTravelApi\\Domains\\Booking.cs",
+              "RelativeDocumentMoniker": "BookingTravelApi\\Domains\\Booking.cs",
+              "ToolTip": "D:\\work\\02_code\\csharp\\BookingTravelApi\\BookingTravelApi\\Domains\\Booking.cs",
+              "RelativeToolTip": "BookingTravelApi\\Domains\\Booking.cs",
+              "ViewState": "AgIAAAkAAAAAAAAAAAAUwCMAAAAIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-13T05:42:46.656Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Notification.cs",
+              "DocumentMoniker": "D:\\work\\02_code\\csharp\\BookingTravelApi\\BookingTravelApi\\Domains\\Notification.cs",
+              "RelativeDocumentMoniker": "BookingTravelApi\\Domains\\Notification.cs",
+              "ToolTip": "D:\\work\\02_code\\csharp\\BookingTravelApi\\BookingTravelApi\\Domains\\Notification.cs",
+              "RelativeToolTip": "BookingTravelApi\\Domains\\Notification.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAAAIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-13T05:42:13.334Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "Status.cs",
+              "DocumentMoniker": "D:\\work\\02_code\\csharp\\BookingTravelApi\\BookingTravelApi\\Domains\\Status.cs",
+              "RelativeDocumentMoniker": "BookingTravelApi\\Domains\\Status.cs",
+              "ToolTip": "D:\\work\\02_code\\csharp\\BookingTravelApi\\BookingTravelApi\\Domains\\Status.cs",
+              "RelativeToolTip": "BookingTravelApi\\Domains\\Status.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-13T05:41:09.007Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "Staff.cs",
+              "DocumentMoniker": "D:\\work\\02_code\\csharp\\BookingTravelApi\\BookingTravelApi\\Domains\\Staff.cs",
+              "RelativeDocumentMoniker": "BookingTravelApi\\Domains\\Staff.cs",
+              "ToolTip": "D:\\work\\02_code\\csharp\\BookingTravelApi\\BookingTravelApi\\Domains\\Staff.cs",
+              "RelativeToolTip": "BookingTravelApi\\Domains\\Staff.cs",
+              "ViewState": "AgIAABQAAAAAAAAAAAAIwCsAAAAIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-13T05:38:45.949Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "ApplicationDbContext.cs",
+              "DocumentMoniker": "D:\\work\\02_code\\csharp\\BookingTravelApi\\BookingTravelApi\\Domains\\ApplicationDbContext.cs",
+              "RelativeDocumentMoniker": "BookingTravelApi\\Domains\\ApplicationDbContext.cs",
+              "ToolTip": "D:\\work\\02_code\\csharp\\BookingTravelApi\\BookingTravelApi\\Domains\\ApplicationDbContext.cs",
+              "RelativeToolTip": "BookingTravelApi\\Domains\\ApplicationDbContext.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAMAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-12T14:22:59.455Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
