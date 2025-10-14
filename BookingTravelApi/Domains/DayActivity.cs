@@ -18,5 +18,9 @@ namespace BookingTravelApi.Domains
 
         [Required]
         public DateTime time { get; set; }
+
+        public DayOfTour? DayOfTour { get; set; }
+        public Activity? Activity { get; set; }
+        public LocationActivity? LocationActivity { get; set; }
     }
 }

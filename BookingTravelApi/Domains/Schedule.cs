@@ -38,5 +38,11 @@ namespace BookingTravelApi.Domains
         [Required]
         [Range(0, 100)]
         public int Desposit { get; set; }
+
+        public Tour? Tour { get; set; }
+        public ICollection<Booking>? Bookings { get; set; }
+        public ICollection<UserCompletedSchedule>? UserCompletedSchedules { get; set; }
+        public ICollection<Review>? Reviews { get; set; }
+        public ICollection<Guide>? Guides { get; set; }
     }
 }

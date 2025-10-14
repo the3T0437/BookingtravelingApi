@@ -6,7 +6,7 @@ namespace BookingTravelApi.Domains
     {
         [Required]
         [Key]
-        public int id;
+        public int Id { get; set; }
 
         [Required]
         [MaxLength(255)]

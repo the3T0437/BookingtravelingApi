@@ -11,5 +11,8 @@ namespace BookingTravelApi.Domains
         [Required]
         [Key]
         public int ReviewId { get; set; }
+
+        public User? User { get; set; }
+        public Review Review { get; set; }
     }
 }

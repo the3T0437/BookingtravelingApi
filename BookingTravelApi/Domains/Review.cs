@@ -24,5 +24,9 @@ namespace BookingTravelApi.Domains
 
         [Required]
         public DateTime CreatedAt { get; set; }
+
+        public User? User { get; set; }
+        public List<Helpful>? Helpfuls { get; set; }
+        public Schedule? Schedule { get; set; }
     }
 }

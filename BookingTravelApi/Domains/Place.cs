@@ -14,5 +14,8 @@ namespace BookingTravelApi.Domains
         [Required]
         [MaxLength(255)]
         public String Name { get; set; } = null!;
+
+        public Location? Location { get; set; }
+        public ICollection<LocationActivity>? LocationActivities { get; set; }
     }
 }

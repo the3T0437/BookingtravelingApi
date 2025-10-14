@@ -162,10 +162,12 @@ D:\work\02_code\csharp\BookingTravelApi\BookingTravelApi\obj\Debug\net8.0\static
 D:\work\02_code\csharp\BookingTravelApi\BookingTravelApi\obj\Debug\net8.0\staticwebassets.build.json.cache
 D:\work\02_code\csharp\BookingTravelApi\BookingTravelApi\obj\Debug\net8.0\staticwebassets.development.json
 D:\work\02_code\csharp\BookingTravelApi\BookingTravelApi\obj\Debug\net8.0\staticwebassets.build.endpoints.json
-D:\work\02_code\csharp\BookingTravelApi\BookingTravelApi\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
 D:\work\02_code\csharp\BookingTravelApi\BookingTravelApi\obj\Debug\net8.0\BookingT.F451B90A.Up2Date
 D:\work\02_code\csharp\BookingTravelApi\BookingTravelApi\obj\Debug\net8.0\BookingTravelApi.dll
 D:\work\02_code\csharp\BookingTravelApi\BookingTravelApi\obj\Debug\net8.0\refint\BookingTravelApi.dll
 D:\work\02_code\csharp\BookingTravelApi\BookingTravelApi\obj\Debug\net8.0\BookingTravelApi.pdb
 D:\work\02_code\csharp\BookingTravelApi\BookingTravelApi\obj\Debug\net8.0\BookingTravelApi.genruntimeconfig.cache
 D:\work\02_code\csharp\BookingTravelApi\BookingTravelApi\obj\Debug\net8.0\ref\BookingTravelApi.dll
+d:\work\02_code\csharp\BookingTravelApi\BookingTravelApi\obj\Debug\net8.0\BookingTravelApi.sourcelink.json
+d:\work\02_code\csharp\BookingTravelApi\BookingTravelApi\bin\Debug\net8.0\DotNetEnv.dll
+d:\work\02_code\csharp\BookingTravelApi\BookingTravelApi\bin\Debug\net8.0\Sprache.dll

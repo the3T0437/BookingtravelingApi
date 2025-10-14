@@ -29,5 +29,11 @@ namespace BookingTravelApi.Domains
         [MaxLength(255)]
         public String Description { get; set; } = null!;
 
+        public ICollection<TourImage>? TourImages { get; set; }
+        public ICollection<DayOfTour>? DayOfTours { get; set; }
+        public ICollection<TourLocation>? TourLocations { get; set; }
+
+        public ICollection<Schedule>? Schedules { get; set; }
+        public ICollection<Favorite>? Favorites { get; set; }
     }
 }

@@ -13,5 +13,13 @@
         public String AvatarPath { get; set; } = null!;
         public String BankBranch { get; set; } = null!;
 
+        public Staff? Staff { get; set; }
+        public ICollection<Notification>? Notification { get; set; }
+        public Role? Role { get; set; }
+        public ICollection<Helpful>? Helpfuls { get; set; }
+        public ICollection<Review>? Reviews { get; set; }
+        public ICollection<UserCompletedSchedule>? UserCompletedSchedules { get; set; }
+        public ICollection<Favorite>? Favorites { get; set; }
+        public ICollection<Booking>? Bookings { get; set; }
     }
 }

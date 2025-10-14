@@ -13,14 +13,17 @@ namespace BookingTravelApi.Domains
 
         [Required]
         [Range(1, 50)]
-        public int Day {  get; set; }
+        public int Day { get; set; }
 
         [Required]
         [MaxLength(255)]
-        public string Title { get; set; } = null!; 
+        public string Title { get; set; } = null!;
 
         [Required]
         [MaxLength(255)]
         public string Description { get; set; } = null!;
+
+        public Tour? Tour { get; set; }
+        public ICollection<DayActivity>? DayActivities { get; set; }
     }
 }

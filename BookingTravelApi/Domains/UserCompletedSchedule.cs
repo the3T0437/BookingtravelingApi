@@ -11,5 +11,8 @@ namespace BookingTravelApi.Domains
         [Required]
         [Key]
         public int ScheduleId { get; set; }
+
+        public User? User { get; set; }
+        public Schedule? Schedule { get; set; }
     }
 }

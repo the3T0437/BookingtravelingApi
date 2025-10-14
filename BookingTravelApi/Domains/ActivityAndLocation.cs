@@ -2,7 +2,7 @@
 
 namespace BookingTravelApi.Domains
 {
-    public class ActivityAtLocationActivity
+    public class ActivityAndLocation
     {
         [Required]
         [Key]
@@ -11,5 +11,8 @@ namespace BookingTravelApi.Domains
         [Required]
         [Key]
         public int LocationActivityId { get; set; }
+
+        public Activity? Activity { get; set; }
+        public LocationActivity? LocationActivity { get; set; }
     }
 }
