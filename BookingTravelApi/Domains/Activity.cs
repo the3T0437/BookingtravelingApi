@@ -12,7 +12,7 @@ namespace BookingTravelApi.Domains
         [MaxLength(255)]
         public String Action { get; set; } = null!;
 
-        public ICollection<DayActivity> DayActivities { get; set; }
+        public ICollection<DayActivity>? DayActivities { get; set; }
         public ICollection<ActivityAndLocation>? ActivityAndLocations { get; set; }
     }
 }
