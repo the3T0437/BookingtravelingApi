@@ -56,30 +56,39 @@ namespace BookingTravelApi.Controllers
         }
 
         [HttpPut(Name = "UpdatePlace")]
-        public async Task<RestDTO<PlaceDTO?>> updatePlace(UpdatePlaceDTO newPlace)
+        public async Task<IActionResult> updatePlace(UpdatePlaceDTO newPlace)
         {
-            var place = await _context.Places.Where(place => place.Id == newPlace.Id).FirstOrDefaultAsync();
-
-            if (place != null)
+            try
             {
-                if (newPlace.LocationId != null)
+                var place = await _context.Places.Where(place => place.Id == newPlace.Id).FirstOrDefaultAsync();
+
+                if (place != null)
                 {
-                    place.LocationId = newPlace.LocationId.Value;
+                    if (newPlace.LocationId != null)
+                    {
+                        place.LocationId = newPlace.LocationId.Value;
+                    }
+
+                    if (!String.IsNullOrEmpty(newPlace.Name))
+                    {
+                        place.Name = newPlace.Name;
+                    }
+
+                    _context.Places.Update(place);
+                    await _context.SaveChangesAsync();
                 }
 
-                if (!String.IsNullOrEmpty(newPlace.Name))
+                return Ok(new RestDTO<PlaceDTO?>()
                 {
-                    place.Name = newPlace.Name;
-                }
+                    Data = place?.Map()
+                });
 
-                _context.Places.Update(place);
-                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                return NotFound("not found");
             }
 
-            return new RestDTO<PlaceDTO?>()
-            {
-                Data = place?.Map()
-            };
         }
     }
 }
