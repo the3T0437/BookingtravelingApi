@@ -24,9 +24,10 @@ namespace BookingTravelApi.Controllers
 
         [HttpGet]
         [ResponseCache(NoStore = true)]
-        public async Task<RestDTO<PlaceDTO[]?>> getPlaces(String orderBy = "Name", String sortBy = "ASC", String? filter = null)
+        public async Task<IActionResult> getPlaces(String orderBy = "Name", String sortBy = "ASC", String? filter = null)
         {
             var query = _context.Places.AsQueryable();
+
             if (!String.IsNullOrEmpty(filter))
             {
                 query = query.Where(place => place.Name.Contains(filter));
@@ -36,23 +37,33 @@ namespace BookingTravelApi.Controllers
             var places = await query.ToArrayAsync();
             var placeDTOs = places.Select(place => place.Map()).ToArray();
 
-            return new RestDTO<PlaceDTO[]?>()
+            return Ok(new RestDTO<PlaceDTO[]?>()
             {
                 Data = placeDTOs
-            };
+            });
         }
 
         [HttpPost(Name = "CreatePlace")]
-        public async Task<RestDTO<PlaceDTO?>> CreatePlace(CreatePlaceDTO newPlaceDTO)
+        public async Task<IActionResult> CreatePlace(CreatePlaceDTO newPlaceDTO)
         {
-            var place = newPlaceDTO.Map();
-            await _context.Places.AddAsync(place);
-            await _context.SaveChangesAsync();
-
-            return new RestDTO<PlaceDTO?>()
+            try
             {
-                Data = place.Map()
-            };
+                var place = newPlaceDTO.Map();
+
+                await _context.Places.AddAsync(place);
+                await _context.SaveChangesAsync();
+
+
+                // Trả về HTTP 200
+                return Ok(new RestDTO<PlaceDTO?>()
+                {
+                    Data = place?.Map()
+                });
+            }
+            catch (Exception ex)
+            {
+                return Problem("Error create");
+            }
         }
 
         [HttpPut(Name = "UpdatePlace")]
@@ -62,22 +73,25 @@ namespace BookingTravelApi.Controllers
             {
                 var place = await _context.Places.Where(place => place.Id == newPlace.Id).FirstOrDefaultAsync();
 
-                if (place != null)
+                if (place == null)
                 {
-                    if (newPlace.LocationId != null)
-                    {
-                        place.LocationId = newPlace.LocationId.Value;
-                    }
-
-                    if (!String.IsNullOrEmpty(newPlace.Name))
-                    {
-                        place.Name = newPlace.Name;
-                    }
-
-                    _context.Places.Update(place);
-                    await _context.SaveChangesAsync();
+                    return NotFound($"Id {newPlace.Id} not found.");
                 }
 
+                if (newPlace.LocationId != null)
+                {
+                    place.LocationId = newPlace.LocationId.Value;
+                }
+
+                if (!String.IsNullOrEmpty(newPlace.Name))
+                {
+                    place.Name = newPlace.Name;
+                }
+
+
+                await _context.SaveChangesAsync();
+
+                // Trả về HTTP 200
                 return Ok(new RestDTO<PlaceDTO?>()
                 {
                     Data = place?.Map()
@@ -86,9 +100,36 @@ namespace BookingTravelApi.Controllers
             }
             catch (Exception ex)
             {
-                return NotFound("not found");
+                return Problem("Error update");
             }
 
+        }
+        [HttpDelete(Name = "DeletePlace")]
+        public async Task<IActionResult> deletePlace(int id)
+        {
+            try
+            {
+                var place = await _context.Places.Where(p => p.Id == id).FirstOrDefaultAsync();
+
+                if (place == null)
+                {
+                    // Trả về HTTP 404 Not Found
+                    return NotFound($"Place with Id {id} not found.");
+                }
+
+                _context.Places.Remove(place);
+                await _context.SaveChangesAsync();
+
+                // Trả về HTTP 200
+                return Ok(new RestDTO<PlaceDTO?>()
+                {
+                    Data = place?.Map()
+                });
+            }
+            catch (Exception ex)
+            {
+                return Problem("Error delete");
+            }
         }
     }
 }
