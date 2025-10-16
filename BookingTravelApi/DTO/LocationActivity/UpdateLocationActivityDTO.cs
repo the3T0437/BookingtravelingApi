@@ -10,5 +10,7 @@ namespace BookingTravelApi.DTO.LocationActivity
 
         [MaxLength(255)]
         public String? Name { get; set; } = null!;
+
+        public int[] ActivityIds { get; set; } = [];
     }
 }

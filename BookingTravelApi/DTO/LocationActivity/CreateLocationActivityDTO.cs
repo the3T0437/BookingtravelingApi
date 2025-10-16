@@ -12,6 +12,9 @@ namespace BookingTravelApi.DTO.LocationActivity
         [MaxLength(255)]
         public String Name { get; set; } = null!;
 
+        [Required]
+        public int[] ActivityIds { get; set; } = [];
+
         public Domains.LocationActivity Map()
         {
             return new Domains.LocationActivity()

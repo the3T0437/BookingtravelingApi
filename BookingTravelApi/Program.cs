@@ -11,7 +11,6 @@ public class Program
     public static void Main(string[] args)
     {
         Env.Load();
-        Console.WriteLine(Environment.GetEnvironmentVariable("ConnectionString"));
         var builder = WebApplication.CreateBuilder(args);
 
         // Add services to the container.

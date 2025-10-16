@@ -45,8 +45,21 @@ namespace BookingTravelApi.Controllers
         public async Task<RestDTO<LocationActivityDTO>> CreateLocationActivity(CreateLocationActivityDTO newLocationActivityDTO)
         {
             var newLocationActivity = newLocationActivityDTO.Map();
-            await _context.AddAsync(newLocationActivity);
+            await _context.LocationActivities.AddAsync(newLocationActivity);
             await _context.SaveChangesAsync();
+
+            foreach (int i in newLocationActivityDTO.ActivityIds)
+            {
+                var link = new ActivityAndLocation()
+                {
+                    ActivityId = i,
+                    LocationActivityId = newLocationActivity.Id
+                };
+                await _context.ActivityAndLocations.AddAsync(link);
+            }
+            await _context.SaveChangesAsync();
+
+
             return new RestDTO<LocationActivityDTO>()
             {
                 Data = newLocationActivity.Map()
@@ -68,6 +81,17 @@ namespace BookingTravelApi.Controllers
                 if (!String.IsNullOrEmpty(updateLocationActivity.Name))
                 {
                     locationActivity.Name = updateLocationActivity.Name;
+                }
+
+                if (updateLocationActivity.ActivityIds != null)
+                {
+                    var items = _context.ActivityAndLocations.Where(i => i.LocationActivityId == updateLocationActivity.Id);
+                    _context.RemoveRange(items);
+
+                    var newItems = updateLocationActivity.ActivityIds.Select(
+                        i => new ActivityAndLocation() { ActivityId = i, LocationActivityId = updateLocationActivity.Id }
+                    );
+                    await _context.AddRangeAsync(newItems);
                 }
 
                 _context.Update(locationActivity);
