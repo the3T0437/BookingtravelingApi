@@ -1,8 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
+using BookingTravelApi.Domains;
 
-namespace BookingTravelApi.Domains
+namespace BookingTravelApi.DTO.user
 {
-    public class User
+    public class UpdateUserDTO
     {
         [Key]
         [Required]
@@ -43,13 +44,20 @@ namespace BookingTravelApi.Domains
         [MaxLength(255)]
         public String BankBranch { get; set; } = null!;
 
-        public Staff? Staff { get; set; }
-        public ICollection<Notification>? Notification { get; set; }
-        public Role? Role { get; set; }
-        public ICollection<Helpful>? Helpfuls { get; set; }
-        public ICollection<Review>? Reviews { get; set; }
-        public ICollection<UserCompletedSchedule>? UserCompletedSchedules { get; set; }
-        public ICollection<Favorite>? Favorites { get; set; }
-        public ICollection<Booking>? Bookings { get; set; }
+
+
+        public void UpdateEntity(User user)
+        {
+            user.RoleId = RoleId;
+            user.Password = Password;
+            user.Money = Money;
+            user.BankNumber = BankNumber;
+            user.Bank = Bank;
+            user.Name = Name;
+            user.Email = Email;
+            user.Phone = Phone;
+            user.AvatarPath = AvatarPath;
+            user.BankBranch = BankBranch;
+        }
     }
 }

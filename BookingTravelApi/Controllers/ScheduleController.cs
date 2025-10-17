@@ -25,14 +25,28 @@ namespace BookingTravelApi.Controllers
         [ResponseCache(NoStore = true)]
         public async Task<IActionResult> getSchedules()
         {
-            var query = _context.Schedules.AsNoTracking().OrderByDescending(s => s.Id); ;
+            var query = _context.Schedules.OrderByDescending(s => s.OpenDate).AsNoTracking();
 
-            var schedules = await query.ToArrayAsync();
-            var scheduleDTOs = schedules.Select(schedule => schedule.Map()).ToArray();
+            var scheduleDTOs = await query.Select(i => i.Map()).ToArrayAsync();
 
             return Ok(new RestDTO<ScheduleDTO[]?>()
             {
                 Data = scheduleDTOs
+            });
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetScheduleById(int id)
+        {
+            var schedule = await _context.Schedules.FindAsync(id);
+            if (schedule == null)
+            {
+                return NotFound($"id {id} not found");
+            }
+
+            return Ok(new RestDTO<ScheduleDTO?>()
+            {
+                Data = schedule.Map()
             });
         }
 
@@ -44,11 +58,11 @@ namespace BookingTravelApi.Controllers
             var now = DateTime.Now;
 
             var query = _context.Schedules
-                .Where(s => s.OpenDate <= now && s.StartDate > now)
+                .Where(s => s.OpenDate <= now && s.StartDate > now && s.MaxSlot > 0)
                 .AsNoTracking();
 
-            var schedules = await query.ToArrayAsync();
-            var scheduleDTOs = schedules.Select(schedule => schedule.Map()).ToArray();
+            var scheduleDTOs = await query.Select(i => i.Map()).ToArrayAsync();
+
 
             return Ok(new RestDTO<ScheduleDTO[]?>()
             {
@@ -80,23 +94,8 @@ namespace BookingTravelApi.Controllers
 
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetScheduleById(int id)
-        {
-            var schedule = await _context.Schedules.FindAsync(id);
-            if (schedule == null)
-            {
-                return NotFound($"id {id} not found");
-            }
-
-            return Ok(new RestDTO<ScheduleDTO?>()
-            {
-                Data = schedule.Map()
-            });
-        }
-
         [HttpPut(Name = "UpdateSchedule")]
-        public async Task<IActionResult> UpdateSchedule(ScheduleDTO updatedSchedule)
+        public async Task<IActionResult> UpdateSchedule(UpdateScheduleDTO updatedSchedule)
         {
             try
             {
@@ -107,22 +106,13 @@ namespace BookingTravelApi.Controllers
                     return NotFound($"Id {updatedSchedule.Id} not found.");
                 }
 
-                schedule.TourId = updatedSchedule.TourId;
-                schedule.StartDate = updatedSchedule.StartDate;
-                schedule.EndDate = updatedSchedule.EndDate;
-                schedule.OpenDate = updatedSchedule.OpenDate;
-                schedule.MaxSlot = updatedSchedule.MaxSlot;
-                schedule.FinalPrice = updatedSchedule.FinalPrice;
-                schedule.GatheringTime = updatedSchedule.GatheringTime;
-                schedule.Code = updatedSchedule.Code;
-                schedule.Desposit = updatedSchedule.Desposit;
+                updatedSchedule.UpdateEntity(schedule);
 
-                _context.Schedules.Update(schedule);
                 await _context.SaveChangesAsync();
 
                 return Ok(new RestDTO<ScheduleDTO?>()
                 {
-                    Data = schedule?.Map()
+                    Data = schedule.Map()
                 });
             }
             catch (Exception ex)

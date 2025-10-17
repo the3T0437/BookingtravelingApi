@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using BookingTravelApi.Domains;
 
 namespace BookingTravelApi.DTO.schedule
 {
@@ -37,5 +38,18 @@ namespace BookingTravelApi.DTO.schedule
         [Required]
         [Range(0, 100)]
         public int Desposit { get; set; }
+
+        public void UpdateEntity(Schedule schedule)
+        {
+            schedule.TourId = TourId;
+            schedule.StartDate = StartDate;
+            schedule.EndDate = EndDate;
+            schedule.OpenDate = OpenDate;
+            schedule.MaxSlot = MaxSlot;
+            schedule.FinalPrice = FinalPrice;
+            schedule.GatheringTime = GatheringTime;
+            schedule.Code = Code;
+            schedule.Desposit = Desposit;
+        }
     }
 }
