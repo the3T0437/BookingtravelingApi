@@ -9,10 +9,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BookingTravelApi.Controllers
 {
-    [Route("[Controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class GuideController : Controller
-    {
+    {   
         private ApplicationDbContext _context;
         private readonly ILogger<GuideController> _logger;
 
@@ -22,9 +22,9 @@ namespace BookingTravelApi.Controllers
             _logger = logger;
         }
 
-        [HttpGet]
+        [HttpGet("ByStaff")]
         [ResponseCache(NoStore = true)]
-        public async Task<IActionResult> getGuides(String orderBy = "StaffId", String sortBy = "ASC", int? staffId = null, int? scheduleId = null)
+        public async Task<IActionResult> getGuidesStaffId(int? staffId = null)
         {
             var query = _context.Guides.AsQueryable();
 
@@ -33,30 +33,41 @@ namespace BookingTravelApi.Controllers
                 query = query.Where(g => g.StaffId == staffId);
             }
 
+            var guideDTOs = await query.Select(i => i.Map()).ToArrayAsync();
+
+            return Ok(new RestDTO<GuideDTO[]?>()
+            {
+                Data = guideDTOs
+            });
+        }
+
+        [HttpGet("BySchedule")]
+        [ResponseCache(NoStore = true)]
+        public async Task<IActionResult> getGuidesScheduleId(int? scheduleId = null)
+        {
+            var query = _context.Guides.AsQueryable();
+
             if (scheduleId != null)
             {
                 query = query.Where(g => g.ScheduleId == scheduleId);
             }
 
-            query = query.OrderBy($"{orderBy} {sortBy}");
-
-            var guides = await query.ToArrayAsync();
-            var placeDTOs = guides.Select(g => g.Map()).ToArray();
+            var guideDTOs = await query.Select(i => i.Map()).ToArrayAsync();
 
             return Ok(new RestDTO<GuideDTO[]?>()
             {
-                Data = placeDTOs
+                Data = guideDTOs
             });
         }
 
         [HttpPost(Name = "CreateGuide")]
-        public async Task<IActionResult> CreateGuide(CreateGuideDTO newGuideDTO)
+        public async Task<IActionResult> createGuide(CreateGuideDTO newGuideDTO)
         {
             try
             {
                 var guide = newGuideDTO.Map();
 
-                await _context.Guides.AddAsync(guide);
+                await _context.Guides.AddAsync(guide);  
                 await _context.SaveChangesAsync();
 
 

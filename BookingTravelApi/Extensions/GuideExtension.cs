@@ -1,6 +1,5 @@
 using BookingTravelApi.Domains;
 using BookingTravelApi.DTO.guide;
-using BookingTravelApi.DTO.place;
 
 namespace BookingTravelApi.Extensions
 {
