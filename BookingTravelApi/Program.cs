@@ -11,7 +11,6 @@ public class Program
     public static void Main(string[] args)
     {
         Env.Load();
-        Console.WriteLine(Environment.GetEnvironmentVariable("ConnectionString"));
         var builder = WebApplication.CreateBuilder(args);
 
         // Add services to the container.
@@ -19,7 +18,7 @@ public class Program
         var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
 
         builder.Services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
+            options.UseSqlServer(connectionString)
         );
 
         builder.Services.AddControllers(); builder.Services.AddEndpointsApiExplorer();
