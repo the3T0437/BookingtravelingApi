@@ -22,15 +22,22 @@ namespace BookingTravelApi.Controllers
 
         [HttpGet]
         [ResponseCache(Duration = 3600, Location = ResponseCacheLocation.Any)]
-        public async Task<RestDTO<LocationDTO[]?>> getLocations()
+        public async Task<IActionResult> getLocations(String? filter = null)
         {
+            var query = _context.Locations.AsQueryable();
+
+            var searchStr = filter?.Trim();
+            if (!String.IsNullOrEmpty(searchStr))
+            {
+                query.Where(i => i.Name.Contains(searchStr));
+            }
             Location[] locations = await _context.Locations.ToArrayAsync();
             LocationDTO[] locationDTOs = locations.Select(location => location.Map()).ToArray();
 
-            return new RestDTO<LocationDTO[]?>
+            return Ok(new RestDTO<LocationDTO[]?>
             {
                 Data = locationDTOs
-            };
+            });
         }
     }
 }

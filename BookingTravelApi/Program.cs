@@ -18,7 +18,7 @@ public class Program
         var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
 
         builder.Services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
+            options.UseSqlServer(connectionString)
         );
 
         builder.Services.AddControllers(); builder.Services.AddEndpointsApiExplorer();

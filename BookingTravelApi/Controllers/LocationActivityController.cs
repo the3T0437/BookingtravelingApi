@@ -4,6 +4,7 @@ using BookingTravelApi.DTO;
 using BookingTravelApi.DTO.Location;
 using BookingTravelApi.DTO.LocationActivity;
 using BookingTravelApi.Extensions;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -23,27 +24,55 @@ namespace BookingTravelApi.Controllers
         }
 
         [HttpGet(Name = "GetLocationActivities")]
-        public async Task<RestDTO<LocationActivityDTO[]>> getLocationActivities(String orderBy = "Name", String sortBy = "ASC", String? filter = null)
+        [ResponseCache(NoStore = true)]
+        public async Task<IActionResult> getLocationActivities(int placeId, String orderBy = "Name", String sortBy = "ASC", String? filter = null)
         {
             var query = _context.LocationActivities.AsQueryable();
+            query = query.Where(i => i.PlaceId == placeId);
             if (!String.IsNullOrEmpty(filter))
             {
                 query = query.Where(locationActivity => locationActivity.Name.Contains(filter));
             }
             query = query.OrderBy($"{orderBy} {sortBy}");
 
-            var locationsActivities = await query.ToArrayAsync();
-            var locationActivityDTOs = locationsActivities.Select(i => i.Map()).ToArray();
+            var locationsActivities = await query.Include(i => i.Place).ToListAsync();
+            var locationActivityDTOs = locationsActivities.Select(i => i.Map()).ToList();
 
-            return new RestDTO<LocationActivityDTO[]>()
+            return Ok(new RestDTO<List<LocationActivityDTO>>()
             {
                 Data = locationActivityDTOs
-            };
+            });
         }
 
-        [HttpPost(Name = "CreateLocationActivity")]
-        public async Task<RestDTO<LocationActivityDTO>> CreateLocationActivity(CreateLocationActivityDTO newLocationActivityDTO)
+        [HttpGet("{id:int}", Name = "GetLocationActivity")]
+        public async Task<IActionResult> getLocationActivity(int id)
         {
+            var locationActivity = await _context.LocationActivities.Where(i => i.Id == id).FirstOrDefaultAsync();
+            if (locationActivity == null)
+            {
+                return NotFound(new
+                {
+                    message = "not found location activity"
+                });
+            }
+
+            return Ok(new RestDTO<LocationActivityDTO>()
+            {
+                Data = locationActivity.Map()
+            });
+        }
+
+
+        [HttpPost(Name = "CreateLocationActivity")]
+        public async Task<IActionResult> CreateLocationActivity(CreateLocationActivityDTO newLocationActivityDTO)
+        {
+
+            var check = await CheckActivityIds(newLocationActivityDTO.ActivityIds);
+            if (check != null)
+            {
+                return check;
+            }
+
             var newLocationActivity = newLocationActivityDTO.Map();
             await _context.LocationActivities.AddAsync(newLocationActivity);
             await _context.SaveChangesAsync();
@@ -60,15 +89,21 @@ namespace BookingTravelApi.Controllers
             await _context.SaveChangesAsync();
 
 
-            return new RestDTO<LocationActivityDTO>()
+            return Ok(new RestDTO<LocationActivityDTO>()
             {
                 Data = newLocationActivity.Map()
-            };
+            });
         }
 
         [HttpPut(Name = "UpdateLocationActivity")]
-        public async Task<RestDTO<LocationActivityDTO?>> UpdateLocationActivity(UpdateLocationActivityDTO updateLocationActivity)
+        public async Task<IActionResult> UpdateLocationActivity(UpdateLocationActivityDTO updateLocationActivity)
         {
+            var check = await CheckActivityIds(updateLocationActivity.ActivityIds);
+            if (check != null)
+            {
+                return check;
+            }
+
             var locationActivity = await _context.LocationActivities.Where(i => i.Id == updateLocationActivity.Id).FirstOrDefaultAsync();
 
             if (locationActivity != null)
@@ -96,12 +131,39 @@ namespace BookingTravelApi.Controllers
 
                 _context.Update(locationActivity);
                 await _context.SaveChangesAsync();
+
+                return Ok(new RestDTO<LocationActivityDTO>()
+                {
+                    Data = locationActivity.Map()
+                });
             }
 
-            return new RestDTO<LocationActivityDTO?>()
+            return NotFound(new
             {
-                Data = locationActivity?.Map()
-            };
+                Message = "location activity not found"
+            });
+        }
+
+        private async Task<IActionResult?> CheckActivityIds(List<int> activityIds)
+        {
+            var existActivities = await _context.Activities
+                .Where(i => activityIds.Contains(i.Id))
+                .Select(i => i.Id)
+                .ToListAsync();
+            var missingActivities = existActivities.Except(activityIds);
+
+            if (missingActivities.Any())
+            {
+                return BadRequest(
+                    new
+                    {
+                        Message = "Some activity missing",
+                        Data = missingActivities
+                    }
+                );
+            }
+
+            return null;
         }
     }
 }

@@ -30,9 +30,10 @@ namespace BookingTravelApi.Controllers
             try
             {
                 var query = _context.Activities.AsQueryable();
-                if (!String.IsNullOrEmpty(filter))
+                var searchStr = filter?.Trim();
+                if (!String.IsNullOrEmpty(searchStr))
                 {
-                    query = query.Where(place => place.Action.Contains(filter));
+                    query = query.Where(place => place.Action.Contains(searchStr));
                 }
                 query = query.OrderBy($"{orderBy} {sortBy}").AsQueryable();
 
@@ -100,7 +101,10 @@ namespace BookingTravelApi.Controllers
             }
             catch (Exception e)
             {
-                return NotFound("not found");
+                return NotFound(new
+                {
+                    message = "activity not found"
+                });
             }
 
         }

@@ -24,22 +24,56 @@ namespace BookingTravelApi.Controllers
 
         [HttpGet]
         [ResponseCache(NoStore = true)]
-        public async Task<IActionResult> getPlaces(String orderBy = "Name", String sortBy = "ASC", String? filter = null)
+        public async Task<IActionResult> GetPlaces(String orderBy = "Name", String sortBy = "ASC", String? filter = null, int? locationId = null)
         {
             var query = _context.Places.AsQueryable();
 
-            if (!String.IsNullOrEmpty(filter))
+            var searchStr = filter?.Trim();
+            if (!String.IsNullOrEmpty(searchStr))
             {
-                query = query.Where(place => place.Name.Contains(filter));
+                query = query.Where(place => place.Name.Contains(searchStr));
+            }
+            if (locationId != null)
+            {
+                query = query.Where(place => place.LocationId == locationId.Value);
             }
             query = query.OrderBy($"{orderBy} {sortBy}").AsQueryable();
 
-            var places = await query.ToArrayAsync();
-            var placeDTOs = places.Select(place => place.Map()).ToArray();
+            var places = await query.Include(i => i.Location).ToArrayAsync();
+            var placeDTOs = places.Select(place =>
+            {
+                var placeDTO = place.Map();
+                var locationDTO = place.Location?.Map();
+                placeDTO.Location = locationDTO;
+                return placeDTO;
+            }).ToArray();
 
             return Ok(new RestDTO<PlaceDTO[]?>()
             {
                 Data = placeDTOs
+            });
+        }
+
+        [HttpGet("{id:int}")]
+        [ResponseCache(NoStore = true)]
+        public async Task<IActionResult> GetPlace(int id)
+        {
+            var place = await _context.Places.Where(i => i.Id == id).Include(i => i.Location).FirstOrDefaultAsync();
+            if (place == null)
+            {
+                return NotFound(new
+                {
+                    message = "not found place"
+                });
+            }
+
+            var placeDTO = place.Map();
+            var locationDTO = place.Location?.Map();
+            placeDTO.Location = locationDTO;
+
+            return Ok(new RestDTO<PlaceDTO>()
+            {
+                Data = placeDTO
             });
         }
 
@@ -48,6 +82,16 @@ namespace BookingTravelApi.Controllers
         {
             try
             {
+                var location = await _context.Locations.Where(i => i.Id == newPlaceDTO.LocationId).FirstOrDefaultAsync();
+                if (location == null)
+                {
+                    return BadRequest(new
+                    {
+                        message = "location doesn't exist",
+                        data = newPlaceDTO.LocationId
+                    });
+                }
+
                 var place = newPlaceDTO.Map();
 
                 await _context.Places.AddAsync(place);
@@ -71,6 +115,16 @@ namespace BookingTravelApi.Controllers
         {
             try
             {
+                var location = await _context.Locations.Where(i => i.Id == newPlace.LocationId).FirstOrDefaultAsync();
+                if (location == null)
+                {
+                    return BadRequest(new
+                    {
+                        message = "location doesn't exist",
+                        data = newPlace.LocationId
+                    });
+                }
+
                 var place = await _context.Places.Where(place => place.Id == newPlace.Id).FirstOrDefaultAsync();
 
                 if (place == null)
@@ -109,6 +163,7 @@ namespace BookingTravelApi.Controllers
         {
             try
             {
+
                 var place = await _context.Places.Where(p => p.Id == id).FirstOrDefaultAsync();
 
                 if (place == null)

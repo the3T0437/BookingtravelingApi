@@ -13,7 +13,7 @@ namespace BookingTravelApi.DTO.LocationActivity
         public String Name { get; set; } = null!;
 
         [Required]
-        public int[] ActivityIds { get; set; } = [];
+        public List<int> ActivityIds { get; set; } = [];
 
         public Domains.LocationActivity Map()
         {
