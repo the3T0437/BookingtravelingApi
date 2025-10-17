@@ -67,27 +67,27 @@ namespace BookingTravelApi.Controllers
         public async Task<IActionResult> CreateLocationActivity(CreateLocationActivityDTO newLocationActivityDTO)
         {
 
-            var check = await CheckActivityIds(newLocationActivityDTO.ActivityIds);
-            if (check != null)
-            {
-                return check;
-            }
+            // var check = await CheckActivityIds(newLocationActivityDTO.ActivityIds);
+            // if (check != null)
+            // {
+            //     return check;
+            // }
 
             var newLocationActivity = newLocationActivityDTO.Map();
+            newLocationActivity.ActivityAndLocations = newLocationActivityDTO.ActivityIds?.Select(i => new ActivityAndLocation() { ActivityId = i }).ToList();
             await _context.LocationActivities.AddAsync(newLocationActivity);
             await _context.SaveChangesAsync();
 
-            foreach (int i in newLocationActivityDTO.ActivityIds)
-            {
-                var link = new ActivityAndLocation()
-                {
-                    ActivityId = i,
-                    LocationActivityId = newLocationActivity.Id
-                };
-                await _context.ActivityAndLocations.AddAsync(link);
-            }
-            await _context.SaveChangesAsync();
-
+            // foreach (int i in newLocationActivityDTO.ActivityIds)
+            // {
+            //     var link = new ActivityAndLocation()
+            //     {
+            //         ActivityId = i,
+            //         LocationActivityId = newLocationActivity.Id
+            //     };
+            //     await _context.ActivityAndLocations.AddAsync(link);
+            // }
+            // await _context.SaveChangesAsync();
 
             return Ok(new RestDTO<LocationActivityDTO>()
             {
