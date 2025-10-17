@@ -5,6 +5,8 @@ namespace BookingTravelApi.DTO.usercompletedschedule
         public int UserId { get; set; }
         public int ScheduleId { get; set; }
 
+        public ScheduleDTO? Schedule { get; set; }
+        public TourDTO? Tour { get; set; }
         
     }
 }
