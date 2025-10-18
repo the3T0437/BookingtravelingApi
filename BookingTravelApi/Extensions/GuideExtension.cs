@@ -10,7 +10,12 @@ namespace BookingTravelApi.Extensions
             return new GuideDTO()
             {
                 StaffId = guide.StaffId,
-                ScheduleId = guide.ScheduleId
+                ScheduleId = guide.ScheduleId,
+
+                User = guide.Staff!.User!.Map(),
+                Tour = guide.Schedule!.Tour!.Map(),
+                Schedule = guide.Schedule!.Map(),
+                TourLocation = guide.Schedule!.Tour!.TourLocations!.Select(i => i.Map()).ToList()
             };
         }
     }

@@ -10,7 +10,8 @@ namespace BookingTravelApi.Extensions
             return new TourLocationDTO()
             {
                 TourId = tourLocation.TourId,
-                LocationId = tourLocation.LocationId
+                LocationId = tourLocation.LocationId,
+                Location = tourLocation.Location!.Map()
             };
         }
     }

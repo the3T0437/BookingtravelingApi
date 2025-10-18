@@ -26,53 +26,99 @@ namespace BookingTravelApi.Controllers
         [ResponseCache(NoStore = true)]
         public async Task<IActionResult> getUsersCompletedSchedule(int? scheduleId = null)
         {
-            var query = _context.UserCompletedSchedules.Include(u => u.Schedule).ThenInclude(s=>s!.Tour).ThenInclude(t=>t!.TourLocations)!.AsQueryable();
-
-            if (scheduleId != null)
+            try
             {
+                if (scheduleId == null)
+                {
+                    return Problem("id not found");
+                }
+
+                var query = _context.UserCompletedSchedules.Include(u => u.Schedule)
+                .ThenInclude(s => s!.Tour).ThenInclude(t => t!.TourLocations)
+                !.ThenInclude(tl => tl!.Location)
+                .Include(u => u.Schedule)
+                .ThenInclude(s => s!.Tour)
+                .ThenInclude(t => t!.TourImages)
+                !.AsNoTracking();
+
                 query = query.Where(g => g.ScheduleId == scheduleId);
+
+                var userScheduleDTO = await query.Select(i => i.Map()).ToArrayAsync();
+
+                return Ok(new RestDTO<UserCompletedScheduleDTO[]?>()
+                {
+                    Data = userScheduleDTO
+                });
             }
-
-            var userScheduleDTO = await query.Select(i => i.Map()).ToArrayAsync();
-
-            return Ok(new RestDTO<UserCompletedScheduleDTO[]?>()
+            catch (Exception ex)
             {
-                Data = userScheduleDTO
-            });
+                return Problem("Error get ScheduleCompleted");
+            }
         }
 
         [HttpGet("User")]
         [ResponseCache(NoStore = true)]
         public async Task<IActionResult> getScheduleCompleted(int? userId = null)
         {
-            var query = _context.UserCompletedSchedules.AsQueryable();
-
-            if (userId != null)
+            try
             {
-                query = query.Where(g => g.UserId == userId);
+                if (userId == null)
+                {
+                    return Problem("id not found");
+                }
+
+                var query = _context.UserCompletedSchedules
+                .Where(g => g.UserId == userId).Include(u => u.Schedule)
+                .ThenInclude(s => s!.Tour).ThenInclude(t => t!.TourLocations)
+                !.ThenInclude(tl => tl.Location)
+                .Include(u => u.Schedule)
+                .ThenInclude(s => s!.Tour)
+                .ThenInclude(t => t!.TourImages)!
+                .AsNoTracking();
+
+                var userScheduleDTO = await query.Select(i => i.Map()).ToArrayAsync();
+
+                return Ok(new RestDTO<UserCompletedScheduleDTO[]?>()
+                {
+                    Data = userScheduleDTO
+                });
             }
-
-            var userScheduleDTO = await query.Select(i => i.Map()).ToArrayAsync();
-
-            return Ok(new RestDTO<UserCompletedScheduleDTO[]?>()
+            catch (Exception ex)
             {
-                Data = userScheduleDTO
-            });
+                return Problem("Error get ScheduleCompleted");
+            }
         }
 
-        [HttpPost(Name = "CreateUserCompletedSchedule")]
+        [HttpPost]
         public async Task<IActionResult> createUserCompletedSchedule(CreateUserCompletedScheduleDTO newUserSchedule)
         {
             try
             {
+                if (newUserSchedule == null)
+                {
+                    return NotFound("Successfully created the record, but failed to retrieve the full data for response.");
+                }
+
                 var userSchedule = newUserSchedule.Map();
 
                 await _context.UserCompletedSchedules.AddAsync(userSchedule);
                 await _context.SaveChangesAsync();
 
-                return Ok(new RestDTO<UserCompletedScheduleDTO?>()
+                
+                var query = _context.UserCompletedSchedules
+                .Where(g => g.UserId == userSchedule.UserId).Include(u => u.Schedule)
+                .ThenInclude(s => s!.Tour).ThenInclude(t => t!.TourLocations)
+                !.ThenInclude(tl => tl.Location)
+                .Include(u => u.Schedule)
+                .ThenInclude(s => s!.Tour)
+                .ThenInclude(t => t!.TourImages)!
+                .AsNoTracking();
+
+                var userScheduleDTO = await query.Select(i => i.Map()).ToArrayAsync();
+                 
+                return Ok(new RestDTO<UserCompletedScheduleDTO[]?>()
                 {
-                    Data = userSchedule?.Map()
+                    Data = userScheduleDTO
                 });
             }
             catch (Exception ex)
@@ -87,18 +133,22 @@ namespace BookingTravelApi.Controllers
         {
             try
             {
-                var userSchedule = await _context.UserCompletedSchedules.Where(g => g.UserId == userId && g.ScheduleId == scheduleId).FirstOrDefaultAsync();
+                var userSchedule = await _context.UserCompletedSchedules
+                .Where(g => g.UserId == userId && g.ScheduleId == scheduleId)
+                .FirstOrDefaultAsync();
+
                 if (userSchedule == null)
                 {
                     return NotFound($"Place with Id {userId} or {scheduleId} not found.");
                 }
 
+
                 _context.UserCompletedSchedules.Remove(userSchedule);
                 await _context.SaveChangesAsync();
 
-                return Ok(new RestDTO<UserCompletedScheduleDTO?>()
+                return Ok(new RestDTO<String>()
                 {
-                    Data = userSchedule.Map()
+                    Data = "200"
                 });
             }
             catch (Exception ex)
@@ -106,6 +156,6 @@ namespace BookingTravelApi.Controllers
                 return Problem("Error delete");
             }
         }
-        
+
     }
 }
