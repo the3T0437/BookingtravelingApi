@@ -1,5 +1,6 @@
 using BookingTravelApi.Domains;
 using BookingTravelApi.DTO.usercompletedschedule;
+using BookingTravelApi.DTO.tourlocation;
 
 namespace BookingTravelApi.Extensions
 {
@@ -10,7 +11,11 @@ namespace BookingTravelApi.Extensions
             return new UserCompletedScheduleDTO()
             {
                 UserId = userCompletedSchedule.UserId,
-                ScheduleId = userCompletedSchedule.ScheduleId
+                ScheduleId = userCompletedSchedule.ScheduleId,
+
+                Tour = userCompletedSchedule.Schedule!.Tour!.Map(),
+                Schedule = userCompletedSchedule.Schedule!.Map(),
+                TourLocation = userCompletedSchedule.Schedule!.Tour!.TourLocations!.Select(i => i.Map()).ToList()
             };
         }
     }

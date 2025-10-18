@@ -26,7 +26,7 @@ namespace BookingTravelApi.Controllers
         [ResponseCache(NoStore = true)]
         public async Task<IActionResult> getUsersCompletedSchedule(int? scheduleId = null)
         {
-            var query = _context.UserCompletedSchedules.AsQueryable();
+            var query = _context.UserCompletedSchedules.Include(u => u.Schedule).ThenInclude(s=>s!.Tour).ThenInclude(t=>t!.TourLocations)!.AsQueryable();
 
             if (scheduleId != null)
             {

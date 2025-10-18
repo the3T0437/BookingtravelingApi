@@ -1,8 +1,16 @@
+using BookingTravelApi.DTO.schedule;
+using BookingTravelApi.DTO.Tour;
+using BookingTravelApi.DTO.tourlocation;
+
 namespace BookingTravelApi.DTO.usercompletedschedule
 {
     public class UserCompletedScheduleDTO
     {
         public int UserId { get; set; }
         public int ScheduleId { get; set; }
+
+        public TourDTO Tour { get; set; } = null!;
+        public ScheduleDTO Schedule { get; set; } = null!;
+        public ICollection<TourLocationDTO> TourLocation { get; set; } = null!;
     }
 }
