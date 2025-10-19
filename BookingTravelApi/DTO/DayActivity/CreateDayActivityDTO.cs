@@ -18,11 +18,10 @@ namespace BookingTravelApi.DTO.DayActivity
 
     public static class CreateDayActivityExtension
     {
-        public static Domains.DayActivity Map(this CreateDayActivityDTO createDayActivityDTO, int dayOfTourId)
+        public static Domains.DayActivity Map(this CreateDayActivityDTO createDayActivityDTO)
         {
             return new Domains.DayActivity()
             {
-                DayOfTourId = dayOfTourId,
                 ActivityId = createDayActivityDTO.ActivityId,
                 LocationActivityId = createDayActivityDTO.LocationActivityId,
                 Time = createDayActivityDTO.Time

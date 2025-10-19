@@ -5,6 +5,7 @@ namespace BookingTravelApi.DTO.Tour
 {
     public class TourDTO
     {
+        public int Id { get; set; }
         public int Day { get; set; }
         public String Title { get; set; } = null!;
         public int Price { get; set; }

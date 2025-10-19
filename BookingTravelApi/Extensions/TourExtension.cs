@@ -9,6 +9,7 @@ namespace BookingTravelApi.Extensions
         {
             return new TourDTO()
             {
+                Id = tour.Id,
                 Day = tour.Day,
                 Title = tour.Title,
                 Price = tour.Price,

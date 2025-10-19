@@ -82,21 +82,9 @@ namespace BookingTravelApi.Controllers
         {
             try
             {
-                var location = await _context.Locations.Where(i => i.Id == newPlaceDTO.LocationId).FirstOrDefaultAsync();
-                if (location == null)
-                {
-                    return BadRequest(new
-                    {
-                        message = "location doesn't exist",
-                        data = newPlaceDTO.LocationId
-                    });
-                }
-
                 var place = newPlaceDTO.Map();
-
                 await _context.Places.AddAsync(place);
                 await _context.SaveChangesAsync();
-
 
                 // Trả về HTTP 200
                 return Ok(new RestDTO<PlaceDTO?>()

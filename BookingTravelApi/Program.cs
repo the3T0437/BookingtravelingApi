@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 using BookingTravelApi.Domains;
 using DotNetEnv;
 using Microsoft.EntityFrameworkCore;
+using Swashbuckle.AspNetCore.Filters;
 
 namespace BookingTravelApi;
 
@@ -23,15 +24,20 @@ public class Program
 
         builder.Services.AddControllers(); builder.Services.AddEndpointsApiExplorer();
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-        builder.Services.AddSwaggerGen();
+        builder.Services.AddSwaggerGen(c =>
+        {
+        //     c.ExampleFilters();
+        });
+        // // Register example providers
+        // builder.Services.AddSwaggerExamplesFromAssemblyOf<CreateTourFormExample>();
 
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {
-            app.UseSwagger();
-            app.UseSwaggerUI();
+            app.UseSwagger(c => { c.OpenApiVersion = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi2_0; });
+            app.UseSwaggerUI(c => { c.SwaggerEndpoint("./v1/swagger.json", "MyServiceAPI"); });
         }
 
         app.UseExceptionHandler("/error");

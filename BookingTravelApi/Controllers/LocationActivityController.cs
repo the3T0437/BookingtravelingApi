@@ -7,6 +7,7 @@ using BookingTravelApi.Extensions;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Client;
 
 namespace BookingTravelApi.Controllers
 {
@@ -35,7 +36,7 @@ namespace BookingTravelApi.Controllers
             }
             query = query.OrderBy($"{orderBy} {sortBy}");
 
-            var locationsActivities = await query.Include(i => i.Place).ToListAsync();
+            var locationsActivities = await query.Include(i => i.Place).ThenInclude(i => i.Location).ToListAsync();
             var locationActivityDTOs = locationsActivities.Select(i => i.Map()).ToList();
 
             return Ok(new RestDTO<List<LocationActivityDTO>>()
@@ -66,45 +67,32 @@ namespace BookingTravelApi.Controllers
         [HttpPost(Name = "CreateLocationActivity")]
         public async Task<IActionResult> CreateLocationActivity(CreateLocationActivityDTO newLocationActivityDTO)
         {
-
-            // var check = await CheckActivityIds(newLocationActivityDTO.ActivityIds);
-            // if (check != null)
-            // {
-            //     return check;
-            // }
-
-            var newLocationActivity = newLocationActivityDTO.Map();
-            newLocationActivity.ActivityAndLocations = newLocationActivityDTO.ActivityIds?.Select(i => new ActivityAndLocation() { ActivityId = i }).ToList();
-            await _context.LocationActivities.AddAsync(newLocationActivity);
-            await _context.SaveChangesAsync();
-
-            // foreach (int i in newLocationActivityDTO.ActivityIds)
-            // {
-            //     var link = new ActivityAndLocation()
-            //     {
-            //         ActivityId = i,
-            //         LocationActivityId = newLocationActivity.Id
-            //     };
-            //     await _context.ActivityAndLocations.AddAsync(link);
-            // }
-            // await _context.SaveChangesAsync();
-
-            return Ok(new RestDTO<LocationActivityDTO>()
+            try
             {
-                Data = newLocationActivity.Map()
-            });
+                var newLocationActivity = newLocationActivityDTO.Map();
+                await _context.LocationActivities.AddAsync(newLocationActivity);
+                await _context.SaveChangesAsync();
+
+                return Ok(new RestDTO<LocationActivityDTO>()
+                {
+                    Data = newLocationActivity.Map()
+                });
+            }
+            catch (Exception)
+            {
+                return BadRequest(
+                    new
+                    {
+                        message = "Something bad happen"
+                    }
+                );
+            }
         }
 
         [HttpPut(Name = "UpdateLocationActivity")]
         public async Task<IActionResult> UpdateLocationActivity(UpdateLocationActivityDTO updateLocationActivity)
         {
-            var check = await CheckActivityIds(updateLocationActivity.ActivityIds);
-            if (check != null)
-            {
-                return check;
-            }
-
-            var locationActivity = await _context.LocationActivities.Where(i => i.Id == updateLocationActivity.Id).FirstOrDefaultAsync();
+            var locationActivity = await _context.LocationActivities.Include(i => i.ActivityAndLocations).Where(i => i.Id == updateLocationActivity.Id).FirstOrDefaultAsync();
 
             if (locationActivity != null)
             {
@@ -120,13 +108,9 @@ namespace BookingTravelApi.Controllers
 
                 if (updateLocationActivity.ActivityIds != null)
                 {
-                    var items = _context.ActivityAndLocations.Where(i => i.LocationActivityId == updateLocationActivity.Id);
-                    _context.RemoveRange(items);
-
-                    var newItems = updateLocationActivity.ActivityIds.Select(
-                        i => new ActivityAndLocation() { ActivityId = i, LocationActivityId = updateLocationActivity.Id }
-                    );
-                    await _context.AddRangeAsync(newItems);
+                    _context.ActivityAndLocations.RemoveRange(locationActivity.ActivityAndLocations!);
+                    var locationAndActivities = updateLocationActivity.ActivityIds.Select(i => new ActivityAndLocation() { ActivityId = i }).ToList();
+                    locationActivity.ActivityAndLocations = locationAndActivities;
                 }
 
                 _context.Update(locationActivity);
@@ -142,28 +126,6 @@ namespace BookingTravelApi.Controllers
             {
                 Message = "location activity not found"
             });
-        }
-
-        private async Task<IActionResult?> CheckActivityIds(List<int> activityIds)
-        {
-            var existActivities = await _context.Activities
-                .Where(i => activityIds.Contains(i.Id))
-                .Select(i => i.Id)
-                .ToListAsync();
-            var missingActivities = existActivities.Except(activityIds);
-
-            if (missingActivities.Any())
-            {
-                return BadRequest(
-                    new
-                    {
-                        Message = "Some activity missing",
-                        Data = missingActivities
-                    }
-                );
-            }
-
-            return null;
         }
     }
 }
