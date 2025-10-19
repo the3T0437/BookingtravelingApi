@@ -21,11 +21,20 @@ namespace BookingTravelApi.Controllers
             _logger = logger;
         }
 
+        // Tour location image
         [HttpGet]
         [ResponseCache(NoStore = true)]
         public async Task<IActionResult> getSchedules()
         {
-            var query = _context.Schedules.OrderByDescending(s => s.OpenDate).AsNoTracking();
+            var query = _context.Schedules
+            .Include(s => s.Tour)
+            .ThenInclude(t => t.TourImages)
+            
+            .Include(s => s.Tour)
+            .ThenInclude(t => t.TourLocations!)
+            .ThenInclude(tl => tl.Location)
+
+            .OrderByDescending(s => s.OpenDate).AsNoTracking();
 
             var scheduleDTOs = await query.Select(i => i.Map()).ToArrayAsync();
 
@@ -79,7 +88,7 @@ namespace BookingTravelApi.Controllers
             {
                 var schedule = newScheduleDTO.Map();
 
-                await _context.Schedules.AddAsync(schedule);
+                _context.Schedules.Add(schedule);
                 await _context.SaveChangesAsync();
 
                 return Ok(new RestDTO<ScheduleDTO?>()
@@ -94,12 +103,13 @@ namespace BookingTravelApi.Controllers
 
         }
 
+
         [HttpPut(Name = "UpdateSchedule")]
         public async Task<IActionResult> UpdateSchedule(UpdateScheduleDTO updatedSchedule)
         {
             try
             {
-                var schedule = await _context.Schedules.Where(s => s.Id == updatedSchedule.Id).FirstOrDefaultAsync();
+                var schedule = await _context.Schedules.FirstOrDefaultAsync(s => s.Id == updatedSchedule.Id);
 
                 if (schedule == null)
                 {

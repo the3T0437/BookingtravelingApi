@@ -1,3 +1,5 @@
+using BookingTravelApi.Domains;
+
 namespace BookingTravelApi.DTO.schedule
 {
     public class ScheduleDTO
@@ -12,5 +14,8 @@ namespace BookingTravelApi.DTO.schedule
         public DateTime GatheringTime { get; set; }
         public String Code { get; set; } = null!;
         public int Desposit { get; set; }
+
+
+        public Tour tour { get; set; } = null!;
     }
 }

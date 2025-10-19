@@ -1,3 +1,4 @@
+using System.Linq.Dynamic.Core;
 using BookingTravelApi.Domains;
 using BookingTravelApi.DTO;
 using BookingTravelApi.DTO.user;
@@ -32,6 +33,23 @@ namespace BookingTravelApi.Controllers
             {
                 Data = userDTOs
             });
+        }
+
+        [HttpGet("email")]
+        public async Task<IActionResult> GetUserByEmail([FromQuery] string email)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+
+            if (user == null)
+            {
+                return Problem($"email {email} not found");
+            }
+
+            return Ok(new RestDTO<Boolean>
+            {
+                Data = true
+            });
+            
         }
 
         [HttpGet("{id}")]
@@ -75,7 +93,7 @@ namespace BookingTravelApi.Controllers
         {
             try
             {
-                var user = await _context.Users.Where(u => u.Id == updatedUser.Id).FirstOrDefaultAsync();
+                var user = await _context.Users.FindAsync(updatedUser.Id);
 
                 if (user == null)
                 {

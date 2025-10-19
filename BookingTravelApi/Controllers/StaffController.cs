@@ -62,7 +62,7 @@ namespace BookingTravelApi.Controllers
                 await _context.SaveChangesAsync();
 
 
-                var result = await _context.Staffs.Include(s => s.User).ThenInclude(u => u.Role).FirstAsync(s => s.UserId == staff.UserId);
+                var result = await _context.Staffs.Include(s => s.User).ThenInclude(u => u.Role).AsNoTracking().FirstOrDefaultAsync(s => s.UserId == staff.UserId);
 
 
                 return Ok(new RestDTO<StaffDTO?>()
@@ -81,7 +81,7 @@ namespace BookingTravelApi.Controllers
         {
             try
             {
-                var staff = await _context.Staffs.Where(s => s.UserId == updatedStaffDTO.UserId).Include(s => s.User).FirstOrDefaultAsync();
+                var staff = await _context.Staffs.Include(s => s.User).FirstOrDefaultAsync(s => s.UserId == updatedStaffDTO.UserId);
 
                 if (staff == null)
                 {
@@ -92,7 +92,7 @@ namespace BookingTravelApi.Controllers
 
                 await _context.SaveChangesAsync();
 
-                var result = await _context.Staffs.Include(s => s.User).ThenInclude(u => u.Role).FirstAsync(s => s.UserId == staff.UserId);
+                var result = await _context.Staffs.Include(s => s.User).ThenInclude(u => u.Role).AsNoTracking().FirstOrDefaultAsync(s => s.UserId == staff.UserId);
 
                 return Ok(new RestDTO<StaffDTO?>()
                 {
