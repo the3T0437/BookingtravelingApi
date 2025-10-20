@@ -1,19 +1,17 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
+using BookingTravelApi.Domains;
 
-namespace BookingTravelApi.Domains
+namespace BookingTravelApi.DTO.user
 {
-    public class User
+    public class CreateUserDTO
     {
-        [Key]
-        [Required]
-        public int Id { get; set; }
-
         [Required]
         public int RoleId { get; set; }
 
         [Required]
         [MaxLength(255)]
         public String Password { get; set; } = null!;
+
         [Required]
         public int Money { get; set; }
 
@@ -43,13 +41,21 @@ namespace BookingTravelApi.Domains
         [MaxLength(255)]
         public String BankBranch { get; set; } = null!;
 
-        public Staff? Staff { get; set; }
-        public ICollection<Notification>? Notification { get; set; }
-        public Role? Role { get; set; }
-        public ICollection<Helpful>? Helpfuls { get; set; }
-        public ICollection<Review>? Reviews { get; set; }
-        public ICollection<UserCompletedSchedule>? UserCompletedSchedules { get; set; }
-        public ICollection<Favorite>? Favorites { get; set; }
-        public ICollection<Booking>? Bookings { get; set; }
+        public User Map()
+        {
+            return new User()
+            {
+                RoleId = RoleId,
+                Password = Password,
+                Money = Money,
+                BankNumber = BankNumber,
+                Bank = Bank,
+                Name = Name,
+                Email = Email,
+                Phone = Phone,
+                AvatarPath = AvatarPath,
+                BankBranch = BankBranch
+            };
+        }
     }
 }

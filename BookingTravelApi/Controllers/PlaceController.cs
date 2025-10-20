@@ -1,7 +1,6 @@
 using System.Linq.Dynamic.Core;
 using BookingTravelApi.Domains;
 using BookingTravelApi.DTO;
-using BookingTravelApi.DTO.Location;
 using BookingTravelApi.DTO.place;
 using BookingTravelApi.Extensions;
 using Microsoft.AspNetCore.Mvc;
