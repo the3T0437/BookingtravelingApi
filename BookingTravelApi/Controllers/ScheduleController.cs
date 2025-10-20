@@ -21,7 +21,7 @@ namespace BookingTravelApi.Controllers
             _logger = logger;
         }
 
-        // Tour location image
+        
         [HttpGet]
         [ResponseCache(NoStore = true)]
         public async Task<IActionResult> getSchedules()
@@ -29,11 +29,11 @@ namespace BookingTravelApi.Controllers
             var query = _context.Schedules
             .Include(s => s.Tour)
             .ThenInclude(t => t.TourImages)
-            
+
             .Include(s => s.Tour)
             .ThenInclude(t => t.TourLocations!)
             .ThenInclude(tl => tl.Location)
-
+            
             .OrderByDescending(s => s.OpenDate).AsNoTracking();
 
             var scheduleDTOs = await query.Select(i => i.Map()).ToArrayAsync();
@@ -47,7 +47,17 @@ namespace BookingTravelApi.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetScheduleById(int id)
         {
-            var schedule = await _context.Schedules.FindAsync(id);
+            var schedule = await _context.Schedules
+            .Include(s => s.Tour)
+            .ThenInclude(t => t.TourImages)
+
+            .Include(s => s.Tour)
+            .ThenInclude(t => t.TourLocations!)
+            .ThenInclude(tl => tl.Location)
+
+            .FirstOrDefaultAsync(s => s.Id == id);
+
+
             if (schedule == null)
             {
                 return NotFound($"id {id} not found");
@@ -67,8 +77,15 @@ namespace BookingTravelApi.Controllers
             var now = DateTime.Now;
 
             var query = _context.Schedules
-                .Where(s => s.OpenDate <= now && s.StartDate > now && s.MaxSlot > 0)
-                .AsNoTracking();
+            .Include(s => s.Tour)
+            .ThenInclude(t => t.TourImages)
+
+            .Include(s => s.Tour)
+            .ThenInclude(t => t.TourLocations!)
+            .ThenInclude(tl => tl.Location)
+              
+            .Where(s => s.OpenDate <= now && s.StartDate > now && s.MaxSlot > 0)
+            .AsNoTracking();
 
             var scheduleDTOs = await query.Select(i => i.Map()).ToArrayAsync();
 
@@ -91,9 +108,11 @@ namespace BookingTravelApi.Controllers
                 _context.Schedules.Add(schedule);
                 await _context.SaveChangesAsync();
 
-                return Ok(new RestDTO<ScheduleDTO?>()
+                // var scheduleDTOid = _context.Schedules.fin
+
+                return Ok(new RestDTO<int>()
                 {
-                    Data = schedule?.Map()
+                    Data = schedule.Id
                 });
             }
             catch (Exception ex)
@@ -120,9 +139,9 @@ namespace BookingTravelApi.Controllers
 
                 await _context.SaveChangesAsync();
 
-                return Ok(new RestDTO<ScheduleDTO?>()
+                return Ok(new RestDTO<Boolean>()
                 {
-                    Data = schedule.Map()
+                    Data = true
                 });
             }
             catch (Exception ex)
@@ -131,7 +150,7 @@ namespace BookingTravelApi.Controllers
             }
         }
 
-        [HttpDelete(Name = "DeleteSchedule")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteSchedule(int id)
         {
             try
@@ -145,9 +164,9 @@ namespace BookingTravelApi.Controllers
                 _context.Schedules.Remove(schedule);
                 await _context.SaveChangesAsync();
 
-                return Ok(new RestDTO<ScheduleDTO?>()
+                return Ok(new RestDTO<Boolean>()
                 {
-                    Data = schedule?.Map()
+                    Data = true
                 });
             }
             catch (Exception ex)

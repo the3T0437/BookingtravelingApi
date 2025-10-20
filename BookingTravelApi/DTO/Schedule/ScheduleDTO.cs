@@ -1,4 +1,5 @@
-using BookingTravelApi.Domains;
+using BookingTravelApi.DTO.Tour;
+using BookingTravelApi.DTO.tourlocation;
 
 namespace BookingTravelApi.DTO.schedule
 {
@@ -16,6 +17,7 @@ namespace BookingTravelApi.DTO.schedule
         public int Desposit { get; set; }
 
 
-        public Tour tour { get; set; } = null!;
+        public TourDTO tourDTO { get; set; } = null!;
+        public List<TourLocationDTO> tourLocationDTOs { get; set; } = null!;
     }
 }

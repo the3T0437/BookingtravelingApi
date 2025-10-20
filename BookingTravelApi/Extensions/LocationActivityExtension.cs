@@ -10,7 +10,8 @@ namespace BookingTravelApi.Extensions
             return new LocationActivityDTO()
             {
                 Id = locationActivity.Id,
-                Name = locationActivity.Name
+                Name = locationActivity.Name,
+                Place = locationActivity.Place?.Map()
             };
         }
     }

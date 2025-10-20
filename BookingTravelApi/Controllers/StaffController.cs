@@ -62,12 +62,9 @@ namespace BookingTravelApi.Controllers
                 await _context.SaveChangesAsync();
 
 
-                var result = await _context.Staffs.Include(s => s.User).ThenInclude(u => u.Role).AsNoTracking().FirstOrDefaultAsync(s => s.UserId == staff.UserId);
-
-
-                return Ok(new RestDTO<StaffDTO?>()
+                return Ok(new RestDTO<int>()
                 {
-                    Data = result.Map()
+                    Data = staff.UserId    
                 });
             }
             catch (Exception ex)
@@ -89,14 +86,11 @@ namespace BookingTravelApi.Controllers
                 }
 
                 updatedStaffDTO.UpdateEntity(staff);
-
                 await _context.SaveChangesAsync();
 
-                var result = await _context.Staffs.Include(s => s.User).ThenInclude(u => u.Role).AsNoTracking().FirstOrDefaultAsync(s => s.UserId == staff.UserId);
-
-                return Ok(new RestDTO<StaffDTO?>()
+                return Ok(new RestDTO<Boolean>()
                 {
-                    Data = result.Map()
+                    Data = true
                 });
             }
             catch (Exception ex)
@@ -119,9 +113,9 @@ namespace BookingTravelApi.Controllers
                 _context.Staffs.Remove(staff);
                 await _context.SaveChangesAsync();
 
-                return Ok(new RestDTO<string?>()
+                return Ok(new RestDTO<Boolean>()
                 {
-                    Data = $"Staff with id {id} has been deleted."
+                    Data = true
                 });
             }
             catch (Exception ex)
