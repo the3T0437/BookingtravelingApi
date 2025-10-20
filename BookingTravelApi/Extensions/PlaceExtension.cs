@@ -10,7 +10,8 @@ namespace BookingTravelApi.Extensions
             return new PlaceDTO()
             {
                 Id = place.Id,
-                Name = place.Name
+                Name = place.Name,
+                Location = place.Location?.Map()
             };
         }
     }

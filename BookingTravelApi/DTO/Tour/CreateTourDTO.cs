@@ -1,5 +1,8 @@
 using System.ComponentModel.DataAnnotations;
+using BookingTravelApi.Domains;
 using BookingTravelApi.DTO.DayOfTour;
+using BookingTravelApi.Infrastructure;
+using Microsoft.Net.Http.Headers;
 
 namespace BookingTravelApi.DTO.Tour
 {
@@ -15,21 +18,26 @@ namespace BookingTravelApi.DTO.Tour
         public String Description { get; set; } = null!;
         [Required]
         public List<CreateDayOfTourDTO> DayOfTours { get; set; } = null!;
-        [Required]
-        public List<IFormFile> TourImages { get; set; } = null!;
+        public List<String> TourImages { get; set; } = [];
 
     }
 
     public static class CreateTourDTOExtension
     {
-        public static Domains.Tour Map(this CreateTourDTO createTourDTO)
+        public static async Task<Domains.Tour> Map(this CreateTourDTO createTourDTO)
         {
+            var dayOfTours = createTourDTO.DayOfTours.Select(i => i.Map()).ToList();
+            List<String> paths = await ImageInfrastructure.WriteImages(createTourDTO.TourImages);
+            var tourImages = paths.Select(i => new TourImage() { Path = i }).ToList();
+
             return new Domains.Tour()
             {
                 Day = createTourDTO.Day,
                 Title = createTourDTO.Title,
                 Price = createTourDTO.Price,
-                Description = createTourDTO.Description
+                Description = createTourDTO.Description,
+                DayOfTours = dayOfTours,
+                TourImages = tourImages
             };
         }
     }

@@ -668,7 +668,7 @@ namespace BookingTravelApi.Migrations
                     b.HasOne("BookingTravelApi.Domains.DayOfTour", "DayOfTour")
                         .WithMany("DayActivities")
                         .HasForeignKey("DayOfTourId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("BookingTravelApi.Domains.LocationActivity", "LocationActivity")
@@ -848,7 +848,7 @@ namespace BookingTravelApi.Migrations
                     b.HasOne("BookingTravelApi.Domains.Tour", "Tour")
                         .WithMany("TourLocations")
                         .HasForeignKey("TourId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Location");

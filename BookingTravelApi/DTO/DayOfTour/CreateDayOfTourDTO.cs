@@ -15,13 +15,14 @@ namespace BookingTravelApi.DTO.DayOfTour
 
     public static class CreateDayOfTourDTOExtension
     {
-        public static Domains.DayOfTour Map(this CreateDayOfTourDTO createDayOfTour, int tourId)
+        public static Domains.DayOfTour Map(this CreateDayOfTourDTO createDayOfTour)
         {
+            var dayActivities = createDayOfTour.DayActivities.Select(i => i.Map()).ToList();
             return new Domains.DayOfTour()
             {
-                TourId = tourId,
                 Title = createDayOfTour.Title,
                 Description = createDayOfTour.Description,
+                DayActivities = dayActivities
             };
         }
     }

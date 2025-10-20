@@ -9,6 +9,7 @@ using BookingTravelApi.Extensions;
 using BookingTravelApi.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Swashbuckle.AspNetCore.Filters;
 
 namespace BookingTravelApi.Controllers
 {
@@ -35,9 +36,18 @@ namespace BookingTravelApi.Controllers
             {
                 query = query.Where(i => i.Title.Contains(searchStr));
             }
-            query = query.OrderBy($"${SortBy} {SortOrder}");
+            query = query.OrderBy($"{SortBy} {SortOrder}");
 
-            var tours = await query.ToListAsync();
+            var tours = await query.Include(i => i.TourImages)
+                .Include(i => i.DayOfTours)
+                .ThenInclude(i => i.DayActivities)
+                .ThenInclude(i => i.Activity)
+                .Include(i => i.DayOfTours)
+                .ThenInclude(i => i.DayActivities)
+                .ThenInclude(i => i.LocationActivity)
+                .ThenInclude(i => i.Place)
+                .ThenInclude(i => i.Location)
+                .ToListAsync();
             var tourDTOs = tours.Select(i => i.Map()).ToArray();
 
             return Ok(new RestDTO<TourDTO[]>()
@@ -50,7 +60,16 @@ namespace BookingTravelApi.Controllers
         [HttpGet("{id:int}", Name = "getTour")]
         public async Task<IActionResult> GetTour(int id)
         {
-            var tour = await _context.Tours.Where(i => i.Id == id).FirstOrDefaultAsync();
+            var tour = await _context.Tours.Include(i => i.TourImages)
+                .Include(i => i.DayOfTours)
+                .ThenInclude(i => i.DayActivities)
+                .ThenInclude(i => i.Activity)
+                .Include(i => i.DayOfTours)
+                .ThenInclude(i => i.DayActivities)
+                .ThenInclude(i => i.LocationActivity)
+                .ThenInclude(i => i.Place)
+                .ThenInclude(i => i.Location)
+                .Where(i => i.Id == id).FirstOrDefaultAsync();
             if (tour == null)
             {
                 return NotFound(new
@@ -68,137 +87,110 @@ namespace BookingTravelApi.Controllers
         [HttpPost(Name = "CreateTour")]
         public async Task<IActionResult> CreateTour(CreateTourDTO newTourDTO)
         {
-            var check = ValidateCreateTourDTO(newTourDTO);
-            if (check != null)
+            List<String> tempImages = [];
+            try
             {
-                return NotFound(new
-                {
-                    message = check
-                });
-            }
+                var newTour = await newTourDTO.Map();
+                tempImages = newTour.TourImages?.Select(i => i.Path).ToList() ?? [];
+                await _context.Tours.AddAsync(newTour);
+                await _context.SaveChangesAsync();
 
-            var tour = await _CreateTour(newTourDTO);
+                return await GetTour(newTour.Id);
+            }
+            catch (Exception)
+            {
+                tempImages.ForEach(path => ImageInfrastructure.DeleteImage(path));
+                return BadRequest(new ErrorDTO("request is not valid"));
+            }
+        }
+
+        [HttpPut(Name = "UpdateTour")]
+        public async Task<IActionResult> UpdateTour(UpdateTourDTO updateTourDTO)
+        {
+            List<String> newImagePaths = [];
+            try
+            {
+                var tour = await _context.Tours
+                    .Include(i => i.TourImages)
+                    .Include(i => i.DayOfTours)
+                    .FirstOrDefaultAsync();
+                if (tour == null)
+                {
+                    return NotFound(new ErrorDTO("Tour not found"));
+                }
+
+                if (!String.IsNullOrEmpty(updateTourDTO.Title))
+                {
+                    tour.Title = updateTourDTO.Title;
+                }
+
+                if (updateTourDTO.Price != null)
+                {
+                    tour.Price = updateTourDTO.Price.Value;
+                }
+
+                if (!String.IsNullOrEmpty(updateTourDTO.Description))
+                {
+                    tour.Description = updateTourDTO.Description;
+                }
+
+                if (updateTourDTO.DayOfTours != null)
+                {
+                    var dayOfTours = updateTourDTO.DayOfTours.Select(i => i.Map()).ToList();
+                    tour.DayOfTours = dayOfTours;
+                }
+
+                List<String> oldImages = [];
+                if (updateTourDTO.TourImages != null)
+                {
+                    oldImages = tour.TourImages!.Select(i => i.Path).ToList();
+                    newImagePaths = await ImageInfrastructure.WriteImages(updateTourDTO.TourImages);
+                    var tourImages = newImagePaths.Select(i => new TourImage() { Path = i }).ToList();
+                    tour.TourImages = tourImages;
+                }
+
+                await _context.SaveChangesAsync();
+                oldImages.ForEach(path => ImageInfrastructure.DeleteImage(path));
+
+                return await GetTour(updateTourDTO.Id);
+            }
+            catch (Exception)
+            {
+                newImagePaths.ForEach(path => ImageInfrastructure.DeleteImage(path));
+                return BadRequest(new ErrorDTO("request is not valid"));
+            }
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteTour(int id)
+        {
+            var tour = await _context.Tours.Include(i => i.TourImages)
+                .Include(i => i.DayOfTours)
+                .ThenInclude(i => i.DayActivities)
+                .ThenInclude(i => i.Activity)
+                .Include(i => i.DayOfTours)
+                .ThenInclude(i => i.DayActivities)
+                .ThenInclude(i => i.LocationActivity)
+                .ThenInclude(i => i.Place)
+                .ThenInclude(i => i.Location)
+                .Where(i => i.Id == id).FirstOrDefaultAsync();
+
+            if (tour == null)
+            {
+                return NotFound(new ErrorDTO("tour not found"));
+            }
+            _context.Tours.Remove(tour);
+            await _context.SaveChangesAsync();
+
+            var tourImages = tour.TourImages ?? [];
+            var paths = tourImages.Select(i => i.Path).ToList();
+
+            ImageInfrastructure.DeleteImages(paths);
+
             return Ok(new RestDTO<TourDTO>()
             {
                 Data = tour.Map()
             });
-        }
-
-        private async Task<Tour> _CreateTour(CreateTourDTO newTourDTO)
-        {
-            var tour = newTourDTO.Map();
-            await _context.Tours.AddAsync(tour);
-            await _context.SaveChangesAsync();
-            var tourImages = await _CreateTourImages(tour.Id, newTourDTO.TourImages);
-            var dayOfTours = await _CreateDayOfTour(tour.Id, newTourDTO.DayOfTours);
-            tour.TourImages = tourImages;
-            tour.DayOfTours = dayOfTours;
-
-            return tour;
-        }
-
-        private async Task<List<DayOfTour>> _CreateDayOfTour(int tourId, List<CreateDayOfTourDTO> createDayOfTourDTOs)
-        {
-            var dayOfTourTasks = createDayOfTourDTOs.Select(async i =>
-            {
-                var dayOfTour = i.Map(tourId);
-                await _context.DayOfTours.AddAsync(dayOfTour);
-                await _context.SaveChangesAsync();
-                var dayActivities = await _CreateDayActivities(tourId, i.DayActivities);
-                dayOfTour.DayActivities = dayActivities;
-                return dayOfTour;
-            }).ToList();
-            var dayOfTours = (await Task.WhenAll(dayOfTourTasks)).ToList();
-
-            return dayOfTours;
-        }
-
-        private async Task<List<DayActivity>> _CreateDayActivities(int tourId, List<CreateDayActivityDTO> createDayActivityDTOs)
-        {
-            var dayActivities = createDayActivityDTOs.Select(i => i.Map(tourId)).ToList();
-            await _context.DayActivities.AddRangeAsync(dayActivities);
-            await _context.SaveChangesAsync();
-            return dayActivities;
-        }
-
-        private async Task<List<TourImage>> _CreateTourImages(int tourId, List<IFormFile> images)
-        {
-            List<TourImage> tourImages = [];
-            foreach (var image in images)
-            {
-                var imagePath = await ImageInfrastructure.WriteImage(image);
-                if (imagePath == null)
-                {
-                    throw new Exception("can't write image");
-                }
-
-                var tourImage = new TourImage()
-                {
-                    Path = imagePath,
-                    TourId = tourId
-                };
-
-                tourImages.Add(tourImage);
-            }
-            await _context.TourImages.AddRangeAsync(tourImages);
-            await _context.SaveChangesAsync();
-
-            return tourImages;
-        }
-
-        private async Task<String?> ValidateCreateTourDTO(CreateTourDTO createTourDTO)
-        {
-            foreach (var i in createTourDTO.DayOfTours)
-            {
-                var check = await ValidateCreateDayOfTourDTO(i);
-                if (check != null)
-                {
-                    return check;
-                }
-            }
-
-            foreach (var i in createTourDTO.TourImages)
-            {
-                var check = await ValidateIFromFile(i);
-                if (check != null)
-                {
-                    return check;
-                }
-            }
-
-            return null;
-        }
-
-        private async Task<String?> ValidateIFromFile(IFormFile formFile)
-        {
-            return null;
-        }
-
-        private async Task<String?> ValidateCreateDayOfTourDTO(CreateDayOfTourDTO createDayOfTourDTO)
-        {
-            foreach (var i in createDayOfTourDTO.DayActivities)
-            {
-                var check = await ValidateCreateDayActivityDTO(i);
-                if (check != null)
-                {
-                    return check;
-                }
-            }
-
-            return null;
-        }
-
-        private async Task<String?> ValidateCreateDayActivityDTO(CreateDayActivityDTO createDayActivityDTO)
-        {
-            var activity = await _context.Activities.Where(i => i.Id == createDayActivityDTO.ActivityId).FirstOrDefaultAsync();
-            if (activity == null)
-                return $"activity with id {createDayActivityDTO.ActivityId} doesn't exist";
-
-            var locationActivity = await _context.LocationActivities.Where(i => i.Id == createDayActivityDTO.LocationActivityId).FirstOrDefaultAsync();
-            if (locationActivity == null)
-                return $"locationActivity with id {createDayActivityDTO.ActivityId} doesn't exist";
-
-            return null;
         }
     }
 }

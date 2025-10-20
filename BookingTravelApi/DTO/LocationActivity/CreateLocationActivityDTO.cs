@@ -17,10 +17,12 @@ namespace BookingTravelApi.DTO.LocationActivity
 
         public Domains.LocationActivity Map()
         {
+            var activityAndLocations = ActivityIds.Select(i => new ActivityAndLocation() { ActivityId = i }).ToList();
             return new Domains.LocationActivity()
             {
                 Name = Name,
-                PlaceId = PlaceId
+                PlaceId = PlaceId,
+                ActivityAndLocations = activityAndLocations
             };
         }
     }

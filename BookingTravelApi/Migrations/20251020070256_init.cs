@@ -134,6 +134,8 @@ namespace BookingTravelApi.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Name = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
+                    Email = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     Phone = table.Column<string>(type: "varchar(11)", maxLength: 11, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     AvatarPath = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
@@ -250,7 +252,7 @@ namespace BookingTravelApi.Migrations
                         column: x => x.TourId,
                         principalTable: "Tours",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -490,7 +492,7 @@ namespace BookingTravelApi.Migrations
                     DayOfTourId = table.Column<int>(type: "int", nullable: false),
                     ActivityId = table.Column<int>(type: "int", nullable: false),
                     LocationActivityId = table.Column<int>(type: "int", nullable: false),
-                    time = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                    Time = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -506,7 +508,7 @@ namespace BookingTravelApi.Migrations
                         column: x => x.DayOfTourId,
                         principalTable: "DayOfTours",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_DayActivities_LocationActivities_LocationActivityId",
                         column: x => x.LocationActivityId,
