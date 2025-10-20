@@ -150,7 +150,7 @@ namespace BookingTravelApi.Domains
                 .WithMany(f => f.DayActivities)
                 .HasForeignKey(t => t.DayOfTourId)
                 .IsRequired()
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
             modelBuilder.Entity<DayActivity>()
                 .HasOne(t => t.Activity)
                 .WithMany(f => f.DayActivities)
@@ -169,7 +169,7 @@ namespace BookingTravelApi.Domains
                 .WithMany(f => f.TourLocations)
                 .HasForeignKey(t => t.TourId)
                 .IsRequired()
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
             modelBuilder.Entity<TourLocation>()
                 .HasOne(t => t.Location)
                 .WithMany(f => f.TourLocations)

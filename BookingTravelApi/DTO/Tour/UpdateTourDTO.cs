@@ -12,6 +12,6 @@ namespace BookingTravelApi.DTO.Tour
         public String? Description { get; set; }
 
         public List<CreateDayOfTourDTO>? DayOfTours { get; set; }
-        public List<IFormFile>? TourImages { get; set; }
+        public List<String>? TourImages { get; set; }
     }
 }

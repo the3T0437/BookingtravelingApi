@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using BookingTravelApi.DTO.DayOfTour;
+using BookingTravelApi.DTO.Location;
 
 namespace BookingTravelApi.DTO.Tour
 {
@@ -13,5 +14,6 @@ namespace BookingTravelApi.DTO.Tour
 
         public List<DayOfTourDTO> DayOfTours { get; set; } = null!;
         public List<String> TourImages { get; set; } = null!;
+        public List<LocationDTO> Locations { get; set; } = null!;
     }
 }

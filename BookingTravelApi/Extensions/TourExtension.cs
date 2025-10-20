@@ -7,6 +7,11 @@ namespace BookingTravelApi.Extensions
     {
         public static TourDTO Map(this Tour tour)
         {
+            var dayActivities = tour.DayOfTours?.SelectMany(i => i.DayActivities).ToList() ?? [];
+            var locationActivities = dayActivities?.Select(i => i.LocationActivity).ToList();
+            var places = locationActivities.Select(i => i.Place).ToList();
+            var locations = places.Select(i => i.Location).ToHashSet();
+
             return new TourDTO()
             {
                 Id = tour.Id,
@@ -16,7 +21,8 @@ namespace BookingTravelApi.Extensions
                 Description = tour.Description,
 
                 DayOfTours = tour.DayOfTours?.Select(i => i.Map()).ToList() ?? [],
-                TourImages = tour.TourImages?.Select(i => i.Path).ToList() ?? []
+                TourImages = tour.TourImages?.Select(i => i.Path).ToList() ?? [],
+                Locations = locations.ToList().Select(i => i.Map()).ToList()
             };
         }
     }

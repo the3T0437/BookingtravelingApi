@@ -60,7 +60,16 @@ namespace BookingTravelApi.Controllers
         [HttpGet("{id:int}", Name = "getTour")]
         public async Task<IActionResult> GetTour(int id)
         {
-            var tour = await _context.Tours.Include(i => i.TourImages).Include(i => i.DayOfTours).ThenInclude(i => i.DayActivities).ThenInclude(i => new { i.Activity, i.LocationActivity }).Where(i => i.Id == id).FirstOrDefaultAsync();
+            var tour = await _context.Tours.Include(i => i.TourImages)
+                .Include(i => i.DayOfTours)
+                .ThenInclude(i => i.DayActivities)
+                .ThenInclude(i => i.Activity)
+                .Include(i => i.DayOfTours)
+                .ThenInclude(i => i.DayActivities)
+                .ThenInclude(i => i.LocationActivity)
+                .ThenInclude(i => i.Place)
+                .ThenInclude(i => i.Location)
+                .Where(i => i.Id == id).FirstOrDefaultAsync();
             if (tour == null)
             {
                 return NotFound(new
@@ -78,13 +87,109 @@ namespace BookingTravelApi.Controllers
         [HttpPost(Name = "CreateTour")]
         public async Task<IActionResult> CreateTour(CreateTourDTO newTourDTO)
         {
-            var newTour = await newTourDTO.Map();
-            await _context.Tours.AddAsync(newTour);
+            List<String> tempImages = [];
+            try
+            {
+                var newTour = await newTourDTO.Map();
+                tempImages = newTour.TourImages?.Select(i => i.Path).ToList() ?? [];
+                await _context.Tours.AddAsync(newTour);
+                await _context.SaveChangesAsync();
+
+                return await GetTour(newTour.Id);
+            }
+            catch (Exception)
+            {
+                tempImages.ForEach(path => ImageInfrastructure.DeleteImage(path));
+                return BadRequest(new ErrorDTO("request is not valid"));
+            }
+        }
+
+        [HttpPut(Name = "UpdateTour")]
+        public async Task<IActionResult> UpdateTour(UpdateTourDTO updateTourDTO)
+        {
+            List<String> newImagePaths = [];
+            try
+            {
+                var tour = await _context.Tours
+                    .Include(i => i.TourImages)
+                    .Include(i => i.DayOfTours)
+                    .FirstOrDefaultAsync();
+                if (tour == null)
+                {
+                    return NotFound(new ErrorDTO("Tour not found"));
+                }
+
+                if (!String.IsNullOrEmpty(updateTourDTO.Title))
+                {
+                    tour.Title = updateTourDTO.Title;
+                }
+
+                if (updateTourDTO.Price != null)
+                {
+                    tour.Price = updateTourDTO.Price.Value;
+                }
+
+                if (!String.IsNullOrEmpty(updateTourDTO.Description))
+                {
+                    tour.Description = updateTourDTO.Description;
+                }
+
+                if (updateTourDTO.DayOfTours != null)
+                {
+                    var dayOfTours = updateTourDTO.DayOfTours.Select(i => i.Map()).ToList();
+                    tour.DayOfTours = dayOfTours;
+                }
+
+                List<String> oldImages = [];
+                if (updateTourDTO.TourImages != null)
+                {
+                    oldImages = tour.TourImages!.Select(i => i.Path).ToList();
+                    newImagePaths = await ImageInfrastructure.WriteImages(updateTourDTO.TourImages);
+                    var tourImages = newImagePaths.Select(i => new TourImage() { Path = i }).ToList();
+                    tour.TourImages = tourImages;
+                }
+
+                await _context.SaveChangesAsync();
+                oldImages.ForEach(path => ImageInfrastructure.DeleteImage(path));
+
+                return await GetTour(updateTourDTO.Id);
+            }
+            catch (Exception)
+            {
+                newImagePaths.ForEach(path => ImageInfrastructure.DeleteImage(path));
+                return BadRequest(new ErrorDTO("request is not valid"));
+            }
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteTour(int id)
+        {
+            var tour = await _context.Tours.Include(i => i.TourImages)
+                .Include(i => i.DayOfTours)
+                .ThenInclude(i => i.DayActivities)
+                .ThenInclude(i => i.Activity)
+                .Include(i => i.DayOfTours)
+                .ThenInclude(i => i.DayActivities)
+                .ThenInclude(i => i.LocationActivity)
+                .ThenInclude(i => i.Place)
+                .ThenInclude(i => i.Location)
+                .Where(i => i.Id == id).FirstOrDefaultAsync();
+
+            if (tour == null)
+            {
+                return NotFound(new ErrorDTO("tour not found"));
+            }
+            _context.Tours.Remove(tour);
             await _context.SaveChangesAsync();
+
+            var tourImages = tour.TourImages ?? [];
+            var paths = tourImages.Select(i => i.Path).ToList();
+
+            ImageInfrastructure.DeleteImages(paths);
 
             return Ok(new RestDTO<TourDTO>()
             {
-                Data = newTour.Map()
+                Data = tour.Map()
             });
         }
     }
