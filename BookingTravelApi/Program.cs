@@ -23,6 +23,7 @@ public class Program
             options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
         );
 
+
         builder.Services.AddControllers(); builder.Services.AddEndpointsApiExplorer();
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddSwaggerGen(c =>

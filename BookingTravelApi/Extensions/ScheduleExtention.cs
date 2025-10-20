@@ -18,7 +18,10 @@ namespace BookingTravelApi.Extensions
                 FinalPrice = schedule.FinalPrice,
                 GatheringTime = schedule.GatheringTime,
                 Code = schedule.Code,
-                Desposit = schedule.Desposit
+                Desposit = schedule.Desposit,
+
+                tourDTO = schedule.Tour!.Map(),
+                tourLocationDTOs = schedule.Tour!.TourLocations!.Select(tl => tl.Map()).ToList()
             };
         }
     }

@@ -45,9 +45,9 @@ namespace BookingTravelApi.Controllers
                 return Problem($"email {email} not found");
             }
 
-            return Ok(new RestDTO<Boolean>
+            return Ok(new RestDTO<UserDTO?>
             {
-                Data = true
+                Data = user.Map()
             });
             
         }
@@ -56,6 +56,7 @@ namespace BookingTravelApi.Controllers
         public async Task<IActionResult> GetUserById(int id)
         {
             var user = await _context.Users.FindAsync(id);
+            
             if (user == null)
             {
                 return NotFound($"id {id} not found");
@@ -77,9 +78,9 @@ namespace BookingTravelApi.Controllers
                 _context.Users.Add(user);
                 await _context.SaveChangesAsync();
 
-                return Ok(new RestDTO<UserDTO?>()
+                return Ok(new RestDTO<int>()
                 {
-                    Data = user.Map()
+                    Data = user.Id
                 });
             }
             catch (Exception ex)
@@ -104,9 +105,9 @@ namespace BookingTravelApi.Controllers
 
                 await _context.SaveChangesAsync();
 
-                return Ok(new RestDTO<UserDTO?>()
+                return Ok(new RestDTO<Boolean>()
                 {
-                    Data = user.Map()
+                    Data = true
                 });
             }
             catch (Exception ex)
