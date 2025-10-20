@@ -27,6 +27,9 @@ namespace BookingTravelApi.Domains
         [MaxLength(255)]
         public String Name { get; set; } = null!;
 
+        [Required]
+        [MaxLength(255)]
+        public String Email { get; set; } = null!;
 
         [Required]
         [MaxLength(11)]

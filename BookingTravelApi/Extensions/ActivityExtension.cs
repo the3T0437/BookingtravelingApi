@@ -10,6 +10,7 @@ namespace BookingTravelApi.Extensions
         {
             return new ActivityDTO()
             {
+                Id = activity.Id,
                 Action = activity.Action
             };
         }

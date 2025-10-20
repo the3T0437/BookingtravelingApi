@@ -17,7 +17,7 @@ namespace BookingTravelApi.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.9")
+                .HasAnnotation("ProductVersion", "9.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
@@ -118,7 +118,7 @@ namespace BookingTravelApi.Migrations
                     b.Property<int>("LocationActivityId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("time")
+                    b.Property<DateTime>("Time")
                         .HasColumnType("datetime(6)");
 
                     b.HasKey("DayOfTourId", "ActivityId", "LocationActivityId");
@@ -562,6 +562,11 @@ namespace BookingTravelApi.Migrations
                         .IsRequired()
                         .HasMaxLength(30)
                         .HasColumnType("varchar(30)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
 
                     b.Property<int>("Money")
                         .HasColumnType("int");
