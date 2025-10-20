@@ -12,6 +12,8 @@ namespace BookingTravelApi.Extensions
             var places = locationActivities.Select(i => i.Place).ToList();
             var locations = places.Select(i => i.Location).ToHashSet();
 
+            var Host = Environment.GetEnvironmentVariable("Host");
+
             return new TourDTO()
             {
                 Id = tour.Id,
@@ -21,7 +23,7 @@ namespace BookingTravelApi.Extensions
                 Description = tour.Description,
 
                 DayOfTours = tour.DayOfTours?.Select(i => i.Map()).ToList() ?? [],
-                TourImages = tour.TourImages?.Select(i => i.Path).ToList() ?? [],
+                TourImages = tour.TourImages?.Select(i => $"http://{Host}/{i.Path}").ToList() ?? [],
                 Locations = locations.ToList().Select(i => i.Map()).ToList()
             };
         }

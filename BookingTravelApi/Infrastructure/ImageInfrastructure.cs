@@ -50,14 +50,16 @@ namespace BookingTravelApi.Infrastructure
                 await stream.WriteAsync(image);
             }
 
-            return filePath;
+            var returnPath = Path.Combine("images", uniqueFileName);
+            return returnPath;
         }
 
         public static void DeleteImages(List<String> paths)
         {
-            foreach(var path in paths)
+            foreach (var path in paths)
             {
-                DeleteImage(path);
+                var deletePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", path);
+                DeleteImage(deletePath);
             }
         }
 
