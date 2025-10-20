@@ -11,10 +11,10 @@ namespace BookingTravelApi.DTO.guide
         public int StaffId { get; set; }
         public int ScheduleId { get; set; }
 
-        public UserDTO User { get; set; } = null!;
-        public ScheduleDTO Schedule { get; set; } = null!;
-        public List<TourLocationDTO> TourLocation { get; set; } = null!;
-        public TourDTO Tour { get; set; } = null!;
-        public StaffDTO Staff { get; set; } = null!;
+        public UserDTO UserDTO { get; set; } = null!;
+        public ScheduleDTO ScheduleDTO { get; set; } = null!;
+        public List<TourLocationDTO> TourLocationDTO { get; set; } = null!;
+        public TourDTO TourDTO { get; set; } = null!;
+        public StaffDTO StaffDTO { get; set; } = null!;
     }
 }
