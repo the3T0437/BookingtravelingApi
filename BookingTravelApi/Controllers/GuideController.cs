@@ -59,10 +59,14 @@ namespace BookingTravelApi.Controllers
 
         [HttpGet("BySchedule")]
         [ResponseCache(NoStore = true)]
-        public async Task<IActionResult> getGuidesScheduleId(int scheduleId)
+        public async Task<IActionResult> getGuidesScheduleId(int? scheduleId = null)
         {
             try
             {
+                if (scheduleId == null)
+                {
+                    return Problem("id not found");
+                }
                 var query = _context.Guides
                 .Where(g => g.ScheduleId == scheduleId)
                 .Include(g => g.Staff)
@@ -84,7 +88,7 @@ namespace BookingTravelApi.Controllers
             }
             catch(Exception ex)
             {
-                return Problem($"ERROR GuidesscheduleId: {ex.GetType().Name} - {ex.Message} - {ex.StackTrace}");
+                return Problem($"ERROR GuidesscheduleId");
             }
         }
 
@@ -97,24 +101,10 @@ namespace BookingTravelApi.Controllers
 
                 await _context.Guides.AddAsync(guide);
                 await _context.SaveChangesAsync();
-
-                var query = _context.Guides
-                .Where(g => g.StaffId == guide.StaffId)
-                .Include(g => g.Staff)
-                !.ThenInclude(us => us!.User)
-
-                .Include(g => g.Schedule)
-                .ThenInclude(s => s!.Tour)
-                .ThenInclude(t => t!.TourLocations)
-                !.ThenInclude(tl => tl.Location)
-                !.AsQueryable();
-
-
-                var guideDTOs = await query.Select(i => i.Map()).ToArrayAsync();
-
-                return Ok(new RestDTO<GuideDTO[]?>()
+                
+                return Ok(new RestDTO<int>()
                 {
-                    Data = guideDTOs
+                    Data = guide.StaffId
                 });
             }
             catch (Exception ex)
@@ -138,9 +128,9 @@ namespace BookingTravelApi.Controllers
                 _context.Guides.Remove(guide);
                 await _context.SaveChangesAsync();
 
-                return Ok(new RestDTO<String>()
+                return Ok(new RestDTO<Boolean>()
                 {
-                    Data = "200"
+                    Data = true
                 });
             }
             catch (Exception ex)
