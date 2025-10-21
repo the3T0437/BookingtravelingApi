@@ -25,12 +25,23 @@ namespace BookingTravelApi.Controllers
 
         [HttpGet(Name = "GetActivity")]
         [ResponseCache(NoStore = true)]
-        public async Task<IActionResult> GetActivity(String orderBy = "Action", String sortBy = "ASC", String? filter = null)
+        public async Task<IActionResult> GetActivities(
+            int? locationActivityId = null,
+            String orderBy = "Action",
+            String sortBy = "ASC",
+            String? filter = null
+            )
         {
             try
             {
                 var query = _context.Activities.AsQueryable();
                 var searchStr = filter?.Trim();
+                if (locationActivityId != null)
+                {
+                    query = query.Where((activity) => activity.ActivityAndLocations
+                            .Select(i => i.LocationActivityId)
+                            .Contains(locationActivityId.Value));
+                }
                 if (!String.IsNullOrEmpty(searchStr))
                 {
                     query = query.Where(place => place.Action.Contains(searchStr));

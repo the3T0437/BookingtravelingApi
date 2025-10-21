@@ -1,9 +1,11 @@
 
-using System.Runtime.InteropServices;
 using BookingTravelApi.Domains;
+using BookingTravelApi.Infrastructure;
 using DotNetEnv;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Swashbuckle.AspNetCore.Filters;
+using System.Runtime.InteropServices;
 
 namespace BookingTravelApi;
 
@@ -15,34 +17,42 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
 
         // Add services to the container.
-
         var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
+        var mySqlServerConnectionString = Environment.GetEnvironmentVariable("SqlServerConnectionString");
 
-        builder.Services.AddDbContext<ApplicationDbContext>(options =>
-            //options.UseSqlServer(connectionString)
-            options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
-        );
-
+        if (!String.IsNullOrEmpty(mySqlServerConnectionString))
+        {
+            builder.Services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseSqlServer(mySqlServerConnectionString)
+            );
+        }
+        else
+        {
+            builder.Services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
+            );
+        }
 
         builder.Services.AddControllers(); builder.Services.AddEndpointsApiExplorer();
-        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-        builder.Services.AddSwaggerGen(c =>
-        {
-            //     c.ExampleFilters();
-        });
-        // // Register example providers
-        // builder.Services.AddSwaggerExamplesFromAssemblyOf<CreateTourFormExample>();
+        builder.Services.AddSwaggerGen();
 
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.
-        if (app.Environment.IsDevelopment())
-        {
-            app.UseSwagger(c => { c.OpenApiVersion = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi2_0; });
-            app.UseSwaggerUI(c => { c.SwaggerEndpoint("./v1/swagger.json", "MyServiceAPI"); });
-        }
+        // if (app.Environment.IsDevelopment())
+        // {
+        //     app.UseSwagger(c => { c.OpenApiVersion = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi2_0; });
+        //     app.UseSwaggerUI(c => { c.SwaggerEndpoint("./v1/swagger.json", "MyServiceAPI"); });
+        // }
+        app.UseSwagger(c => { c.OpenApiVersion = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi2_0; });
+        app.UseSwaggerUI(c => { c.SwaggerEndpoint("./v1/swagger.json", "MyServiceAPI"); });
 
-        app.UseStaticFiles();
+        Directory.CreateDirectory(AppConfig.GetImagePath());
+        app.UseStaticFiles(new StaticFileOptions
+        {
+            FileProvider = new PhysicalFileProvider(AppConfig.GetImagePath()),
+            RequestPath = AppConfig.GetRequestImagePath()
+        });
 
         app.UseExceptionHandler("/error");
 
