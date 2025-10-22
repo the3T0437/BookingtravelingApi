@@ -37,7 +37,7 @@ namespace BookingTravelApi.Controllers
                 .Where(g => g.StaffId == staffId)
                 .Include(g => g.Staff)
                 .ThenInclude(s => s!.User)
-                
+
                 .Include(t => t!.Schedule)
                 .ThenInclude(s => s!.Tour)
                 .ThenInclude(t => t!.TourLocations)
@@ -86,7 +86,7 @@ namespace BookingTravelApi.Controllers
                     Data = guideDTOs
                 });
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return Problem($"ERROR GuidesscheduleId");
             }
@@ -101,7 +101,7 @@ namespace BookingTravelApi.Controllers
 
                 await _context.Guides.AddAsync(guide);
                 await _context.SaveChangesAsync();
-                
+
                 return Ok(new RestDTO<int>()
                 {
                     Data = guide.StaffId

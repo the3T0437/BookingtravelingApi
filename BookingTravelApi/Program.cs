@@ -19,7 +19,6 @@ public class Program
         var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
 
         builder.Services.AddDbContext<ApplicationDbContext>(options =>
-            //options.UseSqlServer(connectionString)
             options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
         );
 

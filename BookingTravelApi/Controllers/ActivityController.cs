@@ -108,5 +108,30 @@ namespace BookingTravelApi.Controllers
             }
 
         }
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteActivity(int id)
+        {
+            try
+            {
+                var activity = await _context.Activities.FirstOrDefaultAsync(ac => ac.Id == id);
+
+                if (activity == null)
+                {
+                    return NotFound($"{id} not found");
+                }
+
+                _context.Activities.Remove(activity);
+                await _context.SaveChangesAsync();
+
+                return Ok(new RestDTO<Boolean>()
+                {
+                    Data = true
+                });
+            }
+            catch (Exception ex)
+            {
+                return Problem("Error deleting schedule: " + ex.Message);
+            }
+        }
     }
 }

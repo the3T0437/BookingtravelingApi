@@ -145,7 +145,7 @@ namespace BookingTravelApi.Controllers
             }
 
         }
-        [HttpDelete(Name = "DeletePlace")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> deletePlace(int id)
         {
             try

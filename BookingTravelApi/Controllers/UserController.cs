@@ -21,42 +21,45 @@ namespace BookingTravelApi.Controllers
             _logger = logger;
         }
 
-        [HttpGet]
+        [HttpGet("Login")]
         [ResponseCache(NoStore = true)]
-        public async Task<IActionResult> getUsers()
+        public async Task<IActionResult> Login(string email, string password)
         {
-            var query = _context.Users.AsNoTracking();
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email && u.Password == password);
 
-            var userDTOs = await query.Select(i => i.Map()).ToArrayAsync();
-
-            return Ok(new RestDTO<UserDTO[]?>()
+            if (user == null)
             {
-                Data = userDTOs
+                return NotFound($"user not found");
+            }
+
+            return Ok(new RestDTO<UserDTO>()
+            {
+                Data = user.Map()
             });
         }
 
-        [HttpGet("email")]
-        public async Task<IActionResult> GetUserByEmail([FromQuery] string email)
+        [HttpGet("LoginByEmail")]
+        public async Task<IActionResult> LoginByEmail([FromQuery] string email)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
 
             if (user == null)
             {
-                return Problem($"email {email} not found");
+                return NotFound($"email {email} not found");
             }
 
-            return Ok(new RestDTO<UserDTO?>
+            return Ok(new RestDTO<UserDTO>
             {
                 Data = user.Map()
             });
-            
+
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetUserById(int id)
         {
             var user = await _context.Users.FindAsync(id);
-            
+
             if (user == null)
             {
                 return NotFound($"id {id} not found");
