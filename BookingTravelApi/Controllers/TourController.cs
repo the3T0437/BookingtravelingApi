@@ -38,15 +38,17 @@ namespace BookingTravelApi.Controllers
             }
             query = query.OrderBy($"{SortBy} {SortOrder}");
 
-            var tours = await query.Include(i => i.TourImages)
-                .Include(i => i.DayOfTours)
-                .ThenInclude(i => i.DayActivities)
-                .ThenInclude(i => i.Activity)
-                .Include(i => i.DayOfTours)
-                .ThenInclude(i => i.DayActivities)
-                .ThenInclude(i => i.LocationActivity)
-                .ThenInclude(i => i.Place)
-                .ThenInclude(i => i.Location)
+            var tours = await query.Include(t => t.TourImages!)
+                .Include(ti => ti.DayOfTours!)
+                .ThenInclude(d => d.DayActivities!)
+                .ThenInclude(da => da.Activity!)
+
+                .Include(ti => ti.DayOfTours!)
+                .ThenInclude(d => d.DayActivities!)
+                .ThenInclude(da => da.LocationActivity!)
+                .ThenInclude(lo => lo.Place!)
+                .ThenInclude(p => p.Location)
+
                 .ToListAsync();
             var tourDTOs = tours.Select(i => i.Map()).ToArray();
 
@@ -60,14 +62,15 @@ namespace BookingTravelApi.Controllers
         [HttpGet("{id:int}", Name = "getTour")]
         public async Task<IActionResult> GetTour(int id)
         {
-            var tour = await _context.Tours.Include(i => i.TourImages)
-                .Include(i => i.DayOfTours)
-                .ThenInclude(i => i.DayActivities)
+            var tour = await _context.Tours.Include(i => i.TourImages)!
+                .Include(i => i.DayOfTours!)
+                .ThenInclude(i => i.DayActivities!)
                 .ThenInclude(i => i.Activity)
-                .Include(i => i.DayOfTours)
-                .ThenInclude(i => i.DayActivities)
-                .ThenInclude(i => i.LocationActivity)
-                .ThenInclude(i => i.Place)
+
+                .Include(i => i.DayOfTours!)
+                .ThenInclude(i => i.DayActivities!)
+                .ThenInclude(i => i.LocationActivity!)
+                .ThenInclude(i => i.Place!)
                 .ThenInclude(i => i.Location)
                 .Where(i => i.Id == id).FirstOrDefaultAsync();
             if (tour == null)
@@ -161,18 +164,20 @@ namespace BookingTravelApi.Controllers
             }
         }
 
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTour(int id)
         {
-            var tour = await _context.Tours.Include(i => i.TourImages)
-                .Include(i => i.DayOfTours)
-                .ThenInclude(i => i.DayActivities)
-                .ThenInclude(i => i.Activity)
-                .Include(i => i.DayOfTours)
-                .ThenInclude(i => i.DayActivities)
+            var tour = await _context.Tours.Include(t => t.TourImages)
+                .Include(tm => tm.DayOfTours!)
+                .ThenInclude(d => d.DayActivities!)
+                .ThenInclude(da => da.Activity)
+
+                .Include(i => i.DayOfTours!)
+                .ThenInclude(i => i.DayActivities!)
                 .ThenInclude(i => i.LocationActivity)
-                .ThenInclude(i => i.Place)
-                .ThenInclude(i => i.Location)
+                .ThenInclude(i => i!.Place)
+                .ThenInclude(i => i!.Location)
+
                 .Where(i => i.Id == id).FirstOrDefaultAsync();
 
             if (tour == null)
