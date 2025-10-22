@@ -1,11 +1,9 @@
-
 using BookingTravelApi.Domains;
 using BookingTravelApi.Infrastructure;
+using BookingTravelApi.Services;
 using DotNetEnv;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
-using Swashbuckle.AspNetCore.Filters;
-using System.Runtime.InteropServices;
 
 namespace BookingTravelApi;
 
@@ -35,6 +33,10 @@ public class Program
 
         builder.Services.AddControllers(); builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
+
+
+        // Đăng ký MailService
+        builder.Services.AddTransient<MailService>();
 
         var app = builder.Build();
 
