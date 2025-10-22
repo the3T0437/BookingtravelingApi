@@ -66,8 +66,7 @@
               "RelativeToolTip": "BookingTravelApi\\Extensions\\TourExtension.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABoAAABJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-21T13:11:25.686Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-10-21T13:11:25.686Z"
             },
             {
               "$type": "Document",
@@ -79,8 +78,7 @@
               "RelativeToolTip": "BookingTravelApi\\Infrastructure\\ConvertInfrastructure.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-21T13:05:41.15Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-10-21T13:05:41.15Z"
             },
             {
               "$type": "Document",
@@ -92,8 +90,7 @@
               "RelativeToolTip": "BookingTravelApi\\Infrastructure\\AppConfig.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAqwA8AAAAIAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-21T13:05:39.96Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-10-21T13:05:39.96Z"
             },
             {
               "$type": "Document",
@@ -103,7 +100,7 @@
               "RelativeDocumentMoniker": "BookingTravelApi\\Controllers\\TourController.cs",
               "ToolTip": "D:\\apiChuyenDe\\BookingTravelApi\\Controllers\\TourController.cs",
               "RelativeToolTip": "BookingTravelApi\\Controllers\\TourController.cs",
-              "ViewState": "AgIAAFsAAAAAAAAAAAAjwG0AAAAMAAAAAAAAAA==",
+              "ViewState": "AgIAAFsAAAAAAAAAAAAjwGwAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-10-21T12:27:34.334Z",
               "EditorCaption": ""
@@ -118,8 +115,7 @@
               "RelativeToolTip": "BookingTravelApi\\Infrastructure\\ImageInfrastructure.cs",
               "ViewState": "AgIAACcAAAAAAAAAAAAWwDkAAAAIAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-21T12:23:02.201Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-10-21T12:23:02.201Z"
             },
             {
               "$type": "Document",
@@ -131,8 +127,7 @@
               "RelativeToolTip": "BookingTravelApi\\Domains\\ApplicationDbContext.cs",
               "ViewState": "AgIAAIkAAAAAAAAAAAArwJgAAAAQAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-21T13:21:08.013Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-10-21T13:21:08.013Z"
             },
             {
               "$type": "Document",
@@ -144,8 +139,7 @@
               "RelativeToolTip": "BookingTravelApi\\Program.cs",
               "ViewState": "AgIAABoAAAAAAAAAAAAgwDYAAAAIAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-21T08:29:05.785Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-10-21T08:29:05.785Z"
             },
             {
               "$type": "Document",
@@ -157,8 +151,7 @@
               "RelativeToolTip": "BookingTravelApi\\.env",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2025-10-20T14:28:49.509Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-10-20T14:28:49.509Z"
             },
             {
               "$type": "Document",
@@ -170,8 +163,7 @@
               "RelativeToolTip": "BookingTravelApi\\Controllers\\PlaceController.cs",
               "ViewState": "AgIAACgAAAAAAAAAAAAcwDYAAAAMAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-15T02:42:10.639Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-10-15T02:42:10.639Z"
             },
             {
               "$type": "Document",
