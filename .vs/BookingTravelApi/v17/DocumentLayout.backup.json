@@ -3,12 +3,12 @@
   "WorkspaceRootPath": "D:\\apiChuyenDe\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{8CA80CC4-A264-4037-A2C5-E19D07BE338A}|BookingTravelApi\\BookingTravelApi.csproj|d:\\apichuyende\\bookingtravelapi\\infrastructure\\imageinfrastructure.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{8CA80CC4-A264-4037-A2C5-E19D07BE338A}|BookingTravelApi\\BookingTravelApi.csproj|solutionrelative:bookingtravelapi\\infrastructure\\imageinfrastructure.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{8CA80CC4-A264-4037-A2C5-E19D07BE338A}|BookingTravelApi\\BookingTravelApi.csproj|d:\\apichuyende\\bookingtravelapi\\controllers\\tourcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{8CA80CC4-A264-4037-A2C5-E19D07BE338A}|BookingTravelApi\\BookingTravelApi.csproj|solutionrelative:bookingtravelapi\\controllers\\tourcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8CA80CC4-A264-4037-A2C5-E19D07BE338A}|BookingTravelApi\\BookingTravelApi.csproj|d:\\apichuyende\\bookingtravelapi\\infrastructure\\imageinfrastructure.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8CA80CC4-A264-4037-A2C5-E19D07BE338A}|BookingTravelApi\\BookingTravelApi.csproj|solutionrelative:bookingtravelapi\\infrastructure\\imageinfrastructure.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{8CA80CC4-A264-4037-A2C5-E19D07BE338A}|BookingTravelApi\\BookingTravelApi.csproj|d:\\apichuyende\\bookingtravelapi\\domains\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -50,7 +50,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 5,
+          "SelectedChildIndex": 4,
           "Children": [
             {
               "$type": "Bookmark",
@@ -97,26 +97,26 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
               "Title": "TourController.cs",
               "DocumentMoniker": "D:\\apiChuyenDe\\BookingTravelApi\\Controllers\\TourController.cs",
               "RelativeDocumentMoniker": "BookingTravelApi\\Controllers\\TourController.cs",
               "ToolTip": "D:\\apiChuyenDe\\BookingTravelApi\\Controllers\\TourController.cs",
               "RelativeToolTip": "BookingTravelApi\\Controllers\\TourController.cs",
-              "ViewState": "AgIAAIEAAAAAAAAAAAASwJ4AAABGAAAAAAAAAA==",
+              "ViewState": "AgIAAFsAAAAAAAAAAAAjwG0AAAAMAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-10-21T12:27:34.334Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "ImageInfrastructure.cs",
               "DocumentMoniker": "D:\\apiChuyenDe\\BookingTravelApi\\Infrastructure\\ImageInfrastructure.cs",
               "RelativeDocumentMoniker": "BookingTravelApi\\Infrastructure\\ImageInfrastructure.cs",
-              "ToolTip": "D:\\apiChuyenDe\\BookingTravelApi\\Infrastructure\\ImageInfrastructure.cs*",
-              "RelativeToolTip": "BookingTravelApi\\Infrastructure\\ImageInfrastructure.cs*",
-              "ViewState": "AgIAADAAAAAAAAAAAAAWwD0AAAAjAAAAAAAAAA==",
+              "ToolTip": "D:\\apiChuyenDe\\BookingTravelApi\\Infrastructure\\ImageInfrastructure.cs",
+              "RelativeToolTip": "BookingTravelApi\\Infrastructure\\ImageInfrastructure.cs",
+              "ViewState": "AgIAACcAAAAAAAAAAAAWwDkAAAAIAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-10-21T12:23:02.201Z",
               "EditorCaption": ""
