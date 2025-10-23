@@ -1,13 +1,10 @@
 using System.Linq.Dynamic.Core;
 using BookingTravelApi.Domains;
 using BookingTravelApi.DTO;
-using BookingTravelApi.DTO.Location;
 using BookingTravelApi.DTO.LocationActivity;
 using BookingTravelApi.Extensions;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Identity.Client;
 
 namespace BookingTravelApi.Controllers
 {
