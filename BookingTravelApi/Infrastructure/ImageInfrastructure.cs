@@ -34,7 +34,7 @@ namespace BookingTravelApi.Infrastructure
             }
 
             // Define the path where you want to save the image
-            var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
+            var uploadsFolder = AppConfig.GetImagePath();
             if (!Directory.Exists(uploadsFolder))
             {
                 Directory.CreateDirectory(uploadsFolder);
@@ -50,7 +50,7 @@ namespace BookingTravelApi.Infrastructure
                 await stream.WriteAsync(image);
             }
 
-            var returnPath = Path.Combine("images", uniqueFileName);
+            var returnPath = Path.Combine(uniqueFileName);
             return returnPath;
         }
 
@@ -58,14 +58,20 @@ namespace BookingTravelApi.Infrastructure
         {
             foreach (var path in paths)
             {
-                var deletePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", path);
-                DeleteImage(deletePath);
+                try { 
+                    DeleteImage(path);
+                }
+                catch (DirectoryNotFoundException)
+                {
+                    //it fine
+                }
             }
         }
 
         public static void DeleteImage(String path)
         {
-            File.Delete(path);
+            var deletePath = Path.Combine(AppConfig.GetImagePath(), path);
+            File.Delete(deletePath);
         }
     }
 }

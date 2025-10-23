@@ -3,8 +3,10 @@ using BookingTravelApi.Domains;
 using BookingTravelApi.DTO;
 using BookingTravelApi.DTO.place;
 using BookingTravelApi.Extensions;
+using BookingTravelApi.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace BookingTravelApi.Controllers
 {
@@ -23,8 +25,18 @@ namespace BookingTravelApi.Controllers
 
         [HttpGet]
         [ResponseCache(NoStore = true)]
-        public async Task<IActionResult> GetPlaces(String orderBy = "Name", String sortBy = "ASC", String? filter = null, int? locationId = null)
+        public async Task<IActionResult> GetPlaces(String orderBy = "Name", String sortBy = "ASC", String? filter = null, [FromQuery(Name = "locationIds")] String? locationIdsStr = null)
         {
+            List<int> locationIds = [];
+            try
+            {
+                locationIds = ConvertInfrastructure.ParseToListInt(locationIdsStr);
+            }
+            catch (Exception)
+            {
+                return BadRequest(new ErrorDTO("Tham số không hợp lệ"));
+            }
+
             var query = _context.Places.AsQueryable();
 
             var searchStr = filter?.Trim();
@@ -32,9 +44,9 @@ namespace BookingTravelApi.Controllers
             {
                 query = query.Where(place => place.Name.Contains(searchStr));
             }
-            if (locationId != null)
+            if (!locationIds.IsNullOrEmpty())
             {
-                query = query.Where(place => place.LocationId == locationId.Value);
+                query = query.Where(place => locationIds.Contains(place.LocationId));
             }
             query = query.OrderBy($"{orderBy} {sortBy}").AsQueryable();
 
