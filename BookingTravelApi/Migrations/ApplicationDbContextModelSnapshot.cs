@@ -275,6 +275,32 @@ namespace BookingTravelApi.Migrations
                     b.ToTable("Notifications");
                 });
 
+            modelBuilder.Entity("BookingTravelApi.Domains.OtpCode", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<DateTime>("ExpiryTime")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("OtpCodes");
+                });
+
             modelBuilder.Entity("BookingTravelApi.Domains.Place", b =>
                 {
                     b.Property<int>("Id")

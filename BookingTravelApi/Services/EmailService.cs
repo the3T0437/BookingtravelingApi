@@ -15,7 +15,7 @@ namespace BookingTravelApi.Services
         private const string SmtpUsername = "nguyenphamphuongnam05@gmail.com"; // Tên đăng nhập SMTP 
         private const string SmtpPassword = "aknw pevn hyza vapc"; // Mật khẩu ứng dụng 
 
-        public async Task<bool> SendMailAsync(string toEmail, string body)
+        public async Task<bool> SendMailAsync(string toEmail, string body, int timeValidity)
         {
             try
             {
@@ -52,7 +52,7 @@ namespace BookingTravelApi.Services
         <h2 style='color: #229784;'>Mã Xác Thực OTP</h2>
         <p>Mã OTP của bạn là:</p>
         <div class='otp'>{body}</div>
-        <p>Mã có hiệu lực trong <strong>5 phút</strong>.</p>
+        <p>Mã có hiệu lực trong <strong>{timeValidity} phút</strong>.</p>
         <p>Nếu bạn không yêu cầu mã này, vui lòng bỏ qua email.</p>
         <div class='footer'>
             <p>© 2024 Booking Tour. All rights reserved.</p>

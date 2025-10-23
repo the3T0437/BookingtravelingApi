@@ -164,7 +164,7 @@ namespace BookingTravelApi.Controllers
                 _context.Schedules.Remove(schedule);
                 await _context.SaveChangesAsync();
 
-                return Ok(new RestDTO<Boolean>()
+                return Ok(new RestDTO<bool>()
                 {
                     Data = true
                 });
