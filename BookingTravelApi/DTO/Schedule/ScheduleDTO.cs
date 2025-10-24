@@ -12,7 +12,7 @@ namespace BookingTravelApi.DTO.schedule
         public DateTime OpenDate { get; set; }
         public int MaxSlot { get; set; }
         public int FinalPrice { get; set; }
-        public DateTime GatheringTime { get; set; }
+        public TimeSpan GatheringTime { get; set; }
         public String Code { get; set; } = null!;
         public int Desposit { get; set; }
 
