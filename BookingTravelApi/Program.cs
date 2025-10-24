@@ -16,12 +16,19 @@ public class Program
 
         // Add services to the container.
         var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
-        var mySqlServerConnectionString = Environment.GetEnvironmentVariable("SqlServerConnectionString");
+        var sqlServerConnectionString = Environment.GetEnvironmentVariable("SqlServerConnectionString");
+        var mySqlConnectionString = Environment.GetEnvironmentVariable("DBEverConnectionString");
 
-        if (!String.IsNullOrEmpty(mySqlServerConnectionString))
+        if (!String.IsNullOrEmpty(mySqlConnectionString))
         {
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(mySqlServerConnectionString)
+                options.UseMySql(mySqlConnectionString, ServerVersion.AutoDetect(mySqlConnectionString))
+            );
+        }
+        else if (!String.IsNullOrEmpty(sqlServerConnectionString))
+        {
+            builder.Services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseSqlServer(sqlServerConnectionString)
             );
         }
         else

@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace BookingTravelApi.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -210,7 +210,7 @@ namespace BookingTravelApi.Migrations
                     OpenDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     MaxSlot = table.Column<int>(type: "int", nullable: false),
                     FinalPrice = table.Column<int>(type: "int", nullable: false),
-                    GatheringTime = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    GatheringTime = table.Column<TimeSpan>(type: "time(6)", nullable: false),
                     Code = table.Column<string>(type: "varchar(20)", maxLength: 20, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Desposit = table.Column<int>(type: "int", nullable: false)
@@ -510,7 +510,7 @@ namespace BookingTravelApi.Migrations
                     DayOfTourId = table.Column<int>(type: "int", nullable: false),
                     ActivityId = table.Column<int>(type: "int", nullable: false),
                     LocationActivityId = table.Column<int>(type: "int", nullable: false),
-                    Time = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                    Time = table.Column<TimeSpan>(type: "time(6)", nullable: false)
                 },
                 constraints: table =>
                 {
