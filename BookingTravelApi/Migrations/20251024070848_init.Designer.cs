@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookingTravelApi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251023135143_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20251024070848_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -121,8 +121,8 @@ namespace BookingTravelApi.Migrations
                     b.Property<int>("LocationActivityId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("Time")
-                        .HasColumnType("datetime(6)");
+                    b.Property<TimeSpan>("Time")
+                        .HasColumnType("time(6)");
 
                     b.HasKey("DayOfTourId", "ActivityId", "LocationActivityId");
 
@@ -401,8 +401,8 @@ namespace BookingTravelApi.Migrations
                     b.Property<int>("FinalPrice")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("GatheringTime")
-                        .HasColumnType("datetime(6)");
+                    b.Property<TimeSpan>("GatheringTime")
+                        .HasColumnType("time(6)");
 
                     b.Property<int>("MaxSlot")
                         .HasColumnType("int");
