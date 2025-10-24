@@ -8,6 +8,7 @@ namespace BookingTravelApi.Domains
         {
         }
 
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -15,7 +16,7 @@ namespace BookingTravelApi.Domains
             CreatePrimaryKey(modelBuilder);
             CreateForeignKey(modelBuilder);
         }
-
+        public DbSet<OtpCode> OtpCodes => Set<OtpCode>();
         public DbSet<Status> Status => Set<Status>();
         public DbSet<Staff> Staffs => Set<Staff>();
         public DbSet<Notification> Notifications => Set<Notification>();

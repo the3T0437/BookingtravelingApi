@@ -21,7 +21,7 @@ namespace BookingTravelApi.Controllers
             _logger = logger;
         }
 
-        [HttpGet("Login")]
+        [HttpPost("Login")]
         [ResponseCache(NoStore = true)]
         public async Task<IActionResult> Login(string email, string password)
         {
@@ -38,7 +38,7 @@ namespace BookingTravelApi.Controllers
             });
         }
 
-        [HttpGet("LoginByEmail")]
+        [HttpPost("loginbyemail")]
         public async Task<IActionResult> LoginByEmail([FromQuery] string email)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
