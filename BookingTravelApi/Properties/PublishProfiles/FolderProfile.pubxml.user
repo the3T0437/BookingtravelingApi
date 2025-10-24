@@ -3,7 +3,7 @@
 <Project>
   <PropertyGroup>
     <_PublishTargetUrl>D:\bookingTravelingApi\wwwroot</_PublishTargetUrl>
-    <History>True|2025-10-21T12:51:08.0692282Z||;False|2025-10-21T19:50:58.0213202+07:00||;True|2025-10-21T19:05:33.7142060+07:00||;True|2025-10-21T06:05:44.1673539+07:00||;True|2025-10-21T05:59:08.4404873+07:00||;</History>
+    <History>False|2025-10-23T16:15:58.7562150Z||;True|2025-10-21T19:51:08.0692282+07:00||;False|2025-10-21T19:50:58.0213202+07:00||;True|2025-10-21T19:05:33.7142060+07:00||;True|2025-10-21T06:05:44.1673539+07:00||;True|2025-10-21T05:59:08.4404873+07:00||;</History>
     <LastFailureDetails />
   </PropertyGroup>
 </Project>
