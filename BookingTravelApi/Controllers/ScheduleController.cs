@@ -21,7 +21,7 @@ namespace BookingTravelApi.Controllers
             _logger = logger;
         }
 
-        
+
         [HttpGet]
         [ResponseCache(NoStore = true)]
         public async Task<IActionResult> getSchedules()
@@ -33,7 +33,7 @@ namespace BookingTravelApi.Controllers
             .Include(s => s.Tour)
             .ThenInclude(t => t.TourLocations!)
             .ThenInclude(tl => tl.Location)
-            
+
             .OrderByDescending(s => s.OpenDate).AsNoTracking();
 
             var scheduleDTOs = await query.Select(i => i.Map()).ToArrayAsync();
@@ -83,7 +83,7 @@ namespace BookingTravelApi.Controllers
             .Include(s => s.Tour)
             .ThenInclude(t => t.TourLocations!)
             .ThenInclude(tl => tl.Location)
-              
+
             .Where(s => s.OpenDate <= now && s.StartDate > now && s.MaxSlot > 0)
             .AsNoTracking();
 
