@@ -1,6 +1,7 @@
 using System.Linq.Dynamic.Core;
 using BookingTravelApi.Domains;
 using BookingTravelApi.DTO;
+using BookingTravelApi.DTO.loginDTO;
 using BookingTravelApi.DTO.user;
 using BookingTravelApi.Extensions;
 using Microsoft.AspNetCore.Mvc;
@@ -23,9 +24,9 @@ namespace BookingTravelApi.Controllers
 
         [HttpPost("Login")]
         [ResponseCache(NoStore = true)]
-        public async Task<IActionResult> Login(string email, string password)
+        public async Task<IActionResult> Login(Login login)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email && u.Password == password);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == login.email && u.Password == login.password);
 
             if (user == null)
             {
@@ -39,13 +40,13 @@ namespace BookingTravelApi.Controllers
         }
 
         [HttpPost("loginbyemail")]
-        public async Task<IActionResult> LoginByEmail([FromQuery] string email)
+        public async Task<IActionResult> LoginByEmail(Login login)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == login.email);
 
             if (user == null)
             {
-                return NotFound($"email {email} not found");
+                return NotFound($"email {login.email} not found");
             }
 
             return Ok(new RestDTO<UserDTO>
