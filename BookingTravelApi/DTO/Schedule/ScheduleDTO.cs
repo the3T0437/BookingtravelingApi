@@ -17,7 +17,7 @@ namespace BookingTravelApi.DTO.schedule
         public int Desposit { get; set; }
 
 
-        public TourDTO tourDTO { get; set; } = null!;
-        public List<TourLocationDTO> tourLocationDTOs { get; set; } = null!;
+        public TourDTO tour { get; set; } = null!;
+        public List<TourLocationDTO> tourLocations { get; set; } = null!;
     }
 }
