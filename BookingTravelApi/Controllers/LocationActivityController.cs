@@ -124,5 +124,23 @@ namespace BookingTravelApi.Controllers
                 Message = "location activity not found"
             });
         }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> deleteLocationActivity(int id)
+        {
+            var locationsActivity = await _context.LocationActivities.Include(i => i.Place).ThenInclude(i => i.Location).Where(i => i.Id == id).FirstOrDefaultAsync();
+            if (locationsActivity == null)
+            {
+                return NotFound(new ErrorDTO("Not found"));
+            }
+
+            _context.LocationActivities.Remove(locationsActivity);
+            await _context.SaveChangesAsync();
+
+            return Ok(new RestDTO<LocationActivityDTO>()
+            {
+                Data = locationsActivity.Map()
+            });
+        }
     }
 }
