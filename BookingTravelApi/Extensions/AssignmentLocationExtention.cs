@@ -12,9 +12,9 @@ namespace BookingTravelApi.Extensions
             {
                 IdSchedule = schedule.Id,
                 TitleTour = schedule.Tour!.Title,
-                TourImageDTOs = schedule.Tour.TourImages?.Select(it => it.Path).ToList() ?? [],
+                TourImages = schedule.Tour.TourImages?.Select(it => it.Path).ToList() ?? [],
                 NameLocations = schedule.Tour.TourLocations?.Select(it => it.Location!.Name).ToList() ?? [],
-                placeNameDTOs = schedule.Tour.TourLocations?.SelectMany(it => it.Location!.Places!).Select(p => p.Name).ToList() ?? [],
+                placeNames = schedule.Tour.TourLocations?.SelectMany(it => it.Location!.Places!).Select(p => p.Name).ToList() ?? [],
             };
         }
     }
