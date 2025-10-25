@@ -13,7 +13,7 @@ namespace BookingTravelApi.DTO.DayActivity
         public int LocationActivityId { get; set; }
 
         [Required]
-        public DateTime Time { get; set; }
+        public TimeSpan Time { get; set; }
     }
 
     public static class CreateDayActivityExtension

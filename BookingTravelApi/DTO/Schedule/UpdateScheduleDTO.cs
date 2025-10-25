@@ -29,7 +29,7 @@ namespace BookingTravelApi.DTO.schedule
         public int FinalPrice { get; set; }
 
         [Required]
-        public DateTime GatheringTime { get; set; }
+        public TimeSpan GatheringTime { get; set; }
 
         [Required]
         [MaxLength(20)]
