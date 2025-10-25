@@ -12,10 +12,10 @@ namespace BookingTravelApi.DTO.AssignmentDTO
         public String TitleTour { get; set; } = null!;
 
 
-        public List<String> TourImageDTOs { get; set; } = null!;
+        public List<String> TourImages { get; set; } = null!;
 
         public List<string> NameLocations { get; set; } = null!;
 
-        public List<String> placeNameDTOs { get; set; } = null!;
+        public List<String> placeNames { get; set; } = null!;
     }
 }
