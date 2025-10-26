@@ -39,7 +39,7 @@ namespace BookingTravelApi.Controllers
                 placeNames = s.Tour.TourLocations!
                 .SelectMany(it => it.Location!.Places!)
                 .Select(p => p.Name)
-                .ToList()
+            .ToList()
             })
             .AsNoTracking()
             .ToArrayAsync();
