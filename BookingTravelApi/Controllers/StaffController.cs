@@ -1,10 +1,11 @@
 using System.Linq.Dynamic.Core;
 using BookingTravelApi.Domains;
-using BookingTravelApi.DTO;
+using BookingTravelApi.DTO.TourGuide;
 using BookingTravelApi.DTO.staff;
 using BookingTravelApi.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using BookingTravelApi.DTO;
 
 namespace BookingTravelApi.Controllers
 {
@@ -37,29 +38,51 @@ namespace BookingTravelApi.Controllers
 
 
         [HttpGet()]
-        [Route("tourguide/assignment")]
-        public async Task<IActionResult> GetTourGuide()
+        [Route("tourguide/assignment/{idschedule}")]
+        public async Task<IActionResult> GetTourGuide(int idschedule)
         {
             var timeNow = DateTime.Now;
 
-            // lọc ra các id của schedule mà đang tiến hành 
-            var activeScheduleIds = await _context.Schedules.Where(s => s.StartDate <= timeNow && s.EndDate >= timeNow)
-            .Select(s => s.Id).ToArrayAsync();
+            // Lấy tất cả StaffIds đang bận 
+            var busyStaffIds = await _context.Guides
+                .Where(g => g.ScheduleId != idschedule &&
+                            g.Schedule.StartDate <= timeNow &&
+                            g.Schedule.EndDate >= timeNow)
+                .Select(g => g.StaffId)
+                .Distinct()
+                .ToHashSetAsync();
 
-            // lọc ra các guideIds mà nằm trong thời gian tiến hành 
-            var busyGuideIds = await _context.Guides.Where(g => activeScheduleIds.Contains(g.ScheduleId))
-            .Select(g => g.StaffId)
-            .ToArrayAsync();
+            // Lấy các StaffIds đã được assign cho schedule này
+            var assignedStaffIds = await _context.Guides
+                .Where(g => g.ScheduleId == idschedule)
+                .Select(g => g.StaffId)
+                .ToHashSetAsync();
 
             // lọc ra các staff là tourguide và không nằm trong khoảng thời gian bận
-            var availableTourGuides = await _context.Staffs.Include(s => s.User)
-            .ThenInclude(u => u!.Role)
-            .Where(s => s.User!.RoleId == 2 && !busyGuideIds.Contains(s.UserId))
-            .Select(s => s.Map())
-            .AsNoTracking()
-            .ToArrayAsync();
+            var availableTourGuides = await _context.Staffs
+                .Include(s => s.User)
+                .Where(s => s.User!.RoleId == 2 && !busyStaffIds.Contains(s.UserId))
+                .AsNoTracking()
+                .Select(s => new TourGuideDTO
+                {
+                    UserId = s.UserId,
+                    Code = s.Code,
+                    IsActive = s.IsActive,
+                    CCCD = s.CCCD,
+                    Address = s.Address,
+                    DateOfBirth = s.DateOfBirth,
+                    StartWorkingDate = s.StartWorkingDate,
+                    CCCDIssueDate = s.CCCDIssueDate,
+                    CCCD_front_path = s.CCCD_front_path,
+                    CCCD_back_path = s.CCCD_back_path,
+                    EndWorkingDate = s.EndWorkingDate,
 
-            return Ok(new RestDTO<StaffDTO[]?>()
+                    ischecked = assignedStaffIds.Contains(s.UserId),
+                    User = s.User!.Map(),
+                })
+                .ToArrayAsync();
+
+            return Ok(new RestDTO<TourGuideDTO[]?>()
             {
                 Data = availableTourGuides
             });
