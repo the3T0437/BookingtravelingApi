@@ -21,7 +21,6 @@ namespace BookingTravelApi.Extensions
                 Desposit = schedule.Desposit,
 
                 tourDTO = schedule.Tour!.Map(),
-                tourLocationDTOs = schedule.Tour!.TourLocations!.Select(tl => tl.Map()).ToList()
             };
         }
     }
