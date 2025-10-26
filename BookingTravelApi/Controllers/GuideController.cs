@@ -33,27 +33,31 @@ namespace BookingTravelApi.Controllers
                     return Problem("id not found");
                 }
 
-                var query = _context.Guides
+                var query = await _context.Guides
                 .Where(g => g.StaffId == staffId)
-                .Include(g => g.Staff)
-                .ThenInclude(s => s!.User)
-
-                .Include(t => t!.Schedule)
+                .Include(t => t.Schedule)
                 .ThenInclude(s => s!.Tour)
-                .ThenInclude(t => t!.TourLocations)
-                !.ThenInclude(tl => tl.Location)
-                !.AsNoTracking();
+                .ThenInclude(t => t!.TourLocations!)
 
-                var guideDTOs = await query.Select(i => i.Map()).ToArrayAsync();
+                .Include(t => t.Schedule)
+                .ThenInclude(s => s!.UserCompletedSchedules)
+                .AsNoTracking().ToListAsync();
+
+                var guideDTOs = query.Select(i => i.Map()).ToArray();
+
 
                 return Ok(new RestDTO<GuideDTO[]?>()
                 {
                     Data = guideDTOs
                 });
             }
-            catch
+            catch(Exception ex)
             {
-                return Problem("ERROR getGuidesStaffId");
+                // ✅ Log chi tiết exception
+        Console.WriteLine($"Error: {ex.Message}");
+        Console.WriteLine($"Inner: {ex.InnerException?.Message}");
+        Console.WriteLine($"Stack: {ex.StackTrace}");
+        return Problem($"ERROR: {ex.Message}");
             }
         }
 
