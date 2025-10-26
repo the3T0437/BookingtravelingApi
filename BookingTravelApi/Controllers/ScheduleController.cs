@@ -31,6 +31,14 @@ namespace BookingTravelApi.Controllers
             var query = _context.Schedules
             .Include(s => s.Tour)
             .ThenInclude(t => t.TourImages)
+
+            .Include(i => i.Tour)
+            .ThenInclude(tm => tm.DayOfTours!)
+            .ThenInclude(i => i.DayActivities!)
+            .ThenInclude(i => i.LocationActivity)
+            .ThenInclude(i => i!.Place)
+            .ThenInclude(i => i!.Location)
+
             .OrderByDescending(s => s.OpenDate).AsNoTracking();
 
             var scheduleDTOs = await query.Select(i => i.Map()).ToArrayAsync();
@@ -57,7 +65,7 @@ namespace BookingTravelApi.Controllers
                 Data = scheduleDTOs
             });
         }
-        
+
         // màn 37
         [HttpGet("{id}")]
         public async Task<IActionResult> GetScheduleById(int id)
