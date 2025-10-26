@@ -56,12 +56,22 @@ namespace BookingTravelApi.Controllers
         public async Task<IActionResult> GetScheduleById(int id)
         {
             var schedule = await _context.Schedules
-            .Include(s => s.Tour)
+             .Include(s => s.Tour)
             .ThenInclude(t => t.TourImages)
 
-            .Include(s => s.Tour)
-            .ThenInclude(t => t.TourLocations!)
-            .ThenInclude(tl => tl.Location)
+            .Include(i => i.Tour)
+            .ThenInclude(tm => tm.DayOfTours!)
+            .ThenInclude(d => d.DayActivities!)
+            .ThenInclude(da => da.Activity)
+
+            .Include(i => i.Tour)
+            .ThenInclude(tm => tm.DayOfTours!)
+            .ThenInclude(i => i.DayActivities!)
+            .ThenInclude(i => i.LocationActivity)
+            .ThenInclude(i => i!.Place)
+            .ThenInclude(i => i!.Location)
+
+            .OrderByDescending(s => s.OpenDate).AsNoTracking()
 
             .FirstOrDefaultAsync(s => s.Id == id);
 
@@ -85,15 +95,24 @@ namespace BookingTravelApi.Controllers
             var now = DateTime.Now;
 
             var query = _context.Schedules
-            .Include(s => s.Tour)
+             .Include(s => s.Tour)
             .ThenInclude(t => t.TourImages)
 
-            .Include(s => s.Tour)
-            .ThenInclude(t => t.TourLocations!)
-            .ThenInclude(tl => tl.Location)
+            .Include(i => i.Tour)
+            .ThenInclude(tm => tm.DayOfTours!)
+            .ThenInclude(d => d.DayActivities!)
+            .ThenInclude(da => da.Activity)
 
-            .Where(s => s.OpenDate <= now && s.StartDate > now && s.MaxSlot > 0)
-            .AsNoTracking();
+            .Include(i => i.Tour)
+            .ThenInclude(tm => tm.DayOfTours!)
+            .ThenInclude(i => i.DayActivities!)
+            .ThenInclude(i => i.LocationActivity)
+            .ThenInclude(i => i!.Place)
+            .ThenInclude(i => i!.Location)
+
+            .OrderByDescending(s => s.OpenDate).AsNoTracking()
+
+            .Where(s => s.OpenDate <= now && s.StartDate > now && s.MaxSlot > 0);
 
             var scheduleDTOs = await query.Select(i => i.Map()).ToArrayAsync();
 
