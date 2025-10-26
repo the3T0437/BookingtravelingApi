@@ -20,8 +20,7 @@ namespace BookingTravelApi.Extensions
                 Code = schedule.Code,
                 Desposit = schedule.Desposit,
 
-                tour = schedule.Tour!.Map(),
-                tourLocations = schedule.Tour!.TourLocations!.Select(tl => tl.Map()).ToList()
+                tourDTO = schedule.Tour!.Map(),
             };
         }
     }

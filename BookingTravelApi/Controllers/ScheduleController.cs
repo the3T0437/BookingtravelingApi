@@ -30,9 +30,17 @@ namespace BookingTravelApi.Controllers
             .Include(s => s.Tour)
             .ThenInclude(t => t.TourImages)
 
-            .Include(s => s.Tour)
-            .ThenInclude(t => t.TourLocations!)
-            .ThenInclude(tl => tl.Location)
+            .Include(i => i.Tour)
+            .ThenInclude(tm => tm.DayOfTours!)
+            .ThenInclude(d => d.DayActivities!)
+            .ThenInclude(da => da.Activity)
+
+            .Include(i => i.Tour)
+            .ThenInclude(tm => tm.DayOfTours!)
+            .ThenInclude(i => i.DayActivities!)
+            .ThenInclude(i => i.LocationActivity)
+            .ThenInclude(i => i!.Place)
+            .ThenInclude(i => i!.Location)
 
             .OrderByDescending(s => s.OpenDate).AsNoTracking();
 
