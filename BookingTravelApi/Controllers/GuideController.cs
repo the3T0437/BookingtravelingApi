@@ -3,6 +3,7 @@ using BookingTravelApi.Domains;
 using BookingTravelApi.DTO;
 using BookingTravelApi.DTO.Activity;
 using BookingTravelApi.DTO.guide;
+using BookingTravelApi.DTO.TourGuide;
 using BookingTravelApi.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -55,6 +56,49 @@ namespace BookingTravelApi.Controllers
             catch (Exception ex)
             {
                 return Problem($"ERROR GuidesscheduleId");
+            }
+        }
+
+        [HttpPost("{scheduleId}")]
+        public async Task<IActionResult> createGuideAssignment([FromRoute] int scheduleId, [FromBody] List<TourGuideDTO> tourGuides)
+        {
+            try
+            {
+                // lấy các guide ra
+                var guides = await _context.Guides.Where(g => g.ScheduleId == scheduleId).ToListAsync();
+
+                // Lọc ra các id guides để duyệt
+                var guideIds = guides.Select(g => g.StaffId).ToHashSet();
+
+                foreach (var item in tourGuides)
+                {
+                    if (guideIds.Contains(item.UserId) && item.ischecked == false)
+                    {
+                        var guideToRemove = guides.FirstOrDefault(g => g.StaffId == item.UserId);
+
+                        if (guideToRemove != null)
+                        {
+                            _context.Guides.Remove(guideToRemove);
+                        }
+                    }
+                    else if (!guideIds.Contains(item.UserId) && item.ischecked == true)
+                    {
+                        var guide = new CreateGuideDTO(item.UserId, scheduleId);
+                        _context.Guides.Add(guide.Map());
+                    }
+                }
+
+                await _context.SaveChangesAsync();
+
+                return Ok(new RestDTO<bool>()
+                {
+                    Data = true
+                });
+
+            }
+            catch (Exception e)
+            {
+                return Problem($"ERRO {e.Message}");
             }
         }
 

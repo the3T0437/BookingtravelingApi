@@ -17,8 +17,7 @@ namespace BookingTravelApi.DTO.TourGuide
         public DateTime EndWorkingDate { get; set; }
         public bool ischecked { get; set; } = false;
 
-
-
+        
         public UserDTO User { get; set; } = null!;
     }
 }
