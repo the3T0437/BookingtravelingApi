@@ -15,6 +15,7 @@ namespace BookingTravelApi.Extensions
                 EndDate = userCompletedSchedule.Schedule!.EndDate,
                 Name = userCompletedSchedule.User!.Name,
 
+                // Loc userCompleted vs booking 
                 Booking = userCompletedSchedule.Schedule!.Bookings!.Where(b => b.UserId == userCompletedSchedule.UserId).Select(b => b.Map()).ToList()
             };
         }
