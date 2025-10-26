@@ -10,12 +10,13 @@ namespace BookingTravelApi.Extensions
         {
             return new UserCompletedScheduleDTO()
             {
-                UserId = userCompletedSchedule.UserId,
-                ScheduleId = userCompletedSchedule.ScheduleId,
+                Code = userCompletedSchedule.Schedule!.Code,
+                StartDate = userCompletedSchedule.Schedule!.StartDate,
+                EndDate = userCompletedSchedule.Schedule!.EndDate,
+                Name = userCompletedSchedule.User!.Name,
 
-                Tour = userCompletedSchedule.Schedule!.Tour!.Map(),
-                Schedule = userCompletedSchedule.Schedule!.Map(),
-                TourLocation = userCompletedSchedule.Schedule!.Tour!.TourLocations!.Select(i => i.Map()).ToList()
+                // Loc userCompleted vs booking 
+                Booking = userCompletedSchedule.Schedule!.Bookings!.Where(b => b.UserId == userCompletedSchedule.UserId).Select(b => b.Map()).ToList()
             };
         }
     }

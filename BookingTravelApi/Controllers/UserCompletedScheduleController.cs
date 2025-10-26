@@ -22,7 +22,7 @@ namespace BookingTravelApi.Controllers
             _logger = logger;
         }
 
-        [HttpGet("ByScheduleId")]
+        [HttpGet("{scheduleId}")]
         [ResponseCache(NoStore = true)]
         public async Task<IActionResult> getUsersCompletedSchedule(int? scheduleId = null)
         {
@@ -35,50 +35,10 @@ namespace BookingTravelApi.Controllers
 
                 var query = _context.UserCompletedSchedules
                 .Where(g => g.ScheduleId == scheduleId)
+                .Include(u => u.User)
+                
                 .Include(u => u.Schedule)
-                .ThenInclude(s => s!.Tour)
-                .ThenInclude(t => t!.TourLocations)
-                !.ThenInclude(tl => tl!.Location)
-
-                .Include(u => u.Schedule)
-                .ThenInclude(s => s!.Tour)
-                .ThenInclude(t => t!.TourImages)
-                !.AsNoTracking();
-
-                var userScheduleDTO = await query.Select(i => i.Map()).ToArrayAsync();
-
-                return Ok(new RestDTO<UserCompletedScheduleDTO[]?>()
-                {
-                    Data = userScheduleDTO
-                });
-            }
-            catch (Exception ex)
-            {
-                return Problem("Error get ScheduleCompleted");
-            }
-        }
-
-        [HttpGet("ByUser")]
-        [ResponseCache(NoStore = true)]
-        public async Task<IActionResult> getScheduleCompleted(int? userId = null)
-        {
-            try
-            {
-                if (userId == null)
-                {
-                    return Problem("id not found");
-                }
-
-                var query = _context.UserCompletedSchedules
-                .Where(g => g.UserId == userId)
-                .Include(u => u.Schedule)
-                .ThenInclude(s => s!.Tour)
-                .ThenInclude(t => t!.TourLocations)
-                !.ThenInclude(tl => tl.Location)
-
-                .Include(u => u.Schedule)
-                .ThenInclude(s => s!.Tour)
-                .ThenInclude(t => t!.TourImages)!
+                .ThenInclude(s => s!.Bookings)
                 .AsNoTracking();
 
                 var userScheduleDTO = await query.Select(i => i.Map()).ToArrayAsync();
