@@ -22,7 +22,7 @@ namespace BookingTravelApi.Controllers
             _logger = logger;
         }
 
-        [HttpGet("ByStaff/{staffId}")]
+        [HttpGet("{staffId}")]
         [ResponseCache(NoStore = true)]
         public async Task<IActionResult> getGuidesStaffId(int? staffId = null)
         {
@@ -36,54 +36,16 @@ namespace BookingTravelApi.Controllers
                 var query = await _context.Guides
                 .Where(g => g.StaffId == staffId)
                 .Include(t => t.Schedule)
-                .ThenInclude(s => s!.Tour)
-                .ThenInclude(t => t!.TourLocations!)
+                .ThenInclude(s => s!.UserCompletedSchedules)
+                !.ThenInclude(s => s.User)
 
                 .Include(t => t.Schedule)
-                .ThenInclude(s => s!.UserCompletedSchedules)
+                .ThenInclude(s => s!.Bookings)
+
+                .Include(t => t.Schedule!.Tour!.TourImages)
                 .AsNoTracking().ToListAsync();
 
                 var guideDTOs = query.Select(i => i.Map()).ToArray();
-
-
-                return Ok(new RestDTO<GuideDTO[]?>()
-                {
-                    Data = guideDTOs
-                });
-            }
-            catch(Exception ex)
-            {
-                // ✅ Log chi tiết exception
-        Console.WriteLine($"Error: {ex.Message}");
-        Console.WriteLine($"Inner: {ex.InnerException?.Message}");
-        Console.WriteLine($"Stack: {ex.StackTrace}");
-        return Problem($"ERROR: {ex.Message}");
-            }
-        }
-
-        [HttpGet("BySchedule/{scheduleId}")]
-        [ResponseCache(NoStore = true)]
-        public async Task<IActionResult> getGuidesScheduleId(int? scheduleId = null)
-        {
-            try
-            {
-                if (scheduleId == null)
-                {
-                    return Problem("id not found");
-                }
-                var query = _context.Guides
-                .Where(g => g.ScheduleId == scheduleId)
-                .Include(g => g.Staff)
-                !.ThenInclude(us => us!.User)
-
-                .Include(g => g.Schedule)
-                .ThenInclude(s => s!.Tour)
-                .ThenInclude(t => t!.TourLocations)
-                !.ThenInclude(tl => tl.Location)
-                !.AsNoTracking();
-
-
-                var guideDTOs = await query.Select(i => i.Map()).ToArrayAsync();
 
                 return Ok(new RestDTO<GuideDTO[]?>()
                 {
