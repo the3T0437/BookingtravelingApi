@@ -3,6 +3,7 @@ using BookingTravelApi.Domains;
 using BookingTravelApi.DTO;
 using BookingTravelApi.DTO.Activity;
 using BookingTravelApi.DTO.guide;
+using BookingTravelApi.DTO.TourGuide;
 using BookingTravelApi.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -22,7 +23,7 @@ namespace BookingTravelApi.Controllers
             _logger = logger;
         }
 
-        [HttpGet("ByStaff/{staffId}")]
+        [HttpGet("{staffId}")]
         [ResponseCache(NoStore = true)]
         public async Task<IActionResult> getGuidesStaffId(int? staffId = null)
         {
@@ -33,53 +34,19 @@ namespace BookingTravelApi.Controllers
                     return Problem("id not found");
                 }
 
-                var query = _context.Guides
+                var query = await _context.Guides
                 .Where(g => g.StaffId == staffId)
-                .Include(g => g.Staff)
-                .ThenInclude(s => s!.User)
+                .Include(t => t.Schedule)
+                .ThenInclude(s => s!.UserCompletedSchedules)
+                !.ThenInclude(s => s.User)
 
-                .Include(t => t!.Schedule)
-                .ThenInclude(s => s!.Tour)
-                .ThenInclude(t => t!.TourLocations)
-                !.ThenInclude(tl => tl.Location)
-                !.AsNoTracking();
+                .Include(t => t.Schedule)
+                .ThenInclude(s => s!.Bookings)
 
-                var guideDTOs = await query.Select(i => i.Map()).ToArrayAsync();
+                .Include(t => t.Schedule!.Tour!.TourImages)
+                .AsNoTracking().ToListAsync();
 
-                return Ok(new RestDTO<GuideDTO[]?>()
-                {
-                    Data = guideDTOs
-                });
-            }
-            catch
-            {
-                return Problem("ERROR getGuidesStaffId");
-            }
-        }
-
-        [HttpGet("BySchedule/{scheduleId}")]
-        [ResponseCache(NoStore = true)]
-        public async Task<IActionResult> getGuidesScheduleId(int? scheduleId = null)
-        {
-            try
-            {
-                if (scheduleId == null)
-                {
-                    return Problem("id not found");
-                }
-                var query = _context.Guides
-                .Where(g => g.ScheduleId == scheduleId)
-                .Include(g => g.Staff)
-                !.ThenInclude(us => us!.User)
-
-                .Include(g => g.Schedule)
-                .ThenInclude(s => s!.Tour)
-                .ThenInclude(t => t!.TourLocations)
-                !.ThenInclude(tl => tl.Location)
-                !.AsNoTracking();
-
-
-                var guideDTOs = await query.Select(i => i.Map()).ToArrayAsync();
+                var guideDTOs = query.Select(i => i.Map()).ToArray();
 
                 return Ok(new RestDTO<GuideDTO[]?>()
                 {
@@ -89,6 +56,49 @@ namespace BookingTravelApi.Controllers
             catch (Exception ex)
             {
                 return Problem($"ERROR GuidesscheduleId");
+            }
+        }
+
+        [HttpPost("{scheduleId}")]
+        public async Task<IActionResult> createGuideAssignment([FromRoute] int scheduleId, [FromBody] List<TourGuideDTO> tourGuides)
+        {
+            try
+            {
+                // lấy các guide ra
+                var guides = await _context.Guides.Where(g => g.ScheduleId == scheduleId).ToListAsync();
+
+                // Lọc ra các id guides để duyệt
+                var guideIds = guides.Select(g => g.StaffId).ToHashSet();
+
+                foreach (var item in tourGuides)
+                {
+                    if (guideIds.Contains(item.UserId) && item.ischecked == false)
+                    {
+                        var guideToRemove = guides.FirstOrDefault(g => g.StaffId == item.UserId);
+
+                        if (guideToRemove != null)
+                        {
+                            _context.Guides.Remove(guideToRemove);
+                        }
+                    }
+                    else if (!guideIds.Contains(item.UserId) && item.ischecked == true)
+                    {
+                        var guide = new CreateGuideDTO(item.UserId, scheduleId);
+                        _context.Guides.Add(guide.Map());
+                    }
+                }
+
+                await _context.SaveChangesAsync();
+
+                return Ok(new RestDTO<bool>()
+                {
+                    Data = true
+                });
+
+            }
+            catch (Exception e)
+            {
+                return Problem($"ERRO {e.Message}");
             }
         }
 
