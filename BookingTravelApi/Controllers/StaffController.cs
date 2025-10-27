@@ -41,13 +41,20 @@ namespace BookingTravelApi.Controllers
         [Route("tourguide/assignment/{idschedule}")]
         public async Task<IActionResult> GetTourGuide(int idschedule)
         {
-            var timeNow = DateTime.Now;
+            // Lấy thông tin schedule hiện tại
+            var currentSchedule = await _context.Schedules
+                .AsNoTracking()
+                .FirstOrDefaultAsync(s => s.Id == idschedule);
+            if (currentSchedule == null)
+            {
+                return NotFound($"Schedule id {idschedule} not found");
+            }
 
             // Lấy tất cả StaffIds đang bận 
             var busyStaffIds = await _context.Guides
                 .Where(g => g.ScheduleId != idschedule &&
-                            g.Schedule.StartDate <= timeNow &&
-                            g.Schedule.EndDate >= timeNow)
+                        g.Schedule.StartDate <= currentSchedule.EndDate &&
+                        g.Schedule.EndDate >= currentSchedule.StartDate)
                 .Select(g => g.StaffId)
                 .Distinct()
                 .ToHashSetAsync();
