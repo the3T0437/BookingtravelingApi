@@ -50,16 +50,16 @@ namespace BookingTravelApi.Controllers
         }
 
         // Màn 36
-        [HttpGet("assignment")]
+        [HttpGet("assignment/{tourId}")]
         [ResponseCache(NoStore = true)]
-        public async Task<IActionResult> getScheduleAssignment()
+        public async Task<IActionResult> getScheduleAssignment(int tourId)
         {
             var timeNow = DateTime.Now;
 
             // lấy ra các schedule có open date trong tương lai
             var query = _context.Schedules.Where(
                 s => s.OpenDate >= timeNow
-            ).OrderByDescending(s => s.OpenDate).AsNoTracking();
+            ).Where(s => s.TourId == tourId).OrderByDescending(s => s.OpenDate).AsNoTracking();
 
             // Lấy các ScheduleIds đã có người hướng dẫn
             var guideScheduleIds = await _context.Guides
