@@ -49,6 +49,12 @@ namespace BookingTravelApi.Controllers
                 .ThenInclude(lo => lo.Place!)
                 .ThenInclude(p => p.Location)
 
+                .Include(i => i.DayOfTours!)
+                !.ThenInclude(i => i.DayActivities!)
+                !.ThenInclude(i => i.LocationActivity)
+                !.ThenInclude(i => i.ActivityAndLocations)
+                !.ThenInclude(i => i.Activity)
+
                 .ToListAsync();
             var tourDTOs = tours.Select(i => i.Map()).ToArray();
 
@@ -72,7 +78,14 @@ namespace BookingTravelApi.Controllers
                 .ThenInclude(i => i.LocationActivity!)
                 .ThenInclude(i => i.Place!)
                 .ThenInclude(i => i.Location)
-                .Where(i => i.Id == id).FirstOrDefaultAsync();
+                .Where(i => i.Id == id)
+
+                .Include(i => i.DayOfTours!)
+                !.ThenInclude(i => i.DayActivities!)
+                !.ThenInclude(i => i.LocationActivity)
+                !.ThenInclude(i => i.ActivityAndLocations)
+                !.ThenInclude(i => i.Activity)
+                .FirstOrDefaultAsync();
             if (tour == null)
             {
                 return NotFound(new
@@ -116,6 +129,7 @@ namespace BookingTravelApi.Controllers
                 var tour = await _context.Tours
                     .Include(i => i.TourImages)
                     .Include(i => i.DayOfTours)
+                    .Where(i => i.Id == updateTourDTO.Id)
                     .FirstOrDefaultAsync();
                 if (tour == null)
                 {
@@ -131,6 +145,10 @@ namespace BookingTravelApi.Controllers
                 {
                     tour.Price = updateTourDTO.Price.Value;
                 }
+                if (updateTourDTO.PercentDeposit != null)
+                {
+                    tour.PercentDeposit = updateTourDTO.PercentDeposit.Value;
+                }
 
                 if (!String.IsNullOrEmpty(updateTourDTO.Description))
                 {
@@ -143,15 +161,27 @@ namespace BookingTravelApi.Controllers
                     tour.DayOfTours = dayOfTours;
                 }
 
+                List<String> retainImages = [];
+                if (updateTourDTO.RetainImages != null)
+                {
+                    retainImages = tour.TourImages?
+                        .Where((image) => updateTourDTO.RetainImages.Any((url) => url.Contains(image.Path)))
+                        .Select((i) => i.Path).ToList() ?? [];
+                }
+
                 List<String> oldImages = [];
                 if (updateTourDTO.TourImages != null)
                 {
-                    oldImages = tour.TourImages!.Select(i => i.Path).ToList();
+                    oldImages = tour.TourImages!.Select(i => i.Path)
+                        .Where((imagePath) => retainImages.Contains(imagePath) == false)
+                        .ToList();
                     newImagePaths = await ImageInfrastructure.WriteImages(updateTourDTO.TourImages);
+                    newImagePaths.AddRange(retainImages);
                     var tourImages = newImagePaths.Select(i => new TourImage() { Path = i }).ToList();
                     tour.TourImages = tourImages;
                 }
 
+                _context.Tours.Update(tour);
                 await _context.SaveChangesAsync();
                 oldImages.ForEach(path => ImageInfrastructure.DeleteImage(path));
 
@@ -169,14 +199,20 @@ namespace BookingTravelApi.Controllers
         {
             var tour = await _context.Tours.Include(t => t.TourImages)
                 .Include(tm => tm.DayOfTours!)
-                .ThenInclude(d => d.DayActivities!)
-                .ThenInclude(da => da.Activity)
+                !.ThenInclude(d => d.DayActivities!)
+                !.ThenInclude(da => da.Activity)
 
                 .Include(i => i.DayOfTours!)
-                .ThenInclude(i => i.DayActivities!)
-                .ThenInclude(i => i.LocationActivity)
-                .ThenInclude(i => i!.Place)
-                .ThenInclude(i => i!.Location)
+                !.ThenInclude(i => i.DayActivities!)
+                !.ThenInclude(i => i.LocationActivity)
+                !.ThenInclude(i => i!.Place)
+                !.ThenInclude(i => i!.Location)
+
+                .Include(i => i.DayOfTours!)
+                !.ThenInclude(i => i.DayActivities!)
+                !.ThenInclude(i => i.LocationActivity)
+                !.ThenInclude(i => i.ActivityAndLocations)
+                !.ThenInclude(i => i.Activity)
 
                 .Where(i => i.Id == id).FirstOrDefaultAsync();
 
