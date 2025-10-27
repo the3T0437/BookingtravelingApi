@@ -60,7 +60,7 @@ namespace BookingTravelApi.Controllers
         }
 
         [HttpPost("{scheduleId}")]
-        public async Task<IActionResult> createGuideAssignment([FromRoute] int scheduleId, [FromBody] List<TourGuideDTO> tourGuides)
+        public async Task<IActionResult> checkGuideAssignment([FromRoute] int scheduleId, [FromBody] List<TourGuideDTO> tourGuides)
         {
             try
             {
