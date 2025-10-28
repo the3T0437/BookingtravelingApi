@@ -23,7 +23,7 @@ namespace BookingTravelApi.Controllers
             _logger = logger;
         }
 
-        [HttpGet("{staffId}")]
+        [HttpGet("schedule/{staffId}")]
         [ResponseCache(NoStore = true)]
         public async Task<IActionResult> getGuidesStaffId(int? staffId = null)
         {
@@ -60,7 +60,7 @@ namespace BookingTravelApi.Controllers
         }
 
         [HttpPost("{scheduleId}")]
-        public async Task<IActionResult> createGuideAssignment([FromRoute] int scheduleId, [FromBody] List<TourGuideDTO> tourGuides)
+        public async Task<IActionResult> checkGuideAssignment([FromRoute] int scheduleId, [FromBody] List<TourGuideDTO> tourGuides)
         {
             try
             {

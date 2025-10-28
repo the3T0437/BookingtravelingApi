@@ -49,7 +49,39 @@ namespace BookingTravelApi.Controllers
             });
         }
 
-        // màn 36
+        // Màn 36
+        [HttpGet("assignment/{tourId}")]
+        [ResponseCache(NoStore = true)]
+        public async Task<IActionResult> getScheduleAssignment(int tourId)
+        {
+            var timeNow = DateTime.Now;
+
+            // lấy ra các schedule có open date trong tương lai
+            var query = _context.Schedules.Where(
+                s => s.OpenDate >= timeNow
+            ).Where(s => s.TourId == tourId).OrderByDescending(s => s.OpenDate).AsNoTracking();
+
+            // Lấy các ScheduleIds đã có người hướng dẫn
+            var guideScheduleIds = await _context.Guides
+                .Select(g => g.ScheduleId)
+                .ToHashSetAsync();
+
+            var scheduleDTOs = await query.Select(s => new ScheduleAssignmentDTO
+            {
+                Id = s.Id,
+                Code = s.Code,
+                StartDate = s.StartDate,
+                EndDate = s.EndDate,
+                isAssignment = guideScheduleIds.Contains(s.Id)
+            }).ToArrayAsync();
+
+            return Ok(new RestDTO<ScheduleAssignmentDTO[]?>()
+            {
+                Data = scheduleDTOs
+            });
+        }
+
+        // màn 37
         [HttpGet("tour/{idtour}")]
         [ResponseCache(NoStore = true)]
         public async Task<IActionResult> getScheduleAssignmentByIdTour(int idtour)

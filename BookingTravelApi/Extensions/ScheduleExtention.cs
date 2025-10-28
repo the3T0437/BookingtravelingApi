@@ -1,5 +1,6 @@
 using BookingTravelApi.Domains;
 using BookingTravelApi.DTO.schedule;
+using BookingTravelApi.DTO.ScheduleAssignmentDTO;
 
 namespace BookingTravelApi.Extensions
 {
