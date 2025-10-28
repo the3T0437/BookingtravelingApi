@@ -15,6 +15,8 @@ namespace BookingTravelApi.DTO.Tour
         [Required]
         public int Price { get; set; }
         [Required]
+        public int PercentDeposit { get; set; }
+        [Required]
         public String Description { get; set; } = null!;
         [Required]
         public List<CreateDayOfTourDTO> DayOfTours { get; set; } = null!;
@@ -35,6 +37,7 @@ namespace BookingTravelApi.DTO.Tour
                 Day = createTourDTO.Day,
                 Title = createTourDTO.Title,
                 Price = createTourDTO.Price,
+                PercentDeposit = createTourDTO.PercentDeposit,
                 Description = createTourDTO.Description,
                 DayOfTours = dayOfTours,
                 TourImages = tourImages

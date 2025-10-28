@@ -20,7 +20,7 @@ namespace BookingTravelApi.Domains
         public string Title { get; set; } = null!;
 
         [Required]
-        [MaxLength(255)]
+        [MaxLength(10000)]
         public string Description { get; set; } = null!;
 
         public Tour? Tour { get; set; }
