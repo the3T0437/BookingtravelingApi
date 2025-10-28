@@ -86,12 +86,13 @@ namespace BookingTravelApi.Controllers
                     Data = newLocationActivity.Map()
                 });
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 return BadRequest(
                     new
                     {
-                        message = "Something bad happen"
+                        message = $"{e.Message}",
+                        data = $"{e.InnerException?.Message}",
                     }
                 );
             }
