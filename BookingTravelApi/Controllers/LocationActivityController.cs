@@ -33,7 +33,12 @@ namespace BookingTravelApi.Controllers
             }
             query = query.OrderBy($"{orderBy} {sortBy}");
 
-            var locationsActivities = await query.Include(i => i.Place).ThenInclude(i => i.Location).ToListAsync();
+            var locationsActivities = await query.Include(i => i.Place)
+                .ThenInclude(i => i.Location)
+                .Include(i => i.ActivityAndLocations)
+                !.ThenInclude(i => i.Activity)
+                .ToListAsync();
+
             var locationActivityDTOs = locationsActivities.Select(i => i.Map()).ToList();
 
             return Ok(new RestDTO<List<LocationActivityDTO>>()
@@ -45,7 +50,13 @@ namespace BookingTravelApi.Controllers
         [HttpGet("{id:int}", Name = "GetLocationActivity")]
         public async Task<IActionResult> getLocationActivity(int id)
         {
-            var locationActivity = await _context.LocationActivities.Where(i => i.Id == id).FirstOrDefaultAsync();
+            var locationActivity = await _context.LocationActivities
+                    .Include(i => i.ActivityAndLocations)
+                    !.ThenInclude(i => i.Activity)
+                    .Include(i => i.Place)
+                    .ThenInclude(i => i.Location)
+                    .Where(i => i.Id == id)
+                    .FirstOrDefaultAsync();
             if (locationActivity == null)
             {
                 return NotFound(new
@@ -114,10 +125,7 @@ namespace BookingTravelApi.Controllers
                 _context.Update(locationActivity);
                 await _context.SaveChangesAsync();
 
-                return Ok(new RestDTO<LocationActivityDTO>()
-                {
-                    Data = locationActivity.Map()
-                });
+                return await getLocationActivity(updateLocationActivity.Id);
             }
 
             return NotFound(new
