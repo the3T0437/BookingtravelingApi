@@ -11,7 +11,8 @@ namespace BookingTravelApi.Extensions
             {
                 Id = locationActivity.Id,
                 Name = locationActivity.Name,
-                Place = locationActivity.Place?.Map()
+                Place = locationActivity.Place?.Map(),
+                Activities = locationActivity.ActivityAndLocations?.Select(i => i.Activity!.Map()).ToList() ?? []
             };
         }
     }

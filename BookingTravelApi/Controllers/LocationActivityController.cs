@@ -33,7 +33,12 @@ namespace BookingTravelApi.Controllers
             }
             query = query.OrderBy($"{orderBy} {sortBy}");
 
-            var locationsActivities = await query.Include(i => i.Place).ThenInclude(i => i.Location).ToListAsync();
+            var locationsActivities = await query.Include(i => i.Place)
+                .ThenInclude(i => i.Location)
+                .Include(i => i.ActivityAndLocations)
+                !.ThenInclude(i => i.Activity)
+                .ToListAsync();
+
             var locationActivityDTOs = locationsActivities.Select(i => i.Map()).ToList();
 
             return Ok(new RestDTO<List<LocationActivityDTO>>()
