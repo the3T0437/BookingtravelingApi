@@ -81,9 +81,9 @@ namespace BookingTravelApi.Controllers
                 await _context.LocationActivities.AddAsync(newLocationActivity);
                 await _context.SaveChangesAsync();
 
-                return Ok(new RestDTO<LocationActivityDTO>()
+                return Ok(new RestDTO<int>()
                 {
-                    Data = newLocationActivity.Map()
+                    Data = newLocationActivity.Id
                 });
             }
             catch (Exception e)
