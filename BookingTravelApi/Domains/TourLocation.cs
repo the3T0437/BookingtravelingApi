@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BookingTravelApi.Domains
 {
+    [Table("tourlocations")]
     public class TourLocation
     {
         [Required]

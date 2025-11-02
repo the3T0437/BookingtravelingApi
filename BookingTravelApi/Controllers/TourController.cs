@@ -105,7 +105,8 @@ namespace BookingTravelApi.Controllers
                 !.ThenInclude(i => i.Activity)
 
                 .ToListAsync();
-            var tourDTOs = tours.Select(i => i.Map()).ToArray();
+
+            var tourDTOs = await query.Select(i => i.Map()).ToArrayAsync();
 
             return Ok(new RestDTO<TourDTO[]>()
             {

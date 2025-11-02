@@ -16,7 +16,7 @@ namespace BookingTravelApi.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Activities",
+                name: "activities",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -26,12 +26,12 @@ namespace BookingTravelApi.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Activities", x => x.Id);
+                    table.PrimaryKey("PK_activities", x => x.Id);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Locations",
+                name: "locations",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -41,12 +41,12 @@ namespace BookingTravelApi.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Locations", x => x.Id);
+                    table.PrimaryKey("PK_locations", x => x.Id);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "OtpCodes",
+                name: "otpcodes",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -59,12 +59,12 @@ namespace BookingTravelApi.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_OtpCodes", x => x.Id);
+                    table.PrimaryKey("PK_otpcodes", x => x.Id);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Roles",
+                name: "roles",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -74,12 +74,12 @@ namespace BookingTravelApi.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Roles", x => x.Id);
+                    table.PrimaryKey("PK_roles", x => x.Id);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Status",
+                name: "status",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -89,12 +89,12 @@ namespace BookingTravelApi.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Status", x => x.Id);
+                    table.PrimaryKey("PK_status", x => x.Id);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Tours",
+                name: "tours",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -106,16 +106,18 @@ namespace BookingTravelApi.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Price = table.Column<int>(type: "int", nullable: false),
                     Description = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4")
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    TotalReviews = table.Column<int>(type: "int", nullable: false),
+                    TotalStars = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Tours", x => x.Id);
+                    table.PrimaryKey("PK_tours", x => x.Id);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Places",
+                name: "places",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -126,18 +128,18 @@ namespace BookingTravelApi.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Places", x => x.Id);
+                    table.PrimaryKey("PK_places", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Places_Locations_LocationId",
+                        name: "FK_places_locations_LocationId",
                         column: x => x.LocationId,
-                        principalTable: "Locations",
+                        principalTable: "locations",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Users",
+                name: "users",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -163,18 +165,18 @@ namespace BookingTravelApi.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Users", x => x.Id);
+                    table.PrimaryKey("PK_users", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Users_Roles_RoleId",
+                        name: "FK_users_roles_RoleId",
                         column: x => x.RoleId,
-                        principalTable: "Roles",
+                        principalTable: "roles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "DayOfTours",
+                name: "dayoftours",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -183,23 +185,23 @@ namespace BookingTravelApi.Migrations
                     Day = table.Column<int>(type: "int", nullable: false),
                     Title = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Description = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
+                    Description = table.Column<string>(type: "varchar(10000)", maxLength: 10000, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_DayOfTours", x => x.Id);
+                    table.PrimaryKey("PK_dayoftours", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_DayOfTours_Tours_TourId",
+                        name: "FK_dayoftours_tours_TourId",
                         column: x => x.TourId,
-                        principalTable: "Tours",
+                        principalTable: "tours",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Schedules",
+                name: "schedules",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -217,18 +219,18 @@ namespace BookingTravelApi.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Schedules", x => x.Id);
+                    table.PrimaryKey("PK_schedules", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Schedules_Tours_TourId",
+                        name: "FK_schedules_tours_TourId",
                         column: x => x.TourId,
-                        principalTable: "Tours",
+                        principalTable: "tours",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "TourImages",
+                name: "tourimages",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -239,18 +241,18 @@ namespace BookingTravelApi.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TourImages", x => x.Id);
+                    table.PrimaryKey("PK_tourimages", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_TourImages_Tours_TourId",
+                        name: "FK_tourimages_tours_TourId",
                         column: x => x.TourId,
-                        principalTable: "Tours",
+                        principalTable: "tours",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "TourLocations",
+                name: "tourlocations",
                 columns: table => new
                 {
                     TourId = table.Column<int>(type: "int", nullable: false),
@@ -258,24 +260,24 @@ namespace BookingTravelApi.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TourLocations", x => new { x.TourId, x.LocationId });
+                    table.PrimaryKey("PK_tourlocations", x => new { x.TourId, x.LocationId });
                     table.ForeignKey(
-                        name: "FK_TourLocations_Locations_LocationId",
+                        name: "FK_tourlocations_locations_LocationId",
                         column: x => x.LocationId,
-                        principalTable: "Locations",
+                        principalTable: "locations",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_TourLocations_Tours_TourId",
+                        name: "FK_tourlocations_tours_TourId",
                         column: x => x.TourId,
-                        principalTable: "Tours",
+                        principalTable: "tours",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "LocationActivities",
+                name: "locationactivities",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -286,18 +288,18 @@ namespace BookingTravelApi.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_LocationActivities", x => x.Id);
+                    table.PrimaryKey("PK_locationactivities", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_LocationActivities_Places_PlaceId",
+                        name: "FK_locationactivities_places_PlaceId",
                         column: x => x.PlaceId,
-                        principalTable: "Places",
+                        principalTable: "places",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Favorites",
+                name: "favorites",
                 columns: table => new
                 {
                     UserId = table.Column<int>(type: "int", nullable: false),
@@ -305,24 +307,24 @@ namespace BookingTravelApi.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Favorites", x => new { x.TourId, x.UserId });
+                    table.PrimaryKey("PK_favorites", x => new { x.TourId, x.UserId });
                     table.ForeignKey(
-                        name: "FK_Favorites_Tours_TourId",
+                        name: "FK_favorites_tours_TourId",
                         column: x => x.TourId,
-                        principalTable: "Tours",
+                        principalTable: "tours",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Favorites_Users_UserId",
+                        name: "FK_favorites_users_UserId",
                         column: x => x.UserId,
-                        principalTable: "Users",
+                        principalTable: "users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Notifications",
+                name: "notifications",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -335,18 +337,18 @@ namespace BookingTravelApi.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Notifications", x => x.Id);
+                    table.PrimaryKey("PK_notifications", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Notifications_Users_UserId",
+                        name: "FK_notifications_users_UserId",
                         column: x => x.UserId,
-                        principalTable: "Users",
+                        principalTable: "users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Staffs",
+                name: "staffs",
                 columns: table => new
                 {
                     UserId = table.Column<int>(type: "int", nullable: false),
@@ -368,18 +370,18 @@ namespace BookingTravelApi.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Staffs", x => x.UserId);
+                    table.PrimaryKey("PK_staffs", x => x.UserId);
                     table.ForeignKey(
-                        name: "FK_Staffs_Users_UserId",
+                        name: "FK_staffs_users_UserId",
                         column: x => x.UserId,
-                        principalTable: "Users",
+                        principalTable: "users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Bookings",
+                name: "bookings",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -400,30 +402,30 @@ namespace BookingTravelApi.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Bookings", x => x.Id);
+                    table.PrimaryKey("PK_bookings", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Bookings_Schedules_ScheduleId",
+                        name: "FK_bookings_schedules_ScheduleId",
                         column: x => x.ScheduleId,
-                        principalTable: "Schedules",
+                        principalTable: "schedules",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Bookings_Status_StatusId",
+                        name: "FK_bookings_status_StatusId",
                         column: x => x.StatusId,
-                        principalTable: "Status",
+                        principalTable: "status",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Bookings_Users_UserId",
+                        name: "FK_bookings_users_UserId",
                         column: x => x.UserId,
-                        principalTable: "Users",
+                        principalTable: "users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Reviews",
+                name: "reviews",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -437,24 +439,24 @@ namespace BookingTravelApi.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Reviews", x => x.Id);
+                    table.PrimaryKey("PK_reviews", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Reviews_Schedules_ScheduleId",
+                        name: "FK_reviews_schedules_ScheduleId",
                         column: x => x.ScheduleId,
-                        principalTable: "Schedules",
+                        principalTable: "schedules",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Reviews_Users_UserId",
+                        name: "FK_reviews_users_UserId",
                         column: x => x.UserId,
-                        principalTable: "Users",
+                        principalTable: "users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "UserCompletedSchedules",
+                name: "usercompletedschedules",
                 columns: table => new
                 {
                     UserId = table.Column<int>(type: "int", nullable: false),
@@ -462,24 +464,24 @@ namespace BookingTravelApi.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserCompletedSchedules", x => new { x.ScheduleId, x.UserId });
+                    table.PrimaryKey("PK_usercompletedschedules", x => new { x.ScheduleId, x.UserId });
                     table.ForeignKey(
-                        name: "FK_UserCompletedSchedules_Schedules_ScheduleId",
+                        name: "FK_usercompletedschedules_schedules_ScheduleId",
                         column: x => x.ScheduleId,
-                        principalTable: "Schedules",
+                        principalTable: "schedules",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_UserCompletedSchedules_Users_UserId",
+                        name: "FK_usercompletedschedules_users_UserId",
                         column: x => x.UserId,
-                        principalTable: "Users",
+                        principalTable: "users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "ActivityAndLocations",
+                name: "activityandlocations",
                 columns: table => new
                 {
                     ActivityId = table.Column<int>(type: "int", nullable: false),
@@ -487,24 +489,24 @@ namespace BookingTravelApi.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ActivityAndLocations", x => new { x.ActivityId, x.LocationActivityId });
+                    table.PrimaryKey("PK_activityandlocations", x => new { x.ActivityId, x.LocationActivityId });
                     table.ForeignKey(
-                        name: "FK_ActivityAndLocations_Activities_ActivityId",
+                        name: "FK_activityandlocations_activities_ActivityId",
                         column: x => x.ActivityId,
-                        principalTable: "Activities",
+                        principalTable: "activities",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ActivityAndLocations_LocationActivities_LocationActivityId",
+                        name: "FK_activityandlocations_locationactivities_LocationActivityId",
                         column: x => x.LocationActivityId,
-                        principalTable: "LocationActivities",
+                        principalTable: "locationactivities",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "DayActivities",
+                name: "dayactivities",
                 columns: table => new
                 {
                     DayOfTourId = table.Column<int>(type: "int", nullable: false),
@@ -514,30 +516,30 @@ namespace BookingTravelApi.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_DayActivities", x => new { x.DayOfTourId, x.ActivityId, x.LocationActivityId });
+                    table.PrimaryKey("PK_dayactivities", x => new { x.DayOfTourId, x.ActivityId, x.LocationActivityId });
                     table.ForeignKey(
-                        name: "FK_DayActivities_Activities_ActivityId",
+                        name: "FK_dayactivities_activities_ActivityId",
                         column: x => x.ActivityId,
-                        principalTable: "Activities",
+                        principalTable: "activities",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_DayActivities_DayOfTours_DayOfTourId",
+                        name: "FK_dayactivities_dayoftours_DayOfTourId",
                         column: x => x.DayOfTourId,
-                        principalTable: "DayOfTours",
+                        principalTable: "dayoftours",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_DayActivities_LocationActivities_LocationActivityId",
+                        name: "FK_dayactivities_locationactivities_LocationActivityId",
                         column: x => x.LocationActivityId,
-                        principalTable: "LocationActivities",
+                        principalTable: "locationactivities",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Guides",
+                name: "guides",
                 columns: table => new
                 {
                     StaffId = table.Column<int>(type: "int", nullable: false),
@@ -545,24 +547,24 @@ namespace BookingTravelApi.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Guides", x => new { x.ScheduleId, x.StaffId });
+                    table.PrimaryKey("PK_guides", x => new { x.ScheduleId, x.StaffId });
                     table.ForeignKey(
-                        name: "FK_Guides_Schedules_ScheduleId",
+                        name: "FK_guides_schedules_ScheduleId",
                         column: x => x.ScheduleId,
-                        principalTable: "Schedules",
+                        principalTable: "schedules",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Guides_Staffs_StaffId",
+                        name: "FK_guides_staffs_StaffId",
                         column: x => x.StaffId,
-                        principalTable: "Staffs",
+                        principalTable: "staffs",
                         principalColumn: "UserId",
                         onDelete: ReferentialAction.Restrict);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Helpfuls",
+                name: "helpfuls",
                 columns: table => new
                 {
                     UserId = table.Column<int>(type: "int", nullable: false),
@@ -570,120 +572,120 @@ namespace BookingTravelApi.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Helpfuls", x => new { x.ReviewId, x.UserId });
+                    table.PrimaryKey("PK_helpfuls", x => new { x.ReviewId, x.UserId });
                     table.ForeignKey(
-                        name: "FK_Helpfuls_Reviews_ReviewId",
+                        name: "FK_helpfuls_reviews_ReviewId",
                         column: x => x.ReviewId,
-                        principalTable: "Reviews",
+                        principalTable: "reviews",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Helpfuls_Users_UserId",
+                        name: "FK_helpfuls_users_UserId",
                         column: x => x.UserId,
-                        principalTable: "Users",
+                        principalTable: "users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ActivityAndLocations_LocationActivityId",
-                table: "ActivityAndLocations",
+                name: "IX_activityandlocations_LocationActivityId",
+                table: "activityandlocations",
                 column: "LocationActivityId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Bookings_ScheduleId",
-                table: "Bookings",
+                name: "IX_bookings_ScheduleId",
+                table: "bookings",
                 column: "ScheduleId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Bookings_StatusId",
-                table: "Bookings",
+                name: "IX_bookings_StatusId",
+                table: "bookings",
                 column: "StatusId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Bookings_UserId",
-                table: "Bookings",
+                name: "IX_bookings_UserId",
+                table: "bookings",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_DayActivities_ActivityId",
-                table: "DayActivities",
+                name: "IX_dayactivities_ActivityId",
+                table: "dayactivities",
                 column: "ActivityId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_DayActivities_LocationActivityId",
-                table: "DayActivities",
+                name: "IX_dayactivities_LocationActivityId",
+                table: "dayactivities",
                 column: "LocationActivityId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_DayOfTours_TourId",
-                table: "DayOfTours",
+                name: "IX_dayoftours_TourId",
+                table: "dayoftours",
                 column: "TourId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Favorites_UserId",
-                table: "Favorites",
+                name: "IX_favorites_UserId",
+                table: "favorites",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Guides_StaffId",
-                table: "Guides",
+                name: "IX_guides_StaffId",
+                table: "guides",
                 column: "StaffId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Helpfuls_UserId",
-                table: "Helpfuls",
+                name: "IX_helpfuls_UserId",
+                table: "helpfuls",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_LocationActivities_PlaceId",
-                table: "LocationActivities",
+                name: "IX_locationactivities_PlaceId",
+                table: "locationactivities",
                 column: "PlaceId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Notifications_UserId",
-                table: "Notifications",
+                name: "IX_notifications_UserId",
+                table: "notifications",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Places_LocationId",
-                table: "Places",
+                name: "IX_places_LocationId",
+                table: "places",
                 column: "LocationId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Reviews_ScheduleId",
-                table: "Reviews",
+                name: "IX_reviews_ScheduleId",
+                table: "reviews",
                 column: "ScheduleId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Reviews_UserId",
-                table: "Reviews",
+                name: "IX_reviews_UserId",
+                table: "reviews",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Schedules_TourId",
-                table: "Schedules",
+                name: "IX_schedules_TourId",
+                table: "schedules",
                 column: "TourId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TourImages_TourId",
-                table: "TourImages",
+                name: "IX_tourimages_TourId",
+                table: "tourimages",
                 column: "TourId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TourLocations_LocationId",
-                table: "TourLocations",
+                name: "IX_tourlocations_LocationId",
+                table: "tourlocations",
                 column: "LocationId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserCompletedSchedules_UserId",
-                table: "UserCompletedSchedules",
+                name: "IX_usercompletedschedules_UserId",
+                table: "usercompletedschedules",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Users_RoleId",
-                table: "Users",
+                name: "IX_users_RoleId",
+                table: "users",
                 column: "RoleId");
         }
 
@@ -691,73 +693,73 @@ namespace BookingTravelApi.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "ActivityAndLocations");
+                name: "activityandlocations");
 
             migrationBuilder.DropTable(
-                name: "Bookings");
+                name: "bookings");
 
             migrationBuilder.DropTable(
-                name: "DayActivities");
+                name: "dayactivities");
 
             migrationBuilder.DropTable(
-                name: "Favorites");
+                name: "favorites");
 
             migrationBuilder.DropTable(
-                name: "Guides");
+                name: "guides");
 
             migrationBuilder.DropTable(
-                name: "Helpfuls");
+                name: "helpfuls");
 
             migrationBuilder.DropTable(
-                name: "Notifications");
+                name: "notifications");
 
             migrationBuilder.DropTable(
-                name: "OtpCodes");
+                name: "otpcodes");
 
             migrationBuilder.DropTable(
-                name: "TourImages");
+                name: "tourimages");
 
             migrationBuilder.DropTable(
-                name: "TourLocations");
+                name: "tourlocations");
 
             migrationBuilder.DropTable(
-                name: "UserCompletedSchedules");
+                name: "usercompletedschedules");
 
             migrationBuilder.DropTable(
-                name: "Status");
+                name: "status");
 
             migrationBuilder.DropTable(
-                name: "Activities");
+                name: "activities");
 
             migrationBuilder.DropTable(
-                name: "DayOfTours");
+                name: "dayoftours");
 
             migrationBuilder.DropTable(
-                name: "LocationActivities");
+                name: "locationactivities");
 
             migrationBuilder.DropTable(
-                name: "Staffs");
+                name: "staffs");
 
             migrationBuilder.DropTable(
-                name: "Reviews");
+                name: "reviews");
 
             migrationBuilder.DropTable(
-                name: "Places");
+                name: "places");
 
             migrationBuilder.DropTable(
-                name: "Schedules");
+                name: "schedules");
 
             migrationBuilder.DropTable(
-                name: "Users");
+                name: "users");
 
             migrationBuilder.DropTable(
-                name: "Locations");
+                name: "locations");
 
             migrationBuilder.DropTable(
-                name: "Tours");
+                name: "tours");
 
             migrationBuilder.DropTable(
-                name: "Roles");
+                name: "roles");
         }
     }
 }
