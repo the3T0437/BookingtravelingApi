@@ -18,6 +18,9 @@ namespace BookingTravelApi.DTO.Tour
         public List<DayOfTourDTO> DayOfTours { get; set; } = null!;
         public List<String> TourImages { get; set; } = null!;
         public List<LocationDTO> Locations { get; set; } = null!;
-        public List<PlaceDTO> places { get; set; } = null!;
+        public List<PlaceDTO> Places { get; set; } = null!;
+        public int TotalReviews { get; set; }
+        public int TotalStars { get; set; }
+
     }
 }

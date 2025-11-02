@@ -14,6 +14,8 @@ namespace BookingTravelApi.Extensions
             var locations = places.Select(i => i.Location).ToHashSet();
 
             var setPlaces = places.ToHashSet().ToList();
+            var reviewCount = tour.Schedules?.Where(i => i.Reviews != null).SelectMany(i => i.Reviews ?? []).Count();
+            var starCount = tour.Schedules?.Where(i => i.Reviews != null).SelectMany(i => i.Reviews ?? []).Select(i => i.Rating).Sum();
 
             var Host = Environment.GetEnvironmentVariable("Host");
 
@@ -29,7 +31,10 @@ namespace BookingTravelApi.Extensions
                 DayOfTours = tour.DayOfTours?.Select(i => i.Map()).ToList() ?? [],
                 TourImages = tour.TourImages?.Select(i => $"http://{Host}{AppConfig.GetRequestImagePath()}/{i.Path}").ToList() ?? [],
                 Locations = locations.ToList().Select(i => i.Map()).ToList(),
-                places = setPlaces.Select(i => i!.Map()).ToList(),
+                Places = setPlaces.Select(i => i!.Map()).ToList(),
+
+                TotalReviews = tour.TotalReviews,
+                TotalStars = tour.TotalStars,
             };
         }
     }
