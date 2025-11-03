@@ -1,0 +1,108 @@
+using System.Linq.Dynamic.Core;
+using BookingTravelApi.Domains;
+using BookingTravelApi.DTO;
+using BookingTravelApi.DTO.review;
+using BookingTravelApi.Extensions;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+
+namespace BookingTravelApi.Controllers
+{
+    [Route("[controller]")]
+    [ApiController]
+    public class ReviewController : Controller
+    {
+        private ApplicationDbContext _context;
+        private readonly ILogger<ReviewController> _logger;
+
+        public ReviewController(ILogger<ReviewController> logger, ApplicationDbContext context)
+        {
+            _context = context;
+            _logger = logger;
+        }
+
+        [HttpGet("{tourId}")]
+        [ResponseCache(NoStore = true)]
+        public async Task<IActionResult> getReviewUser(int? tourId = null)
+        {
+            try
+            {
+                if (tourId == null)
+                {
+                    return Problem("id not found");
+                }
+
+                var query = await _context.Reviews
+                .Where(u => u.Schedule != null && u.Schedule!.TourId == tourId)
+                .Include(t => t.User)
+
+                .Include(s => s.Schedule)
+                .ThenInclude(g => g!.Tour)
+
+                .Include(s => s.Schedule)
+                .ThenInclude(g => g!.Guides)
+                !.ThenInclude(st => st!.Staff)
+                .ThenInclude(us => us!.User)
+                .AsNoTracking().ToListAsync();
+
+                var reviews = query.Select(i => i.Map()).ToArray();
+
+                return Ok(new RestDTO<ReviewDTO[]?>()
+                {
+                    Data = reviews
+                });
+            }
+            catch (Exception ex)
+            {
+                return Problem($"ERROR GuidesscheduleId");
+            }
+        }
+
+        [HttpPost(Name = "CreateReview")]
+        public async Task<IActionResult> createReview(CreateReviewDTO newReviewDTO)
+        {
+            try
+            {
+                var review = newReviewDTO.Map();
+                await _context.Reviews.AddAsync(review);
+                await _context.SaveChangesAsync();
+
+                return Ok(new RestDTO<String>()
+                {
+                    Data = review.Content
+                });
+            }
+            catch (Exception ex)
+            {
+                return Problem("Error create");
+            }
+        }
+
+        [HttpDelete(Name = "DeleteReview")]
+        public async Task<IActionResult> deleteReview(int userId, int scheduleId)
+        {
+            try
+            {
+                var review = await _context.Reviews.Where(r => r.UserId == userId && r.ScheduleId == scheduleId).FirstOrDefaultAsync();
+                if (review == null)
+                {
+                    return NotFound($"Review with Id {userId} or {scheduleId} not found.");
+                }
+
+                _context.Reviews.Remove(review);
+                await _context.SaveChangesAsync();
+
+                return Ok(new RestDTO<Boolean>()
+                {
+                    Data = true,
+                });
+
+            }
+            catch (Exception ex)
+            {
+                return Problem("Eror delete");
+            }
+        }
+
+    }
+}

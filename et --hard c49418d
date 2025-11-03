@@ -1,0 +1,84 @@
+[33mc49418d[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mdev_tinh[m[33m, [m[1;31morigin/dev_tinh[m[33m)[m guide
+[33mbae162d[m main
+[33m812cb73[m Merge pull request #17 from the3T0437/dev_thuong
+[33md1c72da[m[33m ([m[1;31morigin/dev_thuong[m[33m)[m Merge branch 'main' into dev_thuong
+[33mc37acd4[m fix schedule can't get imformation of tour
+[33m5792742[m update DTO
+[33md6958cd[m Merge pull request #16 from the3T0437/dev_thuong
+[33m50deab0[m change some query param to path param
+[33m39a0862[m Merge branch 'main' of https://github.com/the3T0437/BookingtravelingApi
+[33m2e23d29[m remove dto for return json
+[33m4499be9[m Merge pull request #15 from the3T0437/dev_thuong
+[33m32867f5[m delete location activity
+[33m23d7f8b[m Merge pull request #14 from the3T0437/dev_nam
+[33m602b3c6[m update assignment
+[33m92f324b[m Merge pull request #13 from the3T0437/dev_thuong
+[33m8744b71[m Merge branch 'main' into dev_thuong
+[33m96db3d8[m update
+[33ma0c0769[m Merge pull request #12 from the3T0437/dev_nam
+[33mbd698ee[m Merge branch 'main' into dev_thuong
+[33mfccb908[m update
+[33m657f3c5[m change data type of time of day activity, data type gathering time of schedule
+[33m71ed2f7[m change data type of time of day activity, data type gathering time of schedule
+[33m26871b3[m Merge branch 'main' into dev_nam
+[33m2b7cb98[m update login
+[33ma31ca4e[m Merge pull request #11 from the3T0437/dev_thuong
+[33mc61ef89[m Merge branch 'main' into dev_thuong
+[33m6342257[m change data type of time of day activity, data type gathering time of schedule
+[33m438a3b6[m Merge pull request #10 from the3T0437/dev_nam
+[33m4523d60[m Merge branch 'main' into dev_nam
+[33m9fbc1d0[m verify otp  done
+[33m93ea4a5[m Merge pull request #9 from the3T0437/dev_thuong
+[33m6b96f5a[m u
+[33m2ec6339[m send gmail done
+[33m6e90501[m u
+[33mb47e253[m Merge branch 'main' into dev_thuong
+[33mcb3f0a8[m update
+[33ma6a96dc[m update code delete
+[33mb46d939[m Merge branch 'main' into dev_thuong
+[33mafc4e59[m update get activities, places
+[33mb4cd2bb[m Merge pull request #8 from the3T0437/dev_tinh
+[33md76429b[m dev_tinh
+[33mc096bcb[m Merge pull request #7 from the3T0437/dev_thuong
+[33mdcf8eb5[m Merge pull request #6 from the3T0437/dev_nam
+[33m3a6af06[m access image from link
+[33m4bb0f1a[m Merge branch 'dev_nam' into dev_thuong
+[33m51ab1c7[m staging
+[33m39e9f1b[m done assign
+[33m8177fe0[m Merge branch 'dev_nam' into dev_thuong
+[33m2d6aa27[m toiuu
+[33m26acc53[m delete tour
+[33mfb8600b[m a
+[33m3651741[m update git ignore
+[33m28fc5b2[m create tour
+[33ma2bb985[m guide_and_uscompleted
+[33m8c4d388[m new
+[33md6a2314[m new
+[33m9d74588[m merge
+[33m5d6d152[m devtinhthuong
+[33m489f319[m CapNhat
+[33ma61cc29[m[33m ([m[1;32mdev_nam[m[33m)[m api user, staff done
+[33m6d5a92a[m[33m ([m[1;32mdev_thuong[m[33m)[m staging
+[33mb92a69e[m completed
+[33m64d9771[m completed
+[33ma790006[m staging
+[33mdca079d[m xong guide
+[33mfeb4088[m api schedule done
+[33mf688967[m Merge branch 'main' into dev_thuong
+[33m36c8b6b[m update'
+[33m02e881b[m database table
+[33m8c534a9[m tour_DTO
+[33mfde6a4f[m connect to mysql database
+[33ma3f464f[m Merge pull request #4 from the3T0437/dev_thuong
+[33m42ef790[m add gitignore
+[33ma999854[m Merge pull request #3 from the3T0437/dev_thuong
+[33m1fe72ae[m return IActionResult
+[33m6d997f4[m Merge pull request #2 from the3T0437/dev_thuong
+[33mb2533ab[m build some controllers
+[33m41059dd[m Merge pull request #1 from the3T0437/dev_thuong
+[33mda68b91[m remove unncessary files
+[33m19ef7d2[m remove unnecessary files
+[33m8fb78c5[m update
+[33m44032e4[m remove App Folder
+[33m7e489e3[m init database
+[33mbe159db[m first init
