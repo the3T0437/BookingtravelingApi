@@ -43,6 +43,10 @@ namespace BookingTravelApi.Controllers
                 .Include(t => t.Schedule)
                 .ThenInclude(s => s!.Bookings)
 
+                // new
+                .Include(t => t.Staff)
+                .ThenInclude(s => s!.User)
+                
                 .Include(t => t.Schedule!.Tour!.TourImages)
                 .AsNoTracking().ToListAsync();
 
@@ -132,7 +136,7 @@ namespace BookingTravelApi.Controllers
 
                 if (guide == null)
                 {
-                    return NotFound($"Place with Id {staffId} or {scheduleId} not found.");
+                    return NotFound($"Guide with Id {staffId} or {scheduleId} not found.");
                 }
 
                 _context.Guides.Remove(guide);
