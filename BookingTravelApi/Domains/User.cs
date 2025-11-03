@@ -1,7 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BookingTravelApi.Domains
 {
+    [Table("users")]
     public class User
     {
         [Key]

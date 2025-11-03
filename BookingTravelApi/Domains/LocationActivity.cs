@@ -1,7 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BookingTravelApi.Domains
 {
+    [Table("locationactivities")]
     public class LocationActivity
     {
         [Required]

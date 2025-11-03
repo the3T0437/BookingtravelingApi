@@ -5,11 +5,19 @@ namespace BookingTravelApi.DTO.Activity
 {
     public class CreateGuideDTO
     {
+
         [Required]
         public int StaffId { get; set; }
 
         [Required]
         public int ScheduleId { get; set; }
+
+        public CreateGuideDTO(int staffId, int scheduleId)
+        {
+            StaffId = staffId;
+            ScheduleId = scheduleId;
+        }
+
 
         public Guide Map()
         {

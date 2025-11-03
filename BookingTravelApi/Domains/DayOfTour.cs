@@ -1,7 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BookingTravelApi.Domains
 {
+    [Table("dayoftours")]
     public class DayOfTour
     {
         [Key]
@@ -20,7 +22,7 @@ namespace BookingTravelApi.Domains
         public string Title { get; set; } = null!;
 
         [Required]
-        [MaxLength(255)]
+        [MaxLength(10000)]
         public string Description { get; set; } = null!;
 
         public Tour? Tour { get; set; }

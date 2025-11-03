@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookingTravelApi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251026085218_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20251031090750_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -40,7 +40,7 @@ namespace BookingTravelApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Activities");
+                    b.ToTable("activities");
                 });
 
             modelBuilder.Entity("BookingTravelApi.Domains.ActivityAndLocation", b =>
@@ -55,7 +55,7 @@ namespace BookingTravelApi.Migrations
 
                     b.HasIndex("LocationActivityId");
 
-                    b.ToTable("ActivityAndLocations");
+                    b.ToTable("activityandlocations");
                 });
 
             modelBuilder.Entity("BookingTravelApi.Domains.Booking", b =>
@@ -107,7 +107,7 @@ namespace BookingTravelApi.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Bookings");
+                    b.ToTable("bookings");
                 });
 
             modelBuilder.Entity("BookingTravelApi.Domains.DayActivity", b =>
@@ -130,7 +130,7 @@ namespace BookingTravelApi.Migrations
 
                     b.HasIndex("LocationActivityId");
 
-                    b.ToTable("DayActivities");
+                    b.ToTable("dayactivities");
                 });
 
             modelBuilder.Entity("BookingTravelApi.Domains.DayOfTour", b =>
@@ -146,8 +146,8 @@ namespace BookingTravelApi.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("varchar(255)");
+                        .HasMaxLength(10000)
+                        .HasColumnType("varchar(10000)");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -161,7 +161,7 @@ namespace BookingTravelApi.Migrations
 
                     b.HasIndex("TourId");
 
-                    b.ToTable("DayOfTours");
+                    b.ToTable("dayoftours");
                 });
 
             modelBuilder.Entity("BookingTravelApi.Domains.Favorite", b =>
@@ -176,7 +176,7 @@ namespace BookingTravelApi.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Favorites");
+                    b.ToTable("favorites");
                 });
 
             modelBuilder.Entity("BookingTravelApi.Domains.Guide", b =>
@@ -191,7 +191,7 @@ namespace BookingTravelApi.Migrations
 
                     b.HasIndex("StaffId");
 
-                    b.ToTable("Guides");
+                    b.ToTable("guides");
                 });
 
             modelBuilder.Entity("BookingTravelApi.Domains.Helpful", b =>
@@ -206,7 +206,7 @@ namespace BookingTravelApi.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Helpfuls");
+                    b.ToTable("helpfuls");
                 });
 
             modelBuilder.Entity("BookingTravelApi.Domains.Location", b =>
@@ -224,7 +224,7 @@ namespace BookingTravelApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Locations");
+                    b.ToTable("locations");
                 });
 
             modelBuilder.Entity("BookingTravelApi.Domains.LocationActivity", b =>
@@ -247,7 +247,7 @@ namespace BookingTravelApi.Migrations
 
                     b.HasIndex("PlaceId");
 
-                    b.ToTable("LocationActivities");
+                    b.ToTable("locationactivities");
                 });
 
             modelBuilder.Entity("BookingTravelApi.Domains.Notification", b =>
@@ -275,7 +275,7 @@ namespace BookingTravelApi.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Notifications");
+                    b.ToTable("notifications");
                 });
 
             modelBuilder.Entity("BookingTravelApi.Domains.OtpCode", b =>
@@ -301,7 +301,7 @@ namespace BookingTravelApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("OtpCodes");
+                    b.ToTable("otpcodes");
                 });
 
             modelBuilder.Entity("BookingTravelApi.Domains.Place", b =>
@@ -324,7 +324,7 @@ namespace BookingTravelApi.Migrations
 
                     b.HasIndex("LocationId");
 
-                    b.ToTable("Places");
+                    b.ToTable("places");
                 });
 
             modelBuilder.Entity("BookingTravelApi.Domains.Review", b =>
@@ -358,7 +358,7 @@ namespace BookingTravelApi.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Reviews");
+                    b.ToTable("reviews");
                 });
 
             modelBuilder.Entity("BookingTravelApi.Domains.Role", b =>
@@ -376,7 +376,7 @@ namespace BookingTravelApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Roles");
+                    b.ToTable("roles");
                 });
 
             modelBuilder.Entity("BookingTravelApi.Domains.Schedule", b =>
@@ -420,7 +420,7 @@ namespace BookingTravelApi.Migrations
 
                     b.HasIndex("TourId");
 
-                    b.ToTable("Schedules");
+                    b.ToTable("schedules");
                 });
 
             modelBuilder.Entity("BookingTravelApi.Domains.Staff", b =>
@@ -470,7 +470,7 @@ namespace BookingTravelApi.Migrations
 
                     b.HasKey("UserId");
 
-                    b.ToTable("Staffs");
+                    b.ToTable("staffs");
                 });
 
             modelBuilder.Entity("BookingTravelApi.Domains.Status", b =>
@@ -488,7 +488,7 @@ namespace BookingTravelApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Status");
+                    b.ToTable("status");
                 });
 
             modelBuilder.Entity("BookingTravelApi.Domains.Tour", b =>
@@ -521,9 +521,15 @@ namespace BookingTravelApi.Migrations
                     b.Property<int>("TotalRevenue")
                         .HasColumnType("int");
 
+                    b.Property<int>("TotalReviews")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TotalStars")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
-                    b.ToTable("Tours");
+                    b.ToTable("tours");
                 });
 
             modelBuilder.Entity("BookingTravelApi.Domains.TourImage", b =>
@@ -546,7 +552,7 @@ namespace BookingTravelApi.Migrations
 
                     b.HasIndex("TourId");
 
-                    b.ToTable("TourImages");
+                    b.ToTable("tourimages");
                 });
 
             modelBuilder.Entity("BookingTravelApi.Domains.TourLocation", b =>
@@ -561,7 +567,7 @@ namespace BookingTravelApi.Migrations
 
                     b.HasIndex("LocationId");
 
-                    b.ToTable("TourLocations");
+                    b.ToTable("tourlocations");
                 });
 
             modelBuilder.Entity("BookingTravelApi.Domains.User", b =>
@@ -622,7 +628,7 @@ namespace BookingTravelApi.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("Users");
+                    b.ToTable("users");
                 });
 
             modelBuilder.Entity("BookingTravelApi.Domains.UserCompletedSchedule", b =>
@@ -637,7 +643,7 @@ namespace BookingTravelApi.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserCompletedSchedules");
+                    b.ToTable("usercompletedschedules");
                 });
 
             modelBuilder.Entity("BookingTravelApi.Domains.ActivityAndLocation", b =>

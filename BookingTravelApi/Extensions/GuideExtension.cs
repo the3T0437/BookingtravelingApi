@@ -14,7 +14,7 @@ namespace BookingTravelApi.Extensions
             var filteredBookings = guide.Schedule?.Bookings?.Where(b => completedUserIds != null && completedUserIds.Contains(b.UserId)).ToList();
 
             var relevantBookingDTOs = filteredBookings?.Select(b => b.Map()).ToList() ?? new List<BookingDTO>();
-            
+
             return new GuideDTO()
             {
                 //new
@@ -23,6 +23,6 @@ namespace BookingTravelApi.Extensions
                 Schedule = guide.Schedule!.Map(),
                 Booking = relevantBookingDTOs
             };
-        }
+        } 
     }
 }

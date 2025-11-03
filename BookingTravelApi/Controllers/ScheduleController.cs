@@ -22,41 +22,23 @@ namespace BookingTravelApi.Controllers
             _logger = logger;
         }
 
-        [HttpGet("assignment")]
+        // màn 29
+        [HttpGet]
         [ResponseCache(NoStore = true)]
-        public async Task<IActionResult> getScheduleAssignment()
+        public async Task<IActionResult> getSchedules()
         {
 
-            var timeNow = DateTime.Now;
-            var scheduleDTOs = await _context.Schedules
-            .OrderByDescending(s => s.OpenDate)
-            .Select(s => new ScheduleAssignmentDTO
-            {
-                idSchedule = s.Id,
-                titleTour = s.Tour!.Title,
-                tourImages = s.Tour.TourImages!.Select(it => it.Path).ToList(),
-                nameLocations = s.Tour.TourLocations!.Select(it => it.Location!.Name).ToList(),
-                placeNames = s.Tour.TourLocations!
-                .SelectMany(it => it.Location!.Places!)
-                .Select(p => p.Name)
-            .ToList()
-            })
-            .AsNoTracking()
-            .ToArrayAsync();
-
-            return Ok(new RestDTO<ScheduleAssignmentDTO[]?>()
-            {
-                Data = scheduleDTOs
-            });
-        }
-
-
-        [HttpGet("assignment/{idtour}")]
-        [ResponseCache(NoStore = true)]
-        public async Task<IActionResult> getScheduleAssignmentByIdTour(int idtour)
-        {
-            var query = _context.Schedules.Where(s => s.TourId == idtour)
+            var query = _context.Schedules
             .Include(s => s.Tour)
+            .ThenInclude(t => t.TourImages)
+
+            .Include(i => i.Tour)
+            .ThenInclude(tm => tm.DayOfTours!)
+            .ThenInclude(i => i.DayActivities!)
+            .ThenInclude(i => i.LocationActivity)
+            .ThenInclude(i => i!.Place)
+            .ThenInclude(i => i!.Location)
+
             .OrderByDescending(s => s.OpenDate).AsNoTracking();
 
             var scheduleDTOs = await query.Select(i => i.Map()).ToArrayAsync();
@@ -67,6 +49,56 @@ namespace BookingTravelApi.Controllers
             });
         }
 
+        // Màn 36
+        [HttpGet("assignment/{tourId}")]
+        [ResponseCache(NoStore = true)]
+        public async Task<IActionResult> getScheduleAssignment(int tourId)
+        {
+            var timeNow = DateTime.Now;
+
+            // lấy ra các schedule có open date trong tương lai
+            var query = _context.Schedules.Where(
+                s => s.OpenDate >= timeNow
+            ).Where(s => s.TourId == tourId).OrderByDescending(s => s.OpenDate).AsNoTracking();
+
+            // Lấy các ScheduleIds đã có người hướng dẫn
+            var guideScheduleIds = await _context.Guides
+                .Select(g => g.ScheduleId)
+                .ToHashSetAsync();
+
+            var scheduleDTOs = await query.Select(s => new ScheduleAssignmentDTO
+            {
+                Id = s.Id,
+                Code = s.Code,
+                StartDate = s.StartDate,
+                EndDate = s.EndDate,
+                isAssignment = guideScheduleIds.Contains(s.Id)
+            }).ToArrayAsync();
+
+            return Ok(new RestDTO<ScheduleAssignmentDTO[]?>()
+            {
+                Data = scheduleDTOs
+            });
+        }
+
+        // màn 37
+        [HttpGet("tour/{idtour}")]
+        [ResponseCache(NoStore = true)]
+        public async Task<IActionResult> getScheduleAssignmentByIdTour(int idtour)
+        {
+            var query = _context.Schedules.Where(s => s.TourId == idtour)
+            .Include(s => s.Tour)
+            .OrderBy(s => s.OpenDate).AsNoTracking();
+
+            var scheduleDTOs = await query.Select(i => i.Map()).ToArrayAsync();
+
+            return Ok(new RestDTO<ScheduleDTO[]?>()
+            {
+                Data = scheduleDTOs
+            });
+        }
+
+        // màn 37
         [HttpGet("{id}")]
         public async Task<IActionResult> GetScheduleById(int id)
         {
@@ -127,7 +159,7 @@ namespace BookingTravelApi.Controllers
 
             .OrderByDescending(s => s.OpenDate).AsNoTracking()
 
-            .Where(s => s.OpenDate <= now && s.StartDate > now && s.MaxSlot > 0);
+            .Where(s => s.OpenDate <= now && s.StartDate > now);
 
             var scheduleDTOs = await query.Select(i => i.Map()).ToArrayAsync();
 
