@@ -58,7 +58,7 @@ namespace BookingTravelApi.Controllers
                 });
 
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return Problem("Get booking fail");
             }
@@ -102,7 +102,7 @@ namespace BookingTravelApi.Controllers
                 });
 
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return Problem("GetBooking faild");
             }
@@ -181,14 +181,14 @@ namespace BookingTravelApi.Controllers
                 {
                     return Problem("Enter less than 4 times");
                 }
-                
+
                 var booking = await _context.Bookings.FirstOrDefaultAsync(s => s.Id == updateBooking.Id);
                 if (booking == null)
                 {
                     return NotFound($" ID {updateBooking.Id} not found.");
                 }
 
-                if(booking.CountChangeLeft >= 3)
+                if (booking.CountChangeLeft >= 3)
                 {
                     return Problem("Only changed three times");
                 }
@@ -226,11 +226,43 @@ namespace BookingTravelApi.Controllers
                     Data = true
                 });
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return Problem("Delete Booking fail");
             }
         }
 
+        [HttpPost("changeBooking")]
+        public async Task<IActionResult> changeBooking(ChangeBookingDTO changeBooking)
+        {
+            var booking = await _context.Bookings.Include(i => i.Schedule).Where(i => i.Id == changeBooking.BookingId).FirstOrDefaultAsync();
+
+            if (booking == null)
+            {
+                return NotFound(new ErrorDTO("Không tìm thấy hóa đơn tương ứng"));
+            }
+
+            if (booking.Schedule!.StartDate.AddDays(-3) > DateTime.Now)
+            {
+                return BadRequest(new ErrorDTO("Đã quá ngày để có thể đổi"));
+            }
+
+            if (booking.CountChangeLeft - 1 < 0)
+            {
+                return BadRequest(new ErrorDTO("Đã đổi quá số lần"));
+            }
+
+            UpdateBookingDTO updateBookingDTO = new UpdateBookingDTO()
+            {
+                Id = booking.Id,
+                CountChangeLeft = booking.CountChangeLeft - 1,
+                ScheduleId = changeBooking.ScheduleId,
+                StatusId = booking.StatusId
+            };
+
+            //TODO: update ví tiền
+
+            return await updateBooking(updateBookingDTO);
+        }
     }
 }

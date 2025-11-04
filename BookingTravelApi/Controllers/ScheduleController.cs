@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BookingTravelApi.Extensions;
 using BookingTravelApi.DTO.ScheduleAssignmentDTO;
+using Org.BouncyCastle.Asn1.Cms;
 
 namespace BookingTravelApi.Controllers
 {
@@ -86,9 +87,31 @@ namespace BookingTravelApi.Controllers
         [ResponseCache(NoStore = true)]
         public async Task<IActionResult> getScheduleAssignmentByIdTour(int idtour)
         {
-            var query = _context.Schedules.Where(s => s.TourId == idtour)
-            .Include(s => s.Tour)
-            .OrderBy(s => s.OpenDate).AsNoTracking();
+            var timeNow = DateTime.Now;
+
+            var query = _context.Schedules
+                .Where(s => s.TourId == idtour)
+                .Where(
+                    s => s.OpenDate <= timeNow && timeNow <= s.StartDate
+                )
+                // .Where(
+                //     s => timeNow <= s.StartDate
+                // )
+                .Include(s => s.Tour)
+                .ThenInclude(t => t!.TourImages)
+
+                .Include(i => i.Tour)
+                .ThenInclude(tm => tm!.DayOfTours!)
+                .ThenInclude(d => d.DayActivities!)
+                .ThenInclude(da => da.Activity)
+
+                .Include(i => i.Tour)
+                .ThenInclude(tm => tm!.DayOfTours!)
+                .ThenInclude(i => i.DayActivities!)
+                .ThenInclude(i => i.LocationActivity)
+                .ThenInclude(i => i!.Place)
+                .ThenInclude(i => i!.Location)
+                    .OrderBy(s => s.OpenDate).AsNoTracking();
 
             var scheduleDTOs = await query.Select(i => i.Map()).ToArrayAsync();
 
@@ -254,7 +277,26 @@ namespace BookingTravelApi.Controllers
         {
             try
             {
-                var user = await _context.Users.Include(i => i.UserCompletedSchedules)!.ThenInclude(i => i.Schedule).ThenInclude(i => i!.Tour).Where(i => i.Id == userId).FirstOrDefaultAsync();
+                var user = await _context.Users
+                    .Include(i => i.UserCompletedSchedules)!
+                    .ThenInclude(i => i.Schedule)
+                    .ThenInclude(i => i!.Tour)
+
+                    .Include(i => i.UserCompletedSchedules)!
+                    .ThenInclude(s => s.Schedule)
+                    .ThenInclude(t => t!.Tour)
+                    .ThenInclude(tm => tm!.DayOfTours!)
+                    .ThenInclude(i => i.DayActivities!)
+                    .ThenInclude(i => i.LocationActivity)
+                    .ThenInclude(i => i!.Place)
+                    .ThenInclude(i => i!.Location)
+
+                    .Include(i => i.UserCompletedSchedules)!
+                    .ThenInclude(s => s.Schedule)
+                    .ThenInclude(t => t!.Tour)
+                    .ThenInclude(t => t!.TourImages)
+                    .AsNoTracking()
+                    .Where(i => i.Id == userId).FirstOrDefaultAsync();
                 if (user == null)
                 {
                     return NotFound($"user with id {userId} not found.");
