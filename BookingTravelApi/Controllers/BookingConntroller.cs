@@ -30,20 +30,34 @@ namespace BookingTravelApi.Controllers
                 {
                     return Problem("id not found");
                 }
+                var now = DateTime.Now;
 
                 var query = await _context.Bookings
-                .Where(b => b.UserId == userId)
+                .Where(b => b.UserId == userId && b.CreatedAt <= b.Schedule!.StartDate && b.Schedule!.StartDate > now)
                 .Include(st => st.Status)
                 .Include(us => us.User)
 
                 .Include(s => s.Schedule)
                 .ThenInclude(t => t!.Tour)
-                .ThenInclude(d => d!.DayOfTours)
+                .ThenInclude(ti => ti!.DayOfTours!)
+                .ThenInclude(d => d.DayActivities!)
+                .ThenInclude(da => da.Activity!)
 
                 .Include(s => s.Schedule)
                 .ThenInclude(t => t!.Tour)
-                .ThenInclude(tl => tl!.TourLocations)
-                !.ThenInclude(l => l.Location)
+                .ThenInclude(d => d!.DayOfTours)
+                !.ThenInclude(d => d.DayActivities!)
+                .ThenInclude(da => da.LocationActivity!)
+                .ThenInclude(lo => lo.Place!)
+                .ThenInclude(p => p.Location)
+
+                .Include(s => s.Schedule)
+                .ThenInclude(t => t!.Tour)
+                .ThenInclude(i => i!.DayOfTours!)
+                !.ThenInclude(i => i.DayActivities!)
+                !.ThenInclude(i => i.LocationActivity)
+                !.ThenInclude(i => i!.ActivityAndLocations)
+                !.ThenInclude(i => i.Activity)
 
                 .Include(s => s.Schedule)
                 .ThenInclude(t => t!.Tour)
@@ -60,7 +74,7 @@ namespace BookingTravelApi.Controllers
             }
             catch(Exception ex)
             {
-                return Problem("Get booking fail");
+                return Problem($"Get booking fail {ex.Message}");
             }
         }
 
@@ -77,25 +91,37 @@ namespace BookingTravelApi.Controllers
 
                 var query = await _context.Bookings
                 .Where(b => b.Id == bookingId)
-                .Include(s => s.Status)
-                .Include(s => s.User)
+                .Include(st => st.Status)
+                .Include(us => us.User)
 
                 .Include(s => s.Schedule)
                 .ThenInclude(t => t!.Tour)
-                .ThenInclude(t => t!.DayOfTours)
+                .ThenInclude(ti => ti!.DayOfTours!)
+                .ThenInclude(d => d.DayActivities!)
+                .ThenInclude(da => da.Activity!)
 
                 .Include(s => s.Schedule)
                 .ThenInclude(t => t!.Tour)
-                .ThenInclude(t => t!.TourLocations)
-                !.ThenInclude(t => t!.Location)
+                .ThenInclude(d => d!.DayOfTours)
+                !.ThenInclude(d => d.DayActivities!)
+                .ThenInclude(da => da.LocationActivity!)
+                .ThenInclude(lo => lo.Place!)
+                .ThenInclude(p => p.Location)
 
                 .Include(s => s.Schedule)
                 .ThenInclude(t => t!.Tour)
-                .ThenInclude(t => t!.TourImages)
+                .ThenInclude(i => i!.DayOfTours!)
+                !.ThenInclude(i => i.DayActivities!)
+                !.ThenInclude(i => i.LocationActivity)
+                !.ThenInclude(i => i!.ActivityAndLocations)
+                !.ThenInclude(i => i.Activity)
+
+                .Include(s => s.Schedule)
+                .ThenInclude(t => t!.Tour)
+                .ThenInclude(tm => tm!.TourImages)
                 .AsNoTracking().ToListAsync();
 
                 var booking = query.Select(i => i.Map()).ToArray();
-
                 return Ok(new RestDTO<BookingDTO[]?>()
                 {
                     Data = booking
@@ -119,23 +145,38 @@ namespace BookingTravelApi.Controllers
                     return Problem("id not found");
                 }
 
+                var now = DateTime.Now;
+
                 var query = await _context.Bookings
-                .Where(b => b.ScheduleId == scheduleId)
-                .Include(s => s.Status)
-                .Include(s => s.User)
+                .Where(b => b.ScheduleId == scheduleId && b.CreatedAt <= b.Schedule!.StartDate && b.Schedule!.StartDate > now)
+                .Include(st => st.Status)
+                .Include(us => us.User)
 
                 .Include(s => s.Schedule)
                 .ThenInclude(t => t!.Tour)
-                .ThenInclude(t => t!.DayOfTours)
+                .ThenInclude(ti => ti!.DayOfTours!)
+                .ThenInclude(d => d.DayActivities!)
+                .ThenInclude(da => da.Activity!)
 
                 .Include(s => s.Schedule)
                 .ThenInclude(t => t!.Tour)
-                .ThenInclude(t => t!.TourLocations)
-                !.ThenInclude(t => t!.Location)
+                .ThenInclude(d => d!.DayOfTours)
+                !.ThenInclude(d => d.DayActivities!)
+                .ThenInclude(da => da.LocationActivity!)
+                .ThenInclude(lo => lo.Place!)
+                .ThenInclude(p => p.Location)
 
                 .Include(s => s.Schedule)
                 .ThenInclude(t => t!.Tour)
-                .ThenInclude(t => t!.TourImages)
+                .ThenInclude(i => i!.DayOfTours!)
+                !.ThenInclude(i => i.DayActivities!)
+                !.ThenInclude(i => i.LocationActivity)
+                !.ThenInclude(i => i!.ActivityAndLocations)
+                !.ThenInclude(i => i.Activity)
+
+                .Include(s => s.Schedule)
+                .ThenInclude(t => t!.Tour)
+                .ThenInclude(tm => tm!.TourImages)
                 .AsNoTracking().ToListAsync();
 
                 var booking = query.Select(i => i.Map()).ToArray();
@@ -172,28 +213,69 @@ namespace BookingTravelApi.Controllers
             }
         }
 
-        [HttpPut(Name = "UpdateBooking")]
-        public async Task<IActionResult> updateBooking(UpdateBookingDTO updateBooking)
+        [HttpPut("updateScheduleBooking")]
+        public async Task<IActionResult> updateScheduleBooking(UpdateScheduleBookingDTO updateScheduleBooking)
         {
             try
             {
-                if (updateBooking.CountChangeLeft > 3)
-                {
-                    return Problem("Enter less than 4 times");
-                }
-                
-                var booking = await _context.Bookings.FirstOrDefaultAsync(s => s.Id == updateBooking.Id);
+                var booking = await _context.Bookings.FirstOrDefaultAsync(s => s.Id == updateScheduleBooking.Id);
                 if (booking == null)
                 {
-                    return NotFound($" ID {updateBooking.Id} not found.");
+                    return NotFound($" ID {updateScheduleBooking.Id} not found.");
                 }
 
-                if(booking.CountChangeLeft >= 3)
+                if (booking.StatusId == 1)
+                {
+                    return Problem("Cannot change schedule while booking is processing.");
+                }
+
+                if (booking.CountChangeLeft <= 0)
                 {
                     return Problem("Only changed three times");
                 }
 
-                updateBooking.UpdateEntity(booking);
+                var newSchedule = await _context.Schedules.FirstOrDefaultAsync(s => s.Id == updateScheduleBooking.ScheduleId);
+
+                if ((newSchedule!.FinalPrice * booking.NumPeople) > booking.TotalPrice)
+                {
+                    // 1 trang thai xu ly 
+                    // 2 trang thai coc 
+                    // 3 trang thai thanh toan het 
+                    booking.StatusId = 2;
+                }
+                else if((newSchedule!.FinalPrice * booking.NumPeople) <= booking.TotalPrice)
+                {
+                    booking.StatusId = 3;
+                }
+
+                booking.CountChangeLeft--;
+
+                updateScheduleBooking.UpdateEntity(booking);
+                await _context.SaveChangesAsync();
+
+                return Ok(new RestDTO<Boolean>()
+                {
+                    Data = true
+                });
+            }
+            catch (Exception ex)
+            {
+                return Problem($"Update fail {ex.Message}");
+            }
+        }
+
+        [HttpPut("updateStatusBooking")]
+        public async Task<IActionResult> updateStatusBooking(UpdateStatusBookingDTO updateStatusBooking)
+        {
+            try
+            {
+                var booking = await _context.Bookings.FirstOrDefaultAsync(s => s.Id == updateStatusBooking.Id);
+                if (booking == null)
+                {
+                    return NotFound($" ID {updateStatusBooking.Id} not found.");
+                }
+
+                updateStatusBooking.UpdateEntity(booking);
                 await _context.SaveChangesAsync();
 
                 return Ok(new RestDTO<Boolean>()
@@ -206,7 +288,7 @@ namespace BookingTravelApi.Controllers
                 return Problem("Update fail");
             }
         }
-
+        
         [HttpDelete("{bookingid}")]
         public async Task<IActionResult> deleteBooking(int bookingid)
         {
