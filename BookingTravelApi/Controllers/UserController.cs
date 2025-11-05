@@ -2,6 +2,7 @@ using System.Linq.Dynamic.Core;
 using BookingTravelApi.Domains;
 using BookingTravelApi.DTO;
 using BookingTravelApi.DTO.ChangePassword;
+using BookingTravelApi.DTO.checkAccount;
 using BookingTravelApi.DTO.loginDTO;
 using BookingTravelApi.DTO.user;
 using BookingTravelApi.Extensions;
@@ -55,6 +56,23 @@ namespace BookingTravelApi.Controllers
                 Data = user.Map()
             });
 
+        }
+
+        [HttpPost("check-account")]
+        public async Task<IActionResult> CheckAccount(CheckAccount checkAccount)
+        {
+            List<bool> checks = [false, false];
+
+            var user = await _context.Users.FirstOrDefaultAsync(s => s.Email == checkAccount.email);
+            if (user == null) checks[0] = true;
+
+            var user_2 = await _context.Users.FirstOrDefaultAsync(s => s.Password == checkAccount.password);
+            if (user_2 == null) checks[1] = true;
+
+            return Ok(new RestDTO<List<bool>>()
+            {
+                Data = checks
+            });
         }
 
         [HttpPatch("update-password/{id}")]
