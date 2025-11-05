@@ -40,7 +40,9 @@ namespace BookingTravelApi.DTO.Tour
                 PercentDeposit = createTourDTO.PercentDeposit,
                 Description = createTourDTO.Description,
                 DayOfTours = dayOfTours,
-                TourImages = tourImages
+                TourImages = tourImages,
+                TotalReviews = 0,
+                TotalStars = 0
             };
         }
     }

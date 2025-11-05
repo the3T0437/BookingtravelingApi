@@ -81,10 +81,7 @@ namespace BookingTravelApi.Controllers
                 await _context.LocationActivities.AddAsync(newLocationActivity);
                 await _context.SaveChangesAsync();
 
-                return Ok(new RestDTO<int>()
-                {
-                    Data = newLocationActivity.Id
-                });
+                return await getLocationActivity(newLocationActivity.Id);
             }
             catch (Exception e)
             {
@@ -137,7 +134,14 @@ namespace BookingTravelApi.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> deleteLocationActivity(int id)
         {
-            var locationsActivity = await _context.LocationActivities.Include(i => i.Place).ThenInclude(i => i.Location).Where(i => i.Id == id).FirstOrDefaultAsync();
+            var locationsActivity = await _context.LocationActivities
+                .Include(i => i.ActivityAndLocations)
+                !.ThenInclude(i => i.Activity)
+                .Include(i => i.Place)
+                .ThenInclude(i => i.Location)
+                .Where(i => i.Id == id)
+                .FirstOrDefaultAsync();
+
             if (locationsActivity == null)
             {
                 return NotFound(new ErrorDTO("Not found"));
