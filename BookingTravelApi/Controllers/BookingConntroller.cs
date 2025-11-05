@@ -1,4 +1,3 @@
-
 using BookingTravelApi.Domains;
 using BookingTravelApi.DTO;
 using BookingTravelApi.DTO.booking;
@@ -202,9 +201,9 @@ namespace BookingTravelApi.Controllers
                 await _context.Bookings.AddAsync(booking);
                 await _context.SaveChangesAsync();
 
-                return Ok(new RestDTO<String>
+                return Ok(new RestDTO<int>
                 {
-                    Data = $"Code: {booking.Code}"
+                    Data = booking.Id
                 });
             }
             catch (Exception ex)
@@ -218,6 +217,10 @@ namespace BookingTravelApi.Controllers
         {
             try
             {
+                // 1 trang thai xu ly 
+                // 2 trang thai coc 
+                // 3 trang thai thanh toan het 
+                
                 var booking = await _context.Bookings.FirstOrDefaultAsync(s => s.Id == updateScheduleBooking.Id);
                 if (booking == null)
                 {
@@ -238,9 +241,6 @@ namespace BookingTravelApi.Controllers
 
                 if ((newSchedule!.FinalPrice * booking.NumPeople) > booking.TotalPrice)
                 {
-                    // 1 trang thai xu ly 
-                    // 2 trang thai coc 
-                    // 3 trang thai thanh toan het 
                     booking.StatusId = 2;
                 }
                 else if((newSchedule!.FinalPrice * booking.NumPeople) <= booking.TotalPrice)
