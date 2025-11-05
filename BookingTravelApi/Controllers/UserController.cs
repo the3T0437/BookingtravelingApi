@@ -56,6 +56,27 @@ namespace BookingTravelApi.Controllers
 
         }
 
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> UpdatePassword(int id, [FromBody] string newPassword)
+        {
+            var user = await _context.Users.FindAsync(id);
+
+            if (user == null)
+            {
+                return Problem("id not found");
+            }
+
+            user.Password = newPassword;
+
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+
+            return Ok(new RestDTO<bool>()
+            {
+                Data = true
+            });
+        }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetUserById(int id)
         {
