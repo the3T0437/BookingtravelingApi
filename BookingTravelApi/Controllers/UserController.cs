@@ -1,6 +1,7 @@
 using System.Linq.Dynamic.Core;
 using BookingTravelApi.Domains;
 using BookingTravelApi.DTO;
+using BookingTravelApi.DTO.ChangePassword;
 using BookingTravelApi.DTO.loginDTO;
 using BookingTravelApi.DTO.user;
 using BookingTravelApi.Extensions;
@@ -54,6 +55,36 @@ namespace BookingTravelApi.Controllers
                 Data = user.Map()
             });
 
+        }
+
+        [HttpPatch("update-password/{id}")]
+        public async Task<IActionResult> UpdatePassword(int id, [FromBody] ChangePassword changePassword)
+        {
+            var user = await _context.Users.FindAsync(id);
+
+            if (user == null)
+            {
+                return Problem("id not found");
+            }
+
+            if (user.Password != changePassword.oldPassword)
+            {
+                return Ok(new RestDTO<bool>()
+                {
+                    Data = false
+                });
+            }
+
+
+            user.Password = changePassword.newPassword;
+
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+
+            return Ok(new RestDTO<bool>()
+            {
+                Data = true
+            });
         }
 
         [HttpGet("{id}")]
