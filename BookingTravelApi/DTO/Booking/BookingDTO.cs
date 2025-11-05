@@ -7,6 +7,7 @@ namespace BookingTravelApi.DTO.booking
 {
     public class BookingDTO
     {
+        public int Id { get; set; }
         public int NumPeople { get; set; }
         public String Code { get; set; } = null!;
         public String Email { get; set; } = null!;
