@@ -32,7 +32,7 @@ namespace BookingTravelApi.Controllers
                 var now = DateTime.Now;
 
                 var query = await _context.Bookings
-                .Where(b => b.UserId == userId && b.CreatedAt <= b.Schedule!.StartDate && b.Schedule!.StartDate > now)
+                .Where(b => b.UserId == userId && b.Schedule!.StartDate > now)
                 .Include(st => st.Status)
                 .Include(us => us.User)
 
@@ -71,7 +71,7 @@ namespace BookingTravelApi.Controllers
                 });
 
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return Problem($"Get booking fail {ex.Message}");
             }
@@ -127,7 +127,7 @@ namespace BookingTravelApi.Controllers
                 });
 
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return Problem("GetBooking faild");
             }
@@ -147,7 +147,7 @@ namespace BookingTravelApi.Controllers
                 var now = DateTime.Now;
 
                 var query = await _context.Bookings
-                .Where(b => b.ScheduleId == scheduleId && b.CreatedAt <= b.Schedule!.StartDate && b.Schedule!.StartDate > now)
+                .Where(b => b.ScheduleId == scheduleId && b.Schedule!.StartDate > now)
                 .Include(st => st.Status)
                 .Include(us => us.User)
 
@@ -308,11 +308,41 @@ namespace BookingTravelApi.Controllers
                     Data = true
                 });
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return Problem("Delete Booking fail");
             }
         }
 
+        [HttpPost("changeBooking")]
+        public async Task<IActionResult> changeBooking(ChangeBookingDTO changeBooking)
+        {
+            var booking = await _context.Bookings.Include(i => i.Schedule).Where(i => i.Id == changeBooking.BookingId).FirstOrDefaultAsync();
+
+            if (booking == null)
+            {
+                return NotFound(new ErrorDTO("Không tìm thấy hóa đơn tương ứng"));
+            }
+
+            if (booking.Schedule!.StartDate.AddDays(-3) > DateTime.Now)
+            {
+                return BadRequest(new ErrorDTO("Đã quá ngày để có thể đổi"));
+            }
+
+            if (booking.CountChangeLeft - 1 < 0)
+            {
+                return BadRequest(new ErrorDTO("Đã đổi quá số lần"));
+            }
+
+            UpdateScheduleBookingDTO updateBookingDTO = new UpdateScheduleBookingDTO()
+            {
+                Id = booking.Id,
+                ScheduleId = changeBooking.ScheduleId,
+            };
+
+            //TODO: update ví tiền
+
+            return await updateScheduleBooking(updateBookingDTO);
+        }
     }
 }
