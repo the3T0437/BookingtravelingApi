@@ -12,7 +12,6 @@ namespace BookingTravelApi.DTO.user
         [MaxLength(255)]
         public String Password { get; set; } = null!;
 
-        [Required]
         public int Money { get; set; }
 
         [MaxLength(30)]
@@ -32,12 +31,10 @@ namespace BookingTravelApi.DTO.user
         [Required]
         [MaxLength(11)]
         public String Phone { get; set; } = null!;
-
-        [Required]
+        
         [MaxLength(255)]
         public String AvatarPath { get; set; } = null!;
-
-        [Required]
+    
         [MaxLength(255)]
         public String BankBranch { get; set; } = null!;
 
