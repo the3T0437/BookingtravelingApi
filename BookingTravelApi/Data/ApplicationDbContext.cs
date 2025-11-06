@@ -16,6 +16,7 @@ namespace BookingTravelApi.Domains
             CreatePrimaryKey(modelBuilder);
             CreateForeignKey(modelBuilder);
         }
+        public DbSet<Bank> Banks => Set<Bank>();
         public DbSet<OtpCode> OtpCodes => Set<OtpCode>();
         public DbSet<Status> Status => Set<Status>();
         public DbSet<Staff> Staffs => Set<Staff>();
