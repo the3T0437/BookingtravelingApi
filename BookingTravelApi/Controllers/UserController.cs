@@ -42,13 +42,13 @@ namespace BookingTravelApi.Controllers
         }
 
         [HttpPost("loginbyemail")]
-        public async Task<IActionResult> LoginByEmail([FromBody] String email)
+        public async Task<IActionResult> LoginByEmail([FromBody] Login login)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == login.email);
 
             if (user == null)
             {
-                return NotFound($"email {email} not found");
+                return NotFound($"email {login.email} not found");
             }
 
             return Ok(new RestDTO<UserDTO>
@@ -75,10 +75,40 @@ namespace BookingTravelApi.Controllers
             });
         }
 
-        [HttpPatch("update-password/{id}")]
+        [HttpPatch("update-password/email")]
         public async Task<IActionResult> UpdatePassword([FromBody] ChangePassword changePassword)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == changePassword.email);
+
+            if (user == null)
+            {
+                return Problem("id not found");
+            }
+
+            if (user.Password != changePassword.oldPassword)
+            {
+                return Ok(new RestDTO<bool>()
+                {
+                    Data = false
+                });
+            }
+
+
+            user.Password = changePassword.newPassword;
+
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+
+            return Ok(new RestDTO<bool>()
+            {
+                Data = true
+            });
+        }
+
+        [HttpPatch("update-password/{id}")]
+        public async Task<IActionResult> UpdatePassword(int id, [FromBody] ChangePassword changePassword)
+        {
+            var user = await _context.Users.FindAsync(id);
 
             if (user == null)
             {
