@@ -9,6 +9,7 @@ namespace BookingTravelApi.Extensions
         {
             return new BookingDTO()
             {
+                Id = booking.Id,
                 NumPeople = booking.NumPeople,
                 Code = booking.Code,
                 Email = booking.Email,

@@ -1,7 +1,10 @@
 using System.Linq.Dynamic.Core;
 using BookingTravelApi.Domains;
 using BookingTravelApi.DTO;
+using BookingTravelApi.DTO.ChangePassword;
+using BookingTravelApi.DTO.checkAccount;
 using BookingTravelApi.DTO.loginDTO;
+using BookingTravelApi.DTO.updatePassword;
 using BookingTravelApi.DTO.user;
 using BookingTravelApi.Extensions;
 using Microsoft.AspNetCore.Mvc;
@@ -40,7 +43,7 @@ namespace BookingTravelApi.Controllers
         }
 
         [HttpPost("loginbyemail")]
-        public async Task<IActionResult> LoginByEmail(Login login)
+        public async Task<IActionResult> LoginByEmail([FromBody] Login login)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == login.email);
 
@@ -54,6 +57,75 @@ namespace BookingTravelApi.Controllers
                 Data = user.Map()
             });
 
+        }
+
+        [HttpPost("check-account")]
+        public async Task<IActionResult> CheckAccount(CheckAccount checkAccount)
+        {
+            List<bool> checks = [false, false];
+
+            var user = await _context.Users.FirstOrDefaultAsync(s => s.Email == checkAccount.email);
+            if (user == null) checks[0] = true;
+
+            var user_2 = await _context.Users.FirstOrDefaultAsync(s => s.Password == checkAccount.password);
+            if (user_2 == null) checks[1] = true;
+
+            return Ok(new RestDTO<List<bool>>()
+            {
+                Data = checks
+            });
+        }
+
+        [HttpPatch("change-password/email")]
+        public async Task<IActionResult> UpdatePassword([FromBody] ChangePassword changePassword)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == changePassword.email);
+
+            if (user == null)
+            {
+                return Problem("id not found");
+            }
+
+
+            user.Password = changePassword.newPassword;
+
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+
+            return Ok(new RestDTO<bool>()
+            {
+                Data = true
+            });
+        }
+
+        [HttpPatch("update-password/{id}")]
+        public async Task<IActionResult> UpdatePassword(int id, [FromBody] UpdatePassword updatePassword)
+        {
+            var user = await _context.Users.FindAsync(id);
+
+            if (user == null)
+            {
+                return Problem("id not found");
+            }
+
+            if (user.Password != updatePassword.oldPassword)
+            {
+                return Ok(new RestDTO<bool>()
+                {
+                    Data = false
+                });
+            }
+
+
+            user.Password = updatePassword.newPassword;
+
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+
+            return Ok(new RestDTO<bool>()
+            {
+                Data = true
+            });
         }
 
         [HttpGet("{id}")]

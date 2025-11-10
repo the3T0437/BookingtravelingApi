@@ -41,7 +41,7 @@ namespace BookingTravelApi.DTO.booking
                 Email = Email,
                 Phone = Phone,
                 TotalPrice = TotalPrice,
-                CountChangeLeft = 0,
+                CountChangeLeft = 3,
                 CreatedAt = CreatedAt == default ? DateTime.Now : CreatedAt,
             };
         }

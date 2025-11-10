@@ -45,6 +45,7 @@ namespace BookingTravelApi.Controllers
             var currentSchedule = await _context.Schedules
                 .AsNoTracking()
                 .FirstOrDefaultAsync(s => s.Id == idschedule);
+
             if (currentSchedule == null)
             {
                 return NotFound($"Schedule id {idschedule} not found");
@@ -67,7 +68,6 @@ namespace BookingTravelApi.Controllers
 
             // lọc ra các staff là tourguide và không nằm trong khoảng thời gian bận
             var availableTourGuides = await _context.Staffs
-                .Include(s => s.User)
                 .Where(s => s.User!.RoleId == 2 && !busyStaffIds.Contains(s.UserId))
                 .AsNoTracking()
                 .Select(s => new TourGuideDTO
