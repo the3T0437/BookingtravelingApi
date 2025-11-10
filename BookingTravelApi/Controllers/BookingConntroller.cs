@@ -192,23 +192,6 @@ namespace BookingTravelApi.Controllers
             }
         }
 
-        public async Task<String> createCode(Schedule schedule)
-        {
-            var scheduleCode = schedule.Code;
-            string newCode;
-            var random = new Random();
-            bool exists;
-
-            do
-            {
-                var randomNumber = random.Next(1000, 999999);
-                newCode = $"{scheduleCode}-{randomNumber}";
-                exists = await _context.Bookings.AnyAsync(b => b.Code == newCode);
-            } while (exists);
-
-            return newCode;
-        }
-
         [HttpPost(Name = "CreateBooking")]
         public async Task<IActionResult> createBooking(CreateBookingDTO newBookingDTO)
         {
@@ -217,9 +200,23 @@ namespace BookingTravelApi.Controllers
                 var schedule = await _context.Schedules.FindAsync(newBookingDTO.ScheduleId);
                 if (schedule == null) return Problem("scheduleId not Found");
 
+                var scheduleCode = schedule.Code;
+                string newCode;
+                var random = new Random();
+                bool exists;
+
+                do
+                {
+                    var randomNumber = random.Next(1000, 999999);
+                    newCode = $"{scheduleCode}-{randomNumber}";
+                    exists = await _context.Bookings.AnyAsync(b => b.Code == newCode);
+                } while (exists);
+
+
+
                 var booking = newBookingDTO.Map();
-                booking.Code = await createCode(schedule);
-                
+                booking.Code = newCode;
+
                 await _context.Bookings.AddAsync(booking);
                 await _context.SaveChangesAsync();
 
