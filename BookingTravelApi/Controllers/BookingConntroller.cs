@@ -192,12 +192,34 @@ namespace BookingTravelApi.Controllers
             }
         }
 
+        public async Task<String> createCode(Schedule schedule)
+        {
+            var scheduleCode = schedule.Code;
+            string newCode;
+            var random = new Random();
+            bool exists;
+
+            do
+            {
+                var randomNumber = random.Next(1000, 999999);
+                newCode = $"{scheduleCode}-{randomNumber}";
+                exists = await _context.Bookings.AnyAsync(b => b.Code == newCode);
+            } while (exists);
+
+            return newCode;
+        }
+
         [HttpPost(Name = "CreateBooking")]
         public async Task<IActionResult> createBooking(CreateBookingDTO newBookingDTO)
         {
             try
             {
+                var schedule = await _context.Schedules.FindAsync(newBookingDTO.ScheduleId);
+                if (schedule == null) return Problem("scheduleId not Found");
+
                 var booking = newBookingDTO.Map();
+                booking.Code = await createCode(schedule);
+                
                 await _context.Bookings.AddAsync(booking);
                 await _context.SaveChangesAsync();
 
@@ -220,7 +242,7 @@ namespace BookingTravelApi.Controllers
                 // 1 trang thai xu ly 
                 // 2 trang thai coc 
                 // 3 trang thai thanh toan het 
-                
+
                 var booking = await _context.Bookings.FirstOrDefaultAsync(s => s.Id == updateScheduleBooking.Id);
                 if (booking == null)
                 {
@@ -243,7 +265,7 @@ namespace BookingTravelApi.Controllers
                 {
                     booking.StatusId = 2;
                 }
-                else if((newSchedule!.FinalPrice * booking.NumPeople) <= booking.TotalPrice)
+                else if ((newSchedule!.FinalPrice * booking.NumPeople) <= booking.TotalPrice)
                 {
                     booking.StatusId = 3;
                 }
@@ -288,7 +310,7 @@ namespace BookingTravelApi.Controllers
                 return Problem("Update fail");
             }
         }
-        
+
         [HttpDelete("{bookingid}")]
         public async Task<IActionResult> deleteBooking(int bookingid)
         {

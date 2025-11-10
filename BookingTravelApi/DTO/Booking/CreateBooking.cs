@@ -26,6 +26,7 @@ namespace BookingTravelApi.DTO.booking
 
         public Booking Map()
         {
+            var random = new Random(); 
             return new Booking()
             {
                 ScheduleId = ScheduleId,
