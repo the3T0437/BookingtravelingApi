@@ -4,6 +4,7 @@ using BookingTravelApi.DTO;
 using BookingTravelApi.DTO.ChangePassword;
 using BookingTravelApi.DTO.checkAccount;
 using BookingTravelApi.DTO.loginDTO;
+using BookingTravelApi.DTO.updatePassword;
 using BookingTravelApi.DTO.user;
 using BookingTravelApi.Extensions;
 using Microsoft.AspNetCore.Mvc;
@@ -42,7 +43,7 @@ namespace BookingTravelApi.Controllers
         }
 
         [HttpPost("loginbyemail")]
-        public async Task<IActionResult> LoginByEmail(Login login)
+        public async Task<IActionResult> LoginByEmail([FromBody] Login login)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == login.email);
 
@@ -75,8 +76,30 @@ namespace BookingTravelApi.Controllers
             });
         }
 
+        [HttpPatch("change-password/email")]
+        public async Task<IActionResult> UpdatePassword([FromBody] ChangePassword changePassword)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == changePassword.email);
+
+            if (user == null)
+            {
+                return Problem("id not found");
+            }
+
+
+            user.Password = changePassword.newPassword;
+
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+
+            return Ok(new RestDTO<bool>()
+            {
+                Data = true
+            });
+        }
+
         [HttpPatch("update-password/{id}")]
-        public async Task<IActionResult> UpdatePassword(int id, [FromBody] ChangePassword changePassword)
+        public async Task<IActionResult> UpdatePassword(int id, [FromBody] UpdatePassword updatePassword)
         {
             var user = await _context.Users.FindAsync(id);
 
@@ -85,7 +108,7 @@ namespace BookingTravelApi.Controllers
                 return Problem("id not found");
             }
 
-            if (user.Password != changePassword.oldPassword)
+            if (user.Password != updatePassword.oldPassword)
             {
                 return Ok(new RestDTO<bool>()
                 {
@@ -94,7 +117,7 @@ namespace BookingTravelApi.Controllers
             }
 
 
-            user.Password = changePassword.newPassword;
+            user.Password = updatePassword.newPassword;
 
             _context.Users.Update(user);
             await _context.SaveChangesAsync();
