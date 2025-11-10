@@ -94,9 +94,9 @@ namespace BookingTravelApi.Controllers
                 .ThenInclude(t => t!.TourImages)
                 .AsNoTracking().ToListAsync();
 
-                var booking = query.Select(i => i.Map()).ToArray();
+                var booking = query.Select(i => i.Map()).FirstOrDefault();
 
-                return Ok(new RestDTO<BookingDTO[]?>()
+                return Ok(new RestDTO<BookingDTO?>()
                 {
                     Data = booking
                 });
@@ -173,7 +173,7 @@ namespace BookingTravelApi.Controllers
         }
 
         [HttpPut(Name = "UpdateBooking")]
-        public async Task<IActionResult> updateBooking(UpdateBookingDTO updateBooking)
+        public async Task<IActionResult> UpdateBooking(UpdateBookingDTO updateBooking)
         {
             try
             {
@@ -207,23 +207,49 @@ namespace BookingTravelApi.Controllers
             }
         }
 
-        [HttpDelete("{bookingid}")]
-        public async Task<IActionResult> deleteBooking(int bookingid)
+        [HttpDelete("{bookingId}")]
+        public async Task<IActionResult> DeleteBooking(int bookingId)
         {
             try
             {
-                var booking = await _context.Bookings.FindAsync(bookingid);
+                var booking = await _context.Bookings
+                .Include(st => st.Status)
+                .Include(us => us.User)
+
+                .Include(s => s.Schedule)
+                .ThenInclude(t => t!.Tour)
+                .ThenInclude(d => d!.DayOfTours)
+
+                .Include(s => s.Schedule)
+                .ThenInclude(t => t!.Tour)
+                .ThenInclude(tl => tl!.TourLocations)
+                !.ThenInclude(l => l.Location)
+
+                .Include(s => s.Schedule)
+                .ThenInclude(t => t!.Tour)
+                .ThenInclude(tm => tm!.TourImages)
+                .Where(b => b.Id == bookingId)
+                .FirstOrDefaultAsync();
+
                 if (booking == null)
                 {
-                    return Problem($"Id {bookingid} not found.");
+                    return Problem($"Id {bookingId} not found.");
                 }
+
+                var deposit = booking.Schedule.FinalPrice * booking.Schedule.Desposit / 100 * booking.NumPeople;
+                var moneyLeft = booking.TotalPrice - deposit;
+                moneyLeft = moneyLeft > 0 ? moneyLeft : 0;
+
+                var user = await _context.Users.FindAsync(booking.UserId);
+                user!.Money += moneyLeft;
+                _context.Users.Update(user);
 
                 _context.Bookings.Remove(booking);
                 await _context.SaveChangesAsync();
 
-                return Ok(new RestDTO<Boolean>()
+                return Ok(new RestDTO<BookingDTO>()
                 {
-                    Data = true
+                    Data = booking.Map()
                 });
             }
             catch (Exception ex)
@@ -233,7 +259,7 @@ namespace BookingTravelApi.Controllers
         }
 
         [HttpPost("changeBooking")]
-        public async Task<IActionResult> changeBooking(ChangeBookingDTO changeBooking)
+        public async Task<IActionResult> ChangeBooking(ChangeBookingDTO changeBooking)
         {
             var booking = await _context.Bookings.Include(i => i.Schedule).Where(i => i.Id == changeBooking.BookingId).FirstOrDefaultAsync();
 
@@ -242,7 +268,7 @@ namespace BookingTravelApi.Controllers
                 return NotFound(new ErrorDTO("Không tìm thấy hóa đơn tương ứng"));
             }
 
-            if (booking.Schedule!.StartDate.AddDays(-3) > DateTime.Now)
+            if (booking.Schedule!.StartDate.AddDays(-3) < DateTime.Now)
             {
                 return BadRequest(new ErrorDTO("Đã quá ngày để có thể đổi"));
             }
@@ -261,8 +287,9 @@ namespace BookingTravelApi.Controllers
             };
 
             //TODO: update ví tiền
+            await UpdateBooking(updateBookingDTO);
 
-            return await updateBooking(updateBookingDTO);
+            return await getBookingId(changeBooking.BookingId);
         }
     }
 }

@@ -3,16 +3,24 @@
   "WorkspaceRootPath": "D:\\apiChuyenDe\\BookingTravelApi\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{61C285D5-26FC-4EE2-B34E-EA8DD16CF97C}|BookingTravelApi.csproj|d:\\apichuyende\\bookingtravelapi\\extensions\\tourextension.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{61C285D5-26FC-4EE2-B34E-EA8DD16CF97C}|BookingTravelApi.csproj|solutionrelative:extensions\\tourextension.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{61C285D5-26FC-4EE2-B34E-EA8DD16CF97C}|BookingTravelApi.csproj|d:\\apichuyende\\bookingtravelapi\\controllers\\bookingconntroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{61C285D5-26FC-4EE2-B34E-EA8DD16CF97C}|BookingTravelApi.csproj|solutionrelative:controllers\\bookingconntroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{61C285D5-26FC-4EE2-B34E-EA8DD16CF97C}|BookingTravelApi.csproj|d:\\apichuyende\\bookingtravelapi\\extensions\\bookingextension.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{61C285D5-26FC-4EE2-B34E-EA8DD16CF97C}|BookingTravelApi.csproj|solutionrelative:extensions\\bookingextension.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{61C285D5-26FC-4EE2-B34E-EA8DD16CF97C}|BookingTravelApi.csproj|d:\\apichuyende\\bookingtravelapi\\controllers\\bookingconntroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{61C285D5-26FC-4EE2-B34E-EA8DD16CF97C}|BookingTravelApi.csproj|solutionrelative:controllers\\bookingconntroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{61C285D5-26FC-4EE2-B34E-EA8DD16CF97C}|BookingTravelApi.csproj|d:\\apichuyende\\bookingtravelapi\\controllers\\activitycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{61C285D5-26FC-4EE2-B34E-EA8DD16CF97C}|BookingTravelApi.csproj|solutionrelative:controllers\\activitycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{61C285D5-26FC-4EE2-B34E-EA8DD16CF97C}|BookingTravelApi.csproj|d:\\apichuyende\\bookingtravelapi\\extensions\\tourextension.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{61C285D5-26FC-4EE2-B34E-EA8DD16CF97C}|BookingTravelApi.csproj|solutionrelative:extensions\\tourextension.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{61C285D5-26FC-4EE2-B34E-EA8DD16CF97C}|BookingTravelApi.csproj|d:\\apichuyende\\bookingtravelapi\\.env||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{61C285D5-26FC-4EE2-B34E-EA8DD16CF97C}|BookingTravelApi.csproj|solutionrelative:.env||{8B382828-6202-11D1-8870-0000F87579D2}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{61C285D5-26FC-4EE2-B34E-EA8DD16CF97C}|BookingTravelApi.csproj|d:\\apichuyende\\bookingtravelapi\\controllers\\schedulecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -21,10 +29,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{61C285D5-26FC-4EE2-B34E-EA8DD16CF97C}|BookingTravelApi.csproj|d:\\apichuyende\\bookingtravelapi\\data\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{61C285D5-26FC-4EE2-B34E-EA8DD16CF97C}|BookingTravelApi.csproj|solutionrelative:data\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{61C285D5-26FC-4EE2-B34E-EA8DD16CF97C}|BookingTravelApi.csproj|d:\\apichuyende\\bookingtravelapi\\.env||{8B382828-6202-11D1-8870-0000F87579D2}",
-      "RelativeMoniker": "D:0:0:{61C285D5-26FC-4EE2-B34E-EA8DD16CF97C}|BookingTravelApi.csproj|solutionrelative:.env||{8B382828-6202-11D1-8870-0000F87579D2}"
     }
   ],
   "DocumentGroupContainers": [
@@ -34,7 +38,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 4,
           "Children": [
             {
               "$type": "Bookmark",
@@ -42,16 +46,27 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 2,
+              "Title": "ActivityController.cs",
+              "DocumentMoniker": "D:\\apiChuyenDe\\BookingTravelApi\\Controllers\\ActivityController.cs",
+              "RelativeDocumentMoniker": "Controllers\\ActivityController.cs",
+              "ToolTip": "D:\\apiChuyenDe\\BookingTravelApi\\Controllers\\ActivityController.cs",
+              "RelativeToolTip": "Controllers\\ActivityController.cs",
+              "ViewState": "AgIAADkAAAAAAAAAAAAowEgAAAA8AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-04T10:06:15.652Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
               "Title": "TourExtension.cs",
               "DocumentMoniker": "D:\\apiChuyenDe\\BookingTravelApi\\Extensions\\TourExtension.cs",
               "RelativeDocumentMoniker": "Extensions\\TourExtension.cs",
-              "ToolTip": "D:\\apiChuyenDe\\BookingTravelApi\\Extensions\\TourExtension.cs*",
-              "RelativeToolTip": "Extensions\\TourExtension.cs*",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAyAAAAAAAAAA==",
+              "ToolTip": "D:\\apiChuyenDe\\BookingTravelApi\\Extensions\\TourExtension.cs",
+              "RelativeToolTip": "Extensions\\TourExtension.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAIAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-04T03:42:00.629Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-04T03:42:00.629Z"
             },
             {
               "$type": "Document",
@@ -63,37 +78,36 @@
               "RelativeToolTip": "Extensions\\BookingExtension.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAAAtAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-04T03:38:38.879Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-04T03:38:38.879Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 0,
               "Title": "BookingConntroller.cs",
               "DocumentMoniker": "D:\\apiChuyenDe\\BookingTravelApi\\Controllers\\BookingConntroller.cs",
               "RelativeDocumentMoniker": "Controllers\\BookingConntroller.cs",
               "ToolTip": "D:\\apiChuyenDe\\BookingTravelApi\\Controllers\\BookingConntroller.cs",
               "RelativeToolTip": "Controllers\\BookingConntroller.cs",
-              "ViewState": "AgIAAEUAAAAAAAAAAAAowGUAAAASAAAAAAAAAA==",
+              "ViewState": "AgIAANMAAAAAAAAAAAAowNYAAAA1AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-11-04T03:32:37.473Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 4,
               "Title": ".env",
               "DocumentMoniker": "D:\\apiChuyenDe\\BookingTravelApi\\.env",
               "RelativeDocumentMoniker": ".env",
               "ToolTip": "D:\\apiChuyenDe\\BookingTravelApi\\.env",
               "RelativeToolTip": ".env",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAjAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAZAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
               "WhenOpened": "2025-10-24T08:01:29.571Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 5,
               "Title": "ScheduleController.cs",
               "DocumentMoniker": "D:\\apiChuyenDe\\BookingTravelApi\\Controllers\\ScheduleController.cs",
               "RelativeDocumentMoniker": "Controllers\\ScheduleController.cs",
@@ -101,12 +115,11 @@
               "RelativeToolTip": "Controllers\\ScheduleController.cs",
               "ViewState": "AgIAABkAAAAAAAAAAAAgwCgAAAAMAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-24T08:00:45.022Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-10-24T08:00:45.022Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 6,
               "Title": "ApplicationDbContext.cs",
               "DocumentMoniker": "D:\\apiChuyenDe\\BookingTravelApi\\Data\\ApplicationDbContext.cs",
               "RelativeDocumentMoniker": "Data\\ApplicationDbContext.cs",
@@ -114,8 +127,7 @@
               "RelativeToolTip": "Data\\ApplicationDbContext.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAA0AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-24T07:59:48.898Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-10-24T07:59:48.898Z"
             }
           ]
         }

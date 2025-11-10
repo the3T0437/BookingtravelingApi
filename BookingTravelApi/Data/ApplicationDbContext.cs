@@ -39,6 +39,7 @@ namespace BookingTravelApi.Domains
         public DbSet<LocationActivity> LocationActivities => Set<LocationActivity>();
         public DbSet<Place> Places => Set<Place>();
         public DbSet<Location> Locations => Set<Location>();
+        public DbSet<ExternalImage> ExternalImages => Set<ExternalImage>();
 
         static private void CreatePrimaryKey(ModelBuilder modelBuilder)
         {
