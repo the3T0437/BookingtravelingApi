@@ -202,7 +202,26 @@ namespace BookingTravelApi.Controllers
         {
             try
             {
+                var schedule = await _context.Schedules.FindAsync(newBookingDTO.ScheduleId);
+                if (schedule == null) return Problem("scheduleId not Found");
+
+                var scheduleCode = schedule.Code;
+                string newCode;
+                var random = new Random();
+                bool exists;
+
+                do
+                {
+                    var randomNumber = random.Next(1000, 999999);
+                    newCode = $"{scheduleCode}-{randomNumber}";
+                    exists = await _context.Bookings.AnyAsync(b => b.Code == newCode);
+                } while (exists);
+
+
+
                 var booking = newBookingDTO.Map();
+                booking.Code = newCode;
+
                 await _context.Bookings.AddAsync(booking);
                 await _context.SaveChangesAsync();
 
@@ -225,7 +244,7 @@ namespace BookingTravelApi.Controllers
                 // 1 trang thai xu ly 
                 // 2 trang thai coc 
                 // 3 trang thai thanh toan het 
-                
+
                 var booking = await _context.Bookings.FirstOrDefaultAsync(s => s.Id == updateScheduleBooking.Id);
                 if (booking == null)
                 {
@@ -234,12 +253,12 @@ namespace BookingTravelApi.Controllers
 
                 if (booking.StatusId == 1)
                 {
-                    return Problem("Cannot change schedule while booking is processing.");
+                    return BadRequest("Cannot change schedule while booking is processing.");
                 }
 
                 if (booking.CountChangeLeft <= 0)
                 {
-                    return Problem("Only changed three times");
+                    return BadRequest("Only changed three times");
                 }
 
                 var newSchedule = await _context.Schedules.FirstOrDefaultAsync(s => s.Id == updateScheduleBooking.ScheduleId);
@@ -248,7 +267,7 @@ namespace BookingTravelApi.Controllers
                 {
                     booking.StatusId = 2;
                 }
-                else if((newSchedule!.FinalPrice * booking.NumPeople) <= booking.TotalPrice)
+                else if ((newSchedule!.FinalPrice * booking.NumPeople) <= booking.TotalPrice)
                 {
                     booking.StatusId = 3;
                 }
@@ -293,24 +312,50 @@ namespace BookingTravelApi.Controllers
                 return Problem("Update fail");
             }
         }
-        
-        [HttpDelete("{bookingid}")]
-        public async Task<IActionResult> deleteBooking(int bookingid)
+
+        [HttpDelete("{bookingId}")]
+        public async Task<IActionResult> DeleteBooking(int bookingId)
         {
             try
             {
-                var booking = await _context.Bookings.FindAsync(bookingid);
+                var booking = await _context.Bookings
+                .Include(st => st.Status)
+                .Include(us => us.User)
+
+                .Include(s => s.Schedule)
+                .ThenInclude(t => t!.Tour)
+                .ThenInclude(d => d!.DayOfTours)
+
+                .Include(s => s.Schedule)
+                .ThenInclude(t => t!.Tour)
+                .ThenInclude(tl => tl!.TourLocations)
+                !.ThenInclude(l => l.Location)
+
+                .Include(s => s.Schedule)
+                .ThenInclude(t => t!.Tour)
+                .ThenInclude(tm => tm!.TourImages)
+                .Where(b => b.Id == bookingId)
+                .FirstOrDefaultAsync();
+
                 if (booking == null)
                 {
-                    return Problem($"Id {bookingid} not found.");
+                    return Problem($"Id {bookingId} not found.");
                 }
+
+                var deposit = booking.Schedule.FinalPrice * booking.Schedule.Desposit / 100 * booking.NumPeople;
+                var moneyLeft = booking.TotalPrice - deposit;
+                moneyLeft = moneyLeft > 0 ? moneyLeft : 0;
+
+                var user = await _context.Users.FindAsync(booking.UserId);
+                user!.Money += moneyLeft;
+                _context.Users.Update(user);
 
                 _context.Bookings.Remove(booking);
                 await _context.SaveChangesAsync();
 
-                return Ok(new RestDTO<Boolean>()
+                return Ok(new RestDTO<BookingDTO>()
                 {
-                    Data = true
+                    Data = booking.Map()
                 });
             }
             catch (Exception ex)
@@ -320,7 +365,7 @@ namespace BookingTravelApi.Controllers
         }
 
         [HttpPost("changeBooking")]
-        public async Task<IActionResult> changeBooking(ChangeBookingDTO changeBooking)
+        public async Task<IActionResult> ChangeBooking(ChangeBookingDTO changeBooking)
         {
             var booking = await _context.Bookings.Include(i => i.Schedule).Where(i => i.Id == changeBooking.BookingId).FirstOrDefaultAsync();
 
@@ -329,7 +374,7 @@ namespace BookingTravelApi.Controllers
                 return NotFound(new ErrorDTO("Không tìm thấy hóa đơn tương ứng"));
             }
 
-            if (booking.Schedule!.StartDate.AddDays(-3) > DateTime.Now)
+            if (booking.Schedule!.StartDate.AddDays(-3) < DateTime.Now)
             {
                 return BadRequest(new ErrorDTO("Đã quá ngày để có thể đổi"));
             }
@@ -344,8 +389,6 @@ namespace BookingTravelApi.Controllers
                 Id = booking.Id,
                 ScheduleId = changeBooking.ScheduleId,
             };
-
-            //TODO: update ví tiền
 
             return await updateScheduleBooking(updateBookingDTO);
         }

@@ -9,7 +9,7 @@ namespace BookingTravelApi.Extensions
         public static TourDTO Map(this Tour tour)
         {
             var dayActivities = tour.DayOfTours?.Where(i => i.DayActivities != null).SelectMany(i => i.DayActivities).ToList() ?? [];
-            var locationActivities = dayActivities?.Select(i => i.LocationActivity).ToList();
+            var locationActivities = dayActivities?.Select(i => i.LocationActivity).ToList() ?? [];
             var places = locationActivities.Select(i => i.Place).ToList();
             var locations = places.Select(i => i.Location).ToHashSet();
 
