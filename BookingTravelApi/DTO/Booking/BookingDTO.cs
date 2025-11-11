@@ -15,6 +15,7 @@ namespace BookingTravelApi.DTO.booking
         public int TotalPrice { get; set; }
         public int CountChangeLeft { get; set; }
         public DateTime CreatedAt { get; set; }
+        public bool payType { get; set; }
 
         public StatusDTO? Status { get; set; }
         public ScheduleDTO Schedule { get; set; } = null!;
