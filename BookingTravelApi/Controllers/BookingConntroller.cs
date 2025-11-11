@@ -230,12 +230,12 @@ namespace BookingTravelApi.Controllers
 
                 if (booking.StatusId == 1)
                 {
-                    return Problem("Cannot change schedule while booking is processing.");
+                    return BadRequest("Cannot change schedule while booking is processing.");
                 }
 
                 if (booking.CountChangeLeft <= 0)
                 {
-                    return Problem("Only changed three times");
+                    return BadRequest("Only changed three times");
                 }
 
                 var newSchedule = await _context.Schedules.FirstOrDefaultAsync(s => s.Id == updateScheduleBooking.ScheduleId);
@@ -366,9 +366,6 @@ namespace BookingTravelApi.Controllers
                 Id = booking.Id,
                 ScheduleId = changeBooking.ScheduleId,
             };
-
-            //TODO: update ví tiền
-            await UpdateBooking(updateBookingDTO);
 
             return await updateScheduleBooking(updateBookingDTO);
         }
