@@ -14,5 +14,10 @@ namespace BookingTravelApi.Infrastructure
         {
             return "/images";
         }
+
+        public static String DeleteImagePath()
+        {
+            return "/ExternalImage";
+        }
     }
 }
