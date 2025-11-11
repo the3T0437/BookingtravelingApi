@@ -15,9 +15,6 @@ namespace BookingTravelApi.DTO.booking
         public int NumPeople { get; set; }
 
         [Required]
-        public String Code { get; set; } = null!;
-
-        [Required]
         public String Email { get; set; } = null!;
 
         [Required]
@@ -26,23 +23,22 @@ namespace BookingTravelApi.DTO.booking
         [Required]
         public int TotalPrice { get; set; }
 
-        [Required]
-        public DateTime CreatedAt { get; set; }
 
         public Booking Map()
         {
+            var random = new Random(); 
             return new Booking()
             {
                 ScheduleId = ScheduleId,
                 UserId = UserId,
                 StatusId = 1,
                 NumPeople = NumPeople,
-                Code = Code,
+                Code = "String",
                 Email = Email,
                 Phone = Phone,
                 TotalPrice = TotalPrice,
                 CountChangeLeft = 3,
-                CreatedAt = CreatedAt == default ? DateTime.Now : CreatedAt,
+                CreatedAt = DateTime.Now
             };
         }
     }
