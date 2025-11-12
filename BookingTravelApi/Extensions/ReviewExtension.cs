@@ -10,10 +10,11 @@ namespace BookingTravelApi.Extensions
         {
             return new ReviewDTO
             {
+                Id = review.Id,
                 Rating = review.Rating,
                 Content = review.Content,
                 CreatedAt = review.CreatedAt,
-                
+                CountHelpful = review.Helpfuls!.Count(),
                 User = review.User!.Map(),
                 Guides = review.Schedule!.Guides!.Select(i => i.Map()).ToList()
             };
