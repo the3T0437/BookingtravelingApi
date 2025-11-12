@@ -21,20 +21,17 @@ namespace BookingTravelApi.Controllers
             _logger = logger;
         }
 
-        [HttpGet("{tourId}")]
+        [HttpPost("getReviews")]
         [ResponseCache(NoStore = true)]
-        public async Task<IActionResult> getReviewUser(int? tourId = null)
+        public async Task<IActionResult> getReviewUser(GetReviewDTO getReviewDTO)
         {
             try
             {
-                if (tourId == null)
-                {
-                    return Problem("id not found");
-                }
-
                 var query = await _context.Reviews
-                .Where(u => u.Schedule != null && u.Schedule!.TourId == tourId)
+                .Where(u => u.Schedule != null && u.Schedule!.TourId == getReviewDTO.TourId)
                 .Include(t => t.User)
+
+                .Include(i => i.Helpfuls)
 
                 .Include(s => s.Schedule)
                 .ThenInclude(g => g!.Tour)
@@ -45,9 +42,29 @@ namespace BookingTravelApi.Controllers
                 .ThenInclude(us => us!.User)
                 .AsNoTracking().ToListAsync();
 
-                var reviews = query.Select(i => i.Map()).ToArray();
+                var reviews = query.Select(i => i.Map()).ToList();
 
-                return Ok(new RestDTO<ReviewDTO[]?>()
+
+                if (getReviewDTO.UserId != null)
+                {
+                    var helpfulList = await _context.Helpfuls
+                        .Where(i => i.UserId == getReviewDTO.UserId && i.Review.Schedule!.TourId == getReviewDTO.TourId)
+                        .ToListAsync();
+
+                    var helpfulReviewIds = helpfulList.Select(i => i.ReviewId).ToList();
+
+                    reviews = reviews.Select( i =>
+                    {
+                        if (helpfulReviewIds.Contains(i.Id))
+                        {
+                            i.IsHelpful = true;
+                        }
+
+                        return i;
+                    }).ToList();
+                }
+
+                return Ok(new RestDTO<List<ReviewDTO>>()
                 {
                     Data = reviews
                 });
