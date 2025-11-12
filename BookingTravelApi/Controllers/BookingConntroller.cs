@@ -118,11 +118,15 @@ namespace BookingTravelApi.Controllers
                 .Include(s => s.Schedule)
                 .ThenInclude(t => t!.Tour)
                 .ThenInclude(tm => tm!.TourImages)
-                .AsNoTracking().ToListAsync();
+                .AsNoTracking().FirstAsync();
 
-                var booking = query.Select(i => i.Map()).FirstOrDefault();
-
-                return Ok(new RestDTO<BookingDTO?>()
+                var booking = query.Map();
+                
+                if(booking.TotalPrice / booking.NumPeople == booking.Schedule.FinalPrice)
+                {
+                    booking.payType = true;
+                }
+                return Ok(new RestDTO<BookingDTO>()
                 {
                     Data = booking
                 });
