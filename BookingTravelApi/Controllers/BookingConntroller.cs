@@ -241,6 +241,7 @@ namespace BookingTravelApi.Controllers
                 // 3 trang thai thanh toan het 
 
                 var booking = await _context.Bookings.FirstOrDefaultAsync(s => s.Id == updateScheduleBooking.Id);
+
                 if (booking == null)
                 {
                     return NotFound($" ID {updateScheduleBooking.Id} not found.");
@@ -258,11 +259,16 @@ namespace BookingTravelApi.Controllers
 
                 var newSchedule = await _context.Schedules.FirstOrDefaultAsync(s => s.Id == updateScheduleBooking.ScheduleId);
 
+                if (newSchedule == null)
+                {
+                    return NotFound($"Schedule ID {updateScheduleBooking.ScheduleId} not found.");
+                }
+
                 if ((newSchedule!.FinalPrice * booking.NumPeople) > booking.TotalPrice)
                 {
                     booking.StatusId = 2;
                 }
-                else if ((newSchedule!.FinalPrice * booking.NumPeople) <= booking.TotalPrice)
+                else if ((newSchedule!.FinalPrice * booking.NumPeople) == booking.TotalPrice)
                 {
                     booking.StatusId = 3;
                 }
@@ -272,9 +278,42 @@ namespace BookingTravelApi.Controllers
                 updateScheduleBooking.UpdateEntity(booking);
                 await _context.SaveChangesAsync();
 
-                return Ok(new RestDTO<Boolean>()
+                var query = await _context.Bookings
+                .Where(b => b.Id == booking.Id)
+                .Include(st => st.Status)
+                .Include(us => us.User)
+
+                .Include(s => s.Schedule)
+                .ThenInclude(t => t!.Tour)
+                .ThenInclude(ti => ti!.DayOfTours!)
+                .ThenInclude(d => d.DayActivities!)
+                .ThenInclude(da => da.Activity!)
+
+                .Include(s => s.Schedule)
+                .ThenInclude(t => t!.Tour)
+                .ThenInclude(d => d!.DayOfTours)
+                !.ThenInclude(d => d.DayActivities!)
+                .ThenInclude(da => da.LocationActivity!)
+                .ThenInclude(lo => lo.Place!)
+                .ThenInclude(p => p.Location)
+
+                .Include(s => s.Schedule)
+                .ThenInclude(t => t!.Tour)
+                .ThenInclude(i => i!.DayOfTours!)
+                !.ThenInclude(i => i.DayActivities!)
+                !.ThenInclude(i => i.LocationActivity)
+                !.ThenInclude(i => i!.ActivityAndLocations)
+                !.ThenInclude(i => i.Activity)
+
+                .Include(s => s.Schedule)
+                .ThenInclude(t => t!.Tour)
+                .ThenInclude(tm => tm!.TourImages)
+                .AsNoTracking().FirstOrDefaultAsync();
+
+                var bookings = query!.Map();
+                return Ok(new RestDTO<BookingDTO>()
                 {
-                    Data = true
+                    Data = bookings
                 });
             }
             catch (Exception ex)
@@ -297,14 +336,47 @@ namespace BookingTravelApi.Controllers
                 updateStatusBooking.UpdateEntity(booking);
                 await _context.SaveChangesAsync();
 
-                return Ok(new RestDTO<Boolean>()
+                var query = await _context.Bookings
+                .Where(b => b.Id == booking.Id)
+                .Include(st => st.Status)
+                .Include(us => us.User)
+
+                .Include(s => s.Schedule)
+                .ThenInclude(t => t!.Tour)
+                .ThenInclude(ti => ti!.DayOfTours!)
+                .ThenInclude(d => d.DayActivities!)
+                .ThenInclude(da => da.Activity!)
+
+                .Include(s => s.Schedule)
+                .ThenInclude(t => t!.Tour)
+                .ThenInclude(d => d!.DayOfTours)
+                !.ThenInclude(d => d.DayActivities!)
+                .ThenInclude(da => da.LocationActivity!)
+                .ThenInclude(lo => lo.Place!)
+                .ThenInclude(p => p.Location)
+
+                .Include(s => s.Schedule)
+                .ThenInclude(t => t!.Tour)
+                .ThenInclude(i => i!.DayOfTours!)
+                !.ThenInclude(i => i.DayActivities!)
+                !.ThenInclude(i => i.LocationActivity)
+                !.ThenInclude(i => i!.ActivityAndLocations)
+                !.ThenInclude(i => i.Activity)
+
+                .Include(s => s.Schedule)
+                .ThenInclude(t => t!.Tour)
+                .ThenInclude(tm => tm!.TourImages)
+                .AsNoTracking().FirstOrDefaultAsync();
+
+                var bookings = query!.Map();
+                return Ok(new RestDTO<BookingDTO>()
                 {
-                    Data = true
+                    Data = bookings
                 });
             }
             catch (Exception ex)
             {
-                return Problem("Update fail");
+                return Problem($"Update fail {ex.Message}");
             }
         }
 
