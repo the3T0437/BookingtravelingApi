@@ -4,6 +4,7 @@ using BookingTravelApi.DTO;
 using BookingTravelApi.DTO.ChangePassword;
 using BookingTravelApi.DTO.checkAccount;
 using BookingTravelApi.DTO.loginDTO;
+using BookingTravelApi.DTO.loginEmailDTO;
 using BookingTravelApi.DTO.updatePassword;
 using BookingTravelApi.DTO.user;
 using BookingTravelApi.Extensions;
@@ -43,13 +44,23 @@ namespace BookingTravelApi.Controllers
         }
 
         [HttpPost("loginbyemail")]
-        public async Task<IActionResult> LoginByEmail([FromBody] Login login)
+        public async Task<IActionResult> LoginByEmail([FromBody] loginEmailDTO login)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == login.email);
 
             if (user == null)
             {
-                return NotFound($"email {login.email} not found");
+                var newUserDTO = new CreateUserDTO(3, login.password, login.name, login.email, "string", 0, "string", "string", login.photoUrl, "string");
+
+                var newUser = newUserDTO.Map();
+
+                _context.Users.Add(newUser);
+                await _context.SaveChangesAsync();
+
+                return Ok(new RestDTO<UserDTO>
+                {
+                    Data = newUser.Map()
+                });
             }
 
             return Ok(new RestDTO<UserDTO>
