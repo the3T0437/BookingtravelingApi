@@ -51,7 +51,8 @@ namespace BookingTravelApi.DTO.user
                 Email = Email,
                 Phone = Phone,
                 AvatarPath = AvatarPath,
-                BankBranch = BankBranch
+                BankBranch = BankBranch,
+                RefundStatus = false
             };
         }
     }
