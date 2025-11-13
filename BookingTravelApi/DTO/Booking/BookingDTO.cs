@@ -18,7 +18,7 @@ namespace BookingTravelApi.DTO.booking
         public bool payType { get; set; }
 
         public StatusDTO? Status { get; set; }
-        public ScheduleDTO Schedule { get; set; } = null!;
+        public ScheduleDTO? Schedule { get; set; }
         public UserDTO? User { get; set; }
     }
 }
