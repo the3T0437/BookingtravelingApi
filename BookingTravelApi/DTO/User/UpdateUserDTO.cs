@@ -36,7 +36,7 @@ namespace BookingTravelApi.DTO.user
         [MaxLength(255)]
         public String BankBranch { get; set; } = null!;
 
-        public bool paymentStatus { get; set; } = false;
+        public bool RefundStatus { get; set; } = false;
 
 
         public void UpdateEntity(User user)
@@ -49,7 +49,7 @@ namespace BookingTravelApi.DTO.user
             user.Phone = Phone;
             user.AvatarPath = AvatarPath;
             user.BankBranch = BankBranch;
-            user.RefundStatus = paymentStatus;
+            user.RefundStatus = RefundStatus;
         }
     }
 }
