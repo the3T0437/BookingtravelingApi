@@ -12,6 +12,7 @@ namespace BookingTravelApi.DTO.review
 {
     public class ReviewDTO
     {
+        public int Id { get; set; }
         public int Rating { get; set; }
         public String Content { get; set; } = null!;
         public DateTime CreatedAt { get; set; }

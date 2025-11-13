@@ -64,8 +64,15 @@ namespace BookingTravelApi.Controllers
             try
             {
                 var review = newReviewDTO.Map();
+
+                //tim schedule
+                var schedule = await _context.Schedules.Include(s => s.Tour).FirstOrDefaultAsync(s => s.Id == review.ScheduleId);
+                schedule!.Tour!.TotalReviews += 1;
+                schedule!.Tour!.TotalStars += review.Rating;
+                
                 await _context.Reviews.AddAsync(review);
                 await _context.SaveChangesAsync();
+
 
                 return Ok(new RestDTO<String>()
                 {

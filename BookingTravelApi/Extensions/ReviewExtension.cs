@@ -10,6 +10,7 @@ namespace BookingTravelApi.Extensions
         {
             return new ReviewDTO
             {
+                Id = review.Id,
                 Rating = review.Rating,
                 Content = review.Content,
                 CreatedAt = review.CreatedAt,
