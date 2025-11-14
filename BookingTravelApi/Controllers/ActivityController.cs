@@ -80,7 +80,7 @@ namespace BookingTravelApi.Controllers
             }
             catch (Exception e)
             {
-                return Problem(e.Message);
+                return BadRequest(e.Message);
             }
         }
 

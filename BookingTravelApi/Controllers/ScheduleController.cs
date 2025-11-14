@@ -305,7 +305,7 @@ namespace BookingTravelApi.Controllers
                 var schedules = user.UserCompletedSchedules!.Select(i => i.Schedule).ToList() ?? [];
                 return Ok(new RestDTO<List<ScheduleDTO>>()
                 {
-                    Data = [.. schedules.Select(i => i!.Map())]
+                    Data = schedules.Select(i => i!.Map()).ToList()
                 });
             }
             catch (Exception ex)
