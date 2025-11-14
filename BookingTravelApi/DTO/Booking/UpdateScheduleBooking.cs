@@ -11,7 +11,6 @@ namespace BookingTravelApi.DTO.booking
         [Required]
         public int ScheduleId { get; set; }
 
-
         public void UpdateEntity(Booking booking)
         {
             booking.ScheduleId = ScheduleId;

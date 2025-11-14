@@ -45,6 +45,9 @@ namespace BookingTravelApi.Domains
         [MaxLength(255)]
         public String BankBranch { get; set; } = null!;
 
+        [Required]
+        public bool RefundStatus { get; set; } = false;
+
         public Staff? Staff { get; set; }
         public ICollection<Notification>? Notification { get; set; }
         public Role? Role { get; set; }

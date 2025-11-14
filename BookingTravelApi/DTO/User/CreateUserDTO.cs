@@ -31,12 +31,36 @@ namespace BookingTravelApi.DTO.user
         [Required]
         [MaxLength(11)]
         public String Phone { get; set; } = null!;
-        
+
         [MaxLength(255)]
         public String AvatarPath { get; set; } = null!;
-    
+
         [MaxLength(255)]
         public String BankBranch { get; set; } = null!;
+
+        public CreateUserDTO(
+             int roleId,
+             string password,
+             string name,
+             string email,
+             string? phone = null,
+             int money = 0,
+             string? bankNumber = null,
+             string? bank = null,
+             string? avatarPath = null,
+             string? bankBranch = null)
+        {
+            RoleId = roleId;
+            Password = password;
+            Name = name;
+            Email = email;
+            Phone = phone;
+            Money = money;
+            BankNumber = bankNumber ?? "string";
+            Bank = bank ?? "string";
+            AvatarPath = avatarPath ?? "string";
+            BankBranch = bankBranch ?? "string";
+        }
 
         public User Map()
         {
@@ -51,7 +75,8 @@ namespace BookingTravelApi.DTO.user
                 Email = Email,
                 Phone = Phone,
                 AvatarPath = AvatarPath,
-                BankBranch = BankBranch
+                BankBranch = BankBranch,
+                RefundStatus = false
             };
         }
     }

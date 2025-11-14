@@ -14,5 +14,7 @@ namespace BookingTravelApi.DTO.user
         public string Phone { get; set; } = null!;
         public string AvatarPath { get; set; } = null!;
         public string BankBranch { get; set; } = null!;
+        public bool RefundStatus { get; set; } = false;
+        
     }
 }
