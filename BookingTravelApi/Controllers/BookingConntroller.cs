@@ -391,9 +391,18 @@ namespace BookingTravelApi.Controllers
                     return Problem($"Id {bookingid} not found.");
                 }
 
+                if (booking.StatusId == 1)
+                {
+                    return Problem("Cannot delete schedule while booking is processing.");
+                }
+
+                var user = await _context.Users.FirstOrDefaultAsync(s => s.Id == booking.UserId);
+                user!.Money = booking.TotalPrice;
+                _context.Users.Update(user);
+
                 _context.Bookings.Remove(booking);
                 await _context.SaveChangesAsync();
-
+                
                 return Ok(new RestDTO<Boolean>()
                 {
                     Data = true
