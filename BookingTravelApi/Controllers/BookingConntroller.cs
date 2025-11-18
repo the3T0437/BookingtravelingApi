@@ -412,20 +412,21 @@ namespace BookingTravelApi.Controllers
                     return Problem($"Id {bookingId} not found.");
                 }
 
-                var deposit = booking.Schedule.FinalPrice * booking.Schedule.Desposit / 100 * booking.NumPeople;
-                var moneyLeft = booking.TotalPrice - deposit;
-                moneyLeft = moneyLeft > 0 ? moneyLeft : 0;
+                if (booking.StatusId == 1)
+                {
+                    return Problem("Cannot delete schedule while booking is processing.");
+                }
 
-                var user = await _context.Users.FindAsync(booking.UserId);
-                user!.Money += moneyLeft;
+                var user = await _context.Users.FirstOrDefaultAsync(s => s.Id == booking.UserId);
+                user!.Money = booking.TotalPrice;
                 _context.Users.Update(user);
 
                 _context.Bookings.Remove(booking);
                 await _context.SaveChangesAsync();
-
-                return Ok(new RestDTO<BookingDTO>()
+                
+                return Ok(new RestDTO<Boolean>()
                 {
-                    Data = booking.Map()
+                    Data = true
                 });
             }
             catch (Exception ex)
