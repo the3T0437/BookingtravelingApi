@@ -39,7 +39,6 @@ namespace BookingTravelApi.Domains
 
         public ICollection<TourImage>? TourImages { get; set; }
         public ICollection<DayOfTour>? DayOfTours { get; set; }
-        public ICollection<TourLocation>? TourLocations { get; set; }
 
         public ICollection<Schedule>? Schedules { get; set; }
         public ICollection<Favorite>? Favorites { get; set; }

@@ -8,9 +8,8 @@ namespace BookingTravelApi.DTO.user
         [Required]
         public int RoleId { get; set; }
 
-        [Required]
         [MaxLength(255)]
-        public String Password { get; set; } = null!;
+        public String? Password { get; set; }
 
         public int Money { get; set; }
 

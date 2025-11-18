@@ -2,7 +2,6 @@ using BookingTravelApi.Domains;
 using BookingTravelApi.DTO.booking;
 using BookingTravelApi.DTO.schedule;
 using BookingTravelApi.DTO.Tour;
-using BookingTravelApi.DTO.tourlocation;
 using BookingTravelApi.DTO.user;
 
 namespace BookingTravelApi.DTO.usercompletedschedule

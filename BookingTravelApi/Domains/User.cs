@@ -13,9 +13,9 @@ namespace BookingTravelApi.Domains
         [Required]
         public int RoleId { get; set; }
 
-        [Required]
         [MaxLength(255)]
-        public String Password { get; set; } = null!;
+        public String? Password { get; set; } // trường này có thể null
+
         [Required]
         public int Money { get; set; }
 
