@@ -1,5 +1,4 @@
 using BookingTravelApi.DTO.Tour;
-using BookingTravelApi.DTO.tourlocation;
 
 namespace BookingTravelApi.DTO.schedule
 {

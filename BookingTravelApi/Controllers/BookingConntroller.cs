@@ -400,8 +400,6 @@ namespace BookingTravelApi.Controllers
 
                 .Include(s => s.Schedule)
                 .ThenInclude(t => t!.Tour)
-                .ThenInclude(tl => tl!.TourLocations)
-                !.ThenInclude(l => l.Location)
 
                 .Include(s => s.Schedule)
                 .ThenInclude(t => t!.Tour)

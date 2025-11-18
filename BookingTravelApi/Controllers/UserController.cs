@@ -50,7 +50,7 @@ namespace BookingTravelApi.Controllers
 
             if (user == null)
             {
-                var newUserDTO = new CreateUserDTO(3, login.password, login.name, login.email, "", 0, "", "", login.photoUrl, "");
+                var newUserDTO = new CreateUserDTO(3, null , login.name, login.email, "", 0, "", "", login.photoUrl, "");
 
                 var newUser = newUserDTO.Map();
 
