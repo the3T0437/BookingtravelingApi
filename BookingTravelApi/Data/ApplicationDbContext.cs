@@ -16,6 +16,8 @@ namespace BookingTravelApi.Domains
             CreatePrimaryKey(modelBuilder);
             CreateForeignKey(modelBuilder);
         }
+        public DbSet<Configs> Configs => Set<Configs>();
+        public DbSet<Actualcashs> Actualcashs => Set<Actualcashs>();
         public DbSet<Bank> Banks => Set<Bank>();
         public DbSet<OtpCode> OtpCodes => Set<OtpCode>();
         public DbSet<Status> Status => Set<Status>();
@@ -32,7 +34,6 @@ namespace BookingTravelApi.Domains
         public DbSet<DayOfTour> DayOfTours => Set<DayOfTour>();
         public DbSet<DayActivity> DayActivities => Set<DayActivity>();
         public DbSet<Activity> Activities => Set<Activity>();
-        public DbSet<TourLocation> TourLocations => Set<TourLocation>();
         public DbSet<Schedule> Schedules => Set<Schedule>();
         public DbSet<Review> Reviews => Set<Review>();
         public DbSet<Guide> Guides => Set<Guide>();
@@ -46,9 +47,8 @@ namespace BookingTravelApi.Domains
         {
             modelBuilder.Entity<Favorite>().HasKey(i => new { i.TourId, i.UserId });
             modelBuilder.Entity<Helpful>().HasKey(i => new { i.ReviewId, i.UserId });
-            modelBuilder.Entity<UserCompletedSchedule>().HasKey(i => new { i.ScheduleId, i.UserId });
+            modelBuilder.Entity<UserCompletedSchedule>().HasKey(i => i.BookingId);
             modelBuilder.Entity<Guide>().HasKey(i => new { i.ScheduleId, i.StaffId });
-            modelBuilder.Entity<TourLocation>().HasKey(i => new { i.TourId, i.LocationId });
             modelBuilder.Entity<DayActivity>().HasKey(i => new { i.DayOfTourId, i.ActivityId, i.LocationActivityId });
             modelBuilder.Entity<ActivityAndLocation>().HasKey(i => new { i.ActivityId, i.LocationActivityId });
         }
@@ -109,15 +109,9 @@ namespace BookingTravelApi.Domains
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<UserCompletedSchedule>()
-                .HasOne(t => t.User)
-                .WithMany(f => f.UserCompletedSchedules)
-                .HasForeignKey(t => t.UserId)
-                .IsRequired()
-                .OnDelete(DeleteBehavior.Cascade);
-            modelBuilder.Entity<UserCompletedSchedule>()
-                .HasOne(t => t.Schedule)
-                .WithMany(f => f.UserCompletedSchedules)
-                .HasForeignKey(t => t.ScheduleId)
+                .HasOne(t => t.Booking)
+                .WithOne(f => f.UserCompletedSchedule)
+                .HasForeignKey<UserCompletedSchedule>(t => t.BookingId)
                 .IsRequired()
                 .OnDelete(DeleteBehavior.Cascade);
 
@@ -164,19 +158,6 @@ namespace BookingTravelApi.Domains
                 .HasOne(t => t.LocationActivity)
                 .WithMany(f => f.DayActivities)
                 .HasForeignKey(t => t.LocationActivityId)
-                .IsRequired()
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<TourLocation>()
-                .HasOne(t => t.Tour)
-                .WithMany(f => f.TourLocations)
-                .HasForeignKey(t => t.TourId)
-                .IsRequired()
-                .OnDelete(DeleteBehavior.Cascade);
-            modelBuilder.Entity<TourLocation>()
-                .HasOne(t => t.Location)
-                .WithMany(f => f.TourLocations)
-                .HasForeignKey(t => t.LocationId)
                 .IsRequired()
                 .OnDelete(DeleteBehavior.Restrict);
 

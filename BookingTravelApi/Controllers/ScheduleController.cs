@@ -271,47 +271,5 @@ namespace BookingTravelApi.Controllers
                 return Problem("Error deleting schedule: " + ex.Message);
             }
         }
-
-        [HttpGet("completed/{userId}")]
-        public async Task<IActionResult> getScheduleCompletedBy(int userId)
-        {
-            try
-            {
-                var user = await _context.Users
-                    .Include(i => i.UserCompletedSchedules)!
-                    .ThenInclude(i => i.Schedule)
-                    .ThenInclude(i => i!.Tour)
-
-                    .Include(i => i.UserCompletedSchedules)!
-                    .ThenInclude(s => s.Schedule)
-                    .ThenInclude(t => t!.Tour)
-                    .ThenInclude(tm => tm!.DayOfTours!)
-                    .ThenInclude(i => i.DayActivities!)
-                    .ThenInclude(i => i.LocationActivity)
-                    .ThenInclude(i => i!.Place)
-                    .ThenInclude(i => i!.Location)
-
-                    .Include(i => i.UserCompletedSchedules)!
-                    .ThenInclude(s => s.Schedule)
-                    .ThenInclude(t => t!.Tour)
-                    .ThenInclude(t => t!.TourImages)
-                    .AsNoTracking()
-                    .Where(i => i.Id == userId).FirstOrDefaultAsync();
-                if (user == null)
-                {
-                    return NotFound($"user with id {userId} not found.");
-                }
-
-                var schedules = user.UserCompletedSchedules!.Select(i => i.Schedule).ToList() ?? [];
-                return Ok(new RestDTO<List<ScheduleDTO>>()
-                {
-                    Data = schedules.Select(i => i!.Map()).ToList()
-                });
-            }
-            catch (Exception ex)
-            {
-                return Problem("while getting schedule: " + ex.Message);
-            }
-        }
     }
 }
