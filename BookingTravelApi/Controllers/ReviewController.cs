@@ -80,6 +80,12 @@ namespace BookingTravelApi.Controllers
         {
             try
             {
+                var reviewSchesule = await _context.Reviews.Where(r => r.UserId == newReviewDTO.UserId && r.ScheduleId == newReviewDTO.ScheduleId).FirstOrDefaultAsync();
+                if(reviewSchesule != null)
+                {
+                    return BadRequest("Review existed");
+                }
+
                 var review = newReviewDTO.Map();
 
                 //tim schedule
