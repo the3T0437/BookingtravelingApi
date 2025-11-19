@@ -36,7 +36,27 @@ namespace BookingTravelApi.Controllers
                 return Problem("Email không được trống");
             }
 
+            var user = await _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Email == createOtpCodeDTO.Email);
+
+            if (user == null)
+            {
+                return Problem("Email này không tồn tại");
+            }
+
+            var oldOtp = await _context.OtpCodes.AsNoTracking().FirstOrDefaultAsync(o => o.Email == createOtpCodeDTO.Email);
+
+            if (oldOtp != null)
+            {
+                _context.OtpCodes.Remove(oldOtp);
+            }
+
+            var config = await _context.Configs.FindAsync(1);
+
+            DateTime now = DateTime.Now;
+            var time = now.AddMinutes(config!.timeExpiredOtpSec);
+
             var otpCode = createOtpCodeDTO.Map();
+            otpCode.ExpiryTime = time;
 
             _context.OtpCodes.Add(otpCode);
             await _context.SaveChangesAsync();
@@ -46,7 +66,7 @@ namespace BookingTravelApi.Controllers
             bool success = await _mailService.SendMailAsync(
                 otpCode.Email,
                 otpCode.Code,
-                3
+                config!.timeExpiredOtpSec
             );
 
             if (success)
@@ -71,14 +91,17 @@ namespace BookingTravelApi.Controllers
                 var timeNow = DateTime.Now;
 
                 var otpCode = await _context.OtpCodes.AsNoTracking().FirstOrDefaultAsync(o => o.Email == otpCodeDTO.Email
-                && o.Code == otpCodeDTO.Code
-                && o.ExpiryTime > timeNow);
+                && o.Code == otpCodeDTO.Code);
 
                 if (otpCode == null)
                 {
-                    return NotFound("Không tìm thấy mã này");
+                    return Problem("Không tìm thấy mã này");
                 }
 
+                if (otpCode.ExpiryTime < timeNow)
+                {
+                    return Problem("Mã đã hết hạn");
+                }
 
 
                 return Ok(new RestDTO<bool>()
