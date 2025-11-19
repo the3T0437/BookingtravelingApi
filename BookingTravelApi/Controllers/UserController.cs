@@ -70,20 +70,17 @@ namespace BookingTravelApi.Controllers
 
         }
 
-        [HttpPost("check-account")]
+        [HttpPost("check-email-account")]
         public async Task<IActionResult> CheckAccount(CheckAccount checkAccount)
         {
-            List<bool> checks = [false, false];
+            bool result = false;
 
             var user = await _context.Users.FirstOrDefaultAsync(s => s.Email == checkAccount.email);
-            if (user == null) checks[0] = true;
+            if (user == null) result = true;
 
-            var user_2 = await _context.Users.FirstOrDefaultAsync(s => s.Password == checkAccount.password);
-            if (user_2 == null) checks[1] = true;
-
-            return Ok(new RestDTO<List<bool>>()
+            return Ok(new RestDTO<bool>()
             {
-                Data = checks
+                Data = result
             });
         }
 
