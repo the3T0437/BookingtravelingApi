@@ -9,7 +9,7 @@ namespace BookingTravelApi.DTO.config
         [Required]
         public int countChangeSchedule { get; set; }
         [Required]
-        public int timeExpiredBookingSec { get; set; }
+        public int timeExpiredBookingHour { get; set; }
         [Required]
         public int timeExpiredOtpSec { get; set; }
 
