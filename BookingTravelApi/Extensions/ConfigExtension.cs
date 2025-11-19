@@ -11,7 +11,7 @@ namespace BookingTravelApi.Extensions
             {
                 Id = config.Id,
                 countChangeSchedule = config.countChangeSchedule,
-                timeExpiredBookingSec = config.timeExpiredBookingSec,
+                timeExpiredBookingHour = config.timeExpiredBookingHour,
                 timeExpiredOtpSec = config.timeExpiredOtpSec,
             };
         }
