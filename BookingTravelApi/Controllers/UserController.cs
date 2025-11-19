@@ -73,10 +73,10 @@ namespace BookingTravelApi.Controllers
         [HttpPost("check-email-account")]
         public async Task<IActionResult> CheckAccount(CheckAccount checkAccount)
         {
-            bool result = false;
+            bool result = true;
 
             var user = await _context.Users.FirstOrDefaultAsync(s => s.Email == checkAccount.email);
-            if (user == null) result = true;
+            if (user == null) result = false;
 
             return Ok(new RestDTO<bool>()
             {
