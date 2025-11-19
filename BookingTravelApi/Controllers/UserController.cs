@@ -50,7 +50,7 @@ namespace BookingTravelApi.Controllers
 
             if (user == null)
             {
-                var newUserDTO = new CreateUserDTO(3, null , login.name, login.email, "", 0, "", "", login.photoUrl, "");
+                var newUserDTO = new CreateUserDTO(3, null, login.name, login.email, "", 0, "", "", login.photoUrl, "");
 
                 var newUser = newUserDTO.Map();
 
@@ -70,20 +70,17 @@ namespace BookingTravelApi.Controllers
 
         }
 
-        [HttpPost("check-account")]
+        [HttpPost("check-email-account")]
         public async Task<IActionResult> CheckAccount(CheckAccount checkAccount)
         {
-            List<bool> checks = [false, false];
+            bool result = true;
 
             var user = await _context.Users.FirstOrDefaultAsync(s => s.Email == checkAccount.email);
-            if (user == null) checks[0] = true;
+            if (user == null) result = false;
 
-            var user_2 = await _context.Users.FirstOrDefaultAsync(s => s.Password == checkAccount.password);
-            if (user_2 == null) checks[1] = true;
-
-            return Ok(new RestDTO<List<bool>>()
+            return Ok(new RestDTO<bool>()
             {
-                Data = checks
+                Data = result
             });
         }
 
@@ -203,5 +200,50 @@ namespace BookingTravelApi.Controllers
             }
         }
 
+        [HttpGet("RefundUser")]
+        public async Task<IActionResult> GetRefundUsers()
+        {
+            var users = await _context.Users.Where(u => u.RefundStatus == true).ToListAsync();
+
+            return Ok(new RestDTO<List<UserDTO>>()
+            {
+                Data = users.Select(i => i.Map()).ToList()
+            });
+        }
+
+        [HttpPost("CancelRefund/{id}")]
+        public async Task<IActionResult> CancelRefund(int id)
+        {
+            return await SubmitRefund(id);
+        }
+
+        [HttpPost("SubmitRefund/{id}")]
+        public async Task<IActionResult> SubmitRefund(int id)
+        {
+            try
+            {
+                var user = await _context.Users.FindAsync(id);
+
+                if (user == null)
+                {
+                    return NotFound($"id {id} not found");
+                }
+
+                user.RefundStatus = false;
+                user.Money = 0;
+
+                _context.Users.Update(user);
+                await _context.SaveChangesAsync();
+
+                return Ok(new RestDTO<UserDTO>()
+                {
+                    Data = user.Map()
+                });
+            }
+            catch (Exception ex)
+            {
+                return Problem("Error updating user: " + ex.Message);
+            }
+        }
     }
 }

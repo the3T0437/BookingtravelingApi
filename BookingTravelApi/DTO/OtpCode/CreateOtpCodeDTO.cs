@@ -12,6 +12,7 @@ namespace BookingTravelApi.DTO
         public OtpCode Map()
         {
             var timeNow = DateTime.Now;
+            
             //tạo mã
             Random random = new Random();
             var otp = random.Next(100000, 999999).ToString();
@@ -21,7 +22,7 @@ namespace BookingTravelApi.DTO
             {
                 Email = Email,
                 Code = otp,
-                ExpiryTime = timeNow.AddMinutes(2)
+                ExpiryTime = timeNow
             };
         }
     }
