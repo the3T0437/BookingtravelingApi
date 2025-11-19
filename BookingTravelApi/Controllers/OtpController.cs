@@ -36,13 +36,7 @@ namespace BookingTravelApi.Controllers
                 return Problem("Email không được trống");
             }
 
-            var user = await _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Email == createOtpCodeDTO.Email);
-
-            if (user == null)
-            {
-                return Problem("Email này không tồn tại");
-            }
-
+            
             var oldOtp = await _context.OtpCodes.AsNoTracking().FirstOrDefaultAsync(o => o.Email == createOtpCodeDTO.Email);
 
             if (oldOtp != null)
