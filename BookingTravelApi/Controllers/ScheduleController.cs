@@ -97,6 +97,8 @@ namespace BookingTravelApi.Controllers
                 // .Where(
                 //     s => timeNow <= s.StartDate
                 // )
+                .Include(s => s.Bookings)
+
                 .Include(s => s.Tour)
                 .ThenInclude(t => t!.TourImages)
 
@@ -113,9 +115,9 @@ namespace BookingTravelApi.Controllers
                 .ThenInclude(i => i!.Location)
                     .OrderBy(s => s.OpenDate).AsNoTracking();
 
-            var scheduleDTOs = await query.Select(i => i.Map()).ToArrayAsync();
+            var scheduleDTOs = await query.Select(i => i.MapToScheduleOfAccountant()).ToArrayAsync();
 
-            return Ok(new RestDTO<ScheduleDTO[]?>()
+            return Ok(new RestDTO<ScheduleDTOOfAccountant[]?>()
             {
                 Data = scheduleDTOs
             });
