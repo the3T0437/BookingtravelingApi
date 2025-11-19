@@ -1,4 +1,5 @@
 using BookingTravelApi.Domains;
+using BookingTravelApi.DTO.booking;
 using BookingTravelApi.DTO.schedule;
 using BookingTravelApi.DTO.ScheduleAssignmentDTO;
 
