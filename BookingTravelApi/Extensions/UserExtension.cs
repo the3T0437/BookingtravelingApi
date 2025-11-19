@@ -19,7 +19,8 @@ namespace BookingTravelApi.Extensions
                 Email = user.Email,
                 Phone = user.Phone,
                 AvatarPath = user.AvatarPath,
-                BankBranch = user.BankBranch
+                BankBranch = user.BankBranch,
+                RefundStatus = user.RefundStatus
             };
         }
     }
