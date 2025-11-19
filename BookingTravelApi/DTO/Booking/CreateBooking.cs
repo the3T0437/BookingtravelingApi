@@ -31,13 +31,13 @@ namespace BookingTravelApi.DTO.booking
             {
                 ScheduleId = ScheduleId,
                 UserId = UserId,
-                StatusId = 1,
+                StatusId = Status.Processing,
                 NumPeople = NumPeople,
                 Code = "String",
                 Email = Email,
                 Phone = Phone,
                 TotalPrice = TotalPrice,
-                CountChangeLeft = 3,
+                CountChangeLeft = 1,
                 CreatedAt = DateTime.Now
             };
         }
