@@ -50,12 +50,16 @@ namespace BookingTravelApi.Controllers
                 _context.OtpCodes.Remove(oldOtp);
             }
 
+            var config = await _context.Configs.FindAsync(1);
+
+            DateTime now = DateTime.Now;
+            var time = now.AddMinutes(config!.timeExpiredOtpSec);
+
             var otpCode = createOtpCodeDTO.Map();
+            otpCode.ExpiryTime = time;
 
             _context.OtpCodes.Add(otpCode);
             await _context.SaveChangesAsync();
-
-            var config = await _context.Configs.FindAsync(1);
 
 
             // gọi phương thức gửi mail
@@ -87,14 +91,17 @@ namespace BookingTravelApi.Controllers
                 var timeNow = DateTime.Now;
 
                 var otpCode = await _context.OtpCodes.AsNoTracking().FirstOrDefaultAsync(o => o.Email == otpCodeDTO.Email
-                && o.Code == otpCodeDTO.Code
-                && o.ExpiryTime > timeNow);
+                && o.Code == otpCodeDTO.Code);
 
                 if (otpCode == null)
                 {
-                    return NotFound("Không tìm thấy mã này");
+                    return Problem("Không tìm thấy mã này");
                 }
 
+                if (otpCode.ExpiryTime < timeNow)
+                {
+                    return Problem("Mã đã hết hạn");
+                }
 
 
                 return Ok(new RestDTO<bool>()
