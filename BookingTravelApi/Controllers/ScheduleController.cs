@@ -157,6 +157,82 @@ namespace BookingTravelApi.Controllers
             });
         }
 
+        [HttpGet("Accountant")]
+        [ResponseCache(NoStore = true)]
+        public async Task<IActionResult> GetSchedulesForAccountant()
+        {
+
+            var now = DateTime.Now;
+
+            var query = _context.Schedules
+                .Where(
+                    s => s.OpenDate < now && now < s.EndDate.AddDays(1)
+                )
+                .Include(s => s.Bookings)
+
+                .Include(s => s.Tour)
+                .ThenInclude(t => t!.TourImages)
+
+                .Include(i => i.Tour)
+                .ThenInclude(tm => tm!.DayOfTours!)
+                .ThenInclude(d => d.DayActivities!)
+                .ThenInclude(da => da.Activity)
+
+                .Include(i => i.Tour)
+                .ThenInclude(tm => tm!.DayOfTours!)
+                .ThenInclude(i => i.DayActivities!)
+                .ThenInclude(i => i.LocationActivity)
+                .ThenInclude(i => i!.Place)
+                .ThenInclude(i => i!.Location)
+                    .OrderBy(s => s.OpenDate).AsNoTracking();
+
+            var scheduleDTOs = await query.Select(i => i.MapToScheduleOfAccountant()).ToArrayAsync();
+
+
+            return Ok(new RestDTO<ScheduleDTOOfAccountant[]?>()
+            {
+                Data = scheduleDTOs
+            });
+        }
+
+        [HttpGet("Reception")]
+        [ResponseCache(NoStore = true)]
+        public async Task<IActionResult> GetSchedulesForReception()
+        {
+
+            var now = DateTime.Now;
+            var startDate = new DateTime(now.Year, now.Month, now.Day);
+            var endDate = startDate.AddDays(1);
+
+            var query = _context.Schedules
+                .Where(
+                    s => startDate <= s.StartDate && s.StartDate < endDate
+                )
+                .Include(s => s.Tour)
+                .ThenInclude(t => t!.TourImages)
+
+                .Include(i => i.Tour)
+                .ThenInclude(tm => tm!.DayOfTours!)
+                .ThenInclude(d => d.DayActivities!)
+                .ThenInclude(da => da.Activity)
+
+                .Include(i => i.Tour)
+                .ThenInclude(tm => tm!.DayOfTours!)
+                .ThenInclude(i => i.DayActivities!)
+                .ThenInclude(i => i.LocationActivity)
+                .ThenInclude(i => i!.Place)
+                .ThenInclude(i => i!.Location)
+                    .OrderBy(s => s.OpenDate).AsNoTracking();
+
+            var scheduleDTOs = await query.Select(i => i.Map()).ToArrayAsync();
+
+
+            return Ok(new RestDTO<ScheduleDTO[]?>()
+            {
+                Data = scheduleDTOs
+            });
+        }
+
         [HttpGet("schedules-user")]
         [ResponseCache(NoStore = true)]
         public async Task<IActionResult> getSchedulesUser()
