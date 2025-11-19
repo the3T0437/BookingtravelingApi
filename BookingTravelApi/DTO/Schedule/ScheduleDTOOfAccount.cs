@@ -1,9 +1,8 @@
-using BookingTravelApi.DTO.booking;
 using BookingTravelApi.DTO.Tour;
 
 namespace BookingTravelApi.DTO.schedule
 {
-    public class ScheduleDTO
+    public class ScheduleDTOOfAccountant
     {
         public int Id { get; set; }
         public int TourId { get; set; }
@@ -15,8 +14,9 @@ namespace BookingTravelApi.DTO.schedule
         public TimeSpan GatheringTime { get; set; }
         public String Code { get; set; } = null!;
         public int Desposit { get; set; }
-
-
         public TourDTO tour { get; set; } = null!;
+        public int ProcessingBooking { get; set; }
+        public int DepositBooking { get; set; }
+        public int PaidBooking { get; set; }
     }
 }

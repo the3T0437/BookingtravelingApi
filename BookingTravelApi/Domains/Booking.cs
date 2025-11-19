@@ -41,6 +41,7 @@ namespace BookingTravelApi.Domains
         public DateTime CreatedAt { get; set; }
 
         public Status? Status { get; set; }
+        public UserCompletedSchedule? UserCompletedSchedule {get; set;}
         public Schedule? Schedule { get; set; }
         public User? User { get; set; }
     }

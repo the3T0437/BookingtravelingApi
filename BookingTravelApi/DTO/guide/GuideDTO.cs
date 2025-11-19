@@ -2,7 +2,6 @@ using BookingTravelApi.DTO.booking;
 using BookingTravelApi.DTO.schedule;
 using BookingTravelApi.DTO.staff;
 using BookingTravelApi.DTO.Tour;
-using BookingTravelApi.DTO.tourlocation;
 using BookingTravelApi.DTO.user;
 using BookingTravelApi.DTO.usercompletedschedule;
 

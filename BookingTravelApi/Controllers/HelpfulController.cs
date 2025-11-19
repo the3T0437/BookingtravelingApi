@@ -17,9 +17,9 @@ namespace BookingTravelApi.Controllers
     public class HelpfulController : Controller
     {
         private ApplicationDbContext _context;
-        private readonly ILogger<GuideController> _logger;
+        private readonly ILogger<HelpfulController> _logger;
 
-        public HelpfulController(ILogger<GuideController> logger, ApplicationDbContext context)
+        public HelpfulController(ILogger<HelpfulController> logger, ApplicationDbContext context)
         {
             _context = context;
             _logger = logger;

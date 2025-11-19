@@ -157,6 +157,82 @@ namespace BookingTravelApi.Controllers
             });
         }
 
+        [HttpGet("Accountant")]
+        [ResponseCache(NoStore = true)]
+        public async Task<IActionResult> GetSchedulesForAccountant()
+        {
+
+            var now = DateTime.Now;
+
+            var query = _context.Schedules
+                .Where(
+                    s => s.OpenDate < now && now < s.EndDate.AddDays(1)
+                )
+                .Include(s => s.Bookings)
+
+                .Include(s => s.Tour)
+                .ThenInclude(t => t!.TourImages)
+
+                .Include(i => i.Tour)
+                .ThenInclude(tm => tm!.DayOfTours!)
+                .ThenInclude(d => d.DayActivities!)
+                .ThenInclude(da => da.Activity)
+
+                .Include(i => i.Tour)
+                .ThenInclude(tm => tm!.DayOfTours!)
+                .ThenInclude(i => i.DayActivities!)
+                .ThenInclude(i => i.LocationActivity)
+                .ThenInclude(i => i!.Place)
+                .ThenInclude(i => i!.Location)
+                    .OrderBy(s => s.OpenDate).AsNoTracking();
+
+            var scheduleDTOs = await query.Select(i => i.MapToScheduleOfAccountant()).ToArrayAsync();
+
+
+            return Ok(new RestDTO<ScheduleDTOOfAccountant[]?>()
+            {
+                Data = scheduleDTOs
+            });
+        }
+
+        [HttpGet("Reception")]
+        [ResponseCache(NoStore = true)]
+        public async Task<IActionResult> GetSchedulesForReception()
+        {
+
+            var now = DateTime.Now;
+            var startDate = new DateTime(now.Year, now.Month, now.Day);
+            var endDate = startDate.AddDays(1);
+
+            var query = _context.Schedules
+                .Where(
+                    s => startDate <= s.StartDate && s.StartDate < endDate
+                )
+                .Include(s => s.Tour)
+                .ThenInclude(t => t!.TourImages)
+
+                .Include(i => i.Tour)
+                .ThenInclude(tm => tm!.DayOfTours!)
+                .ThenInclude(d => d.DayActivities!)
+                .ThenInclude(da => da.Activity)
+
+                .Include(i => i.Tour)
+                .ThenInclude(tm => tm!.DayOfTours!)
+                .ThenInclude(i => i.DayActivities!)
+                .ThenInclude(i => i.LocationActivity)
+                .ThenInclude(i => i!.Place)
+                .ThenInclude(i => i!.Location)
+                    .OrderBy(s => s.OpenDate).AsNoTracking();
+
+            var scheduleDTOs = await query.Select(i => i.Map()).ToArrayAsync();
+
+
+            return Ok(new RestDTO<ScheduleDTO[]?>()
+            {
+                Data = scheduleDTOs
+            });
+        }
+
         [HttpGet("schedules-user")]
         [ResponseCache(NoStore = true)]
         public async Task<IActionResult> getSchedulesUser()
@@ -269,48 +345,6 @@ namespace BookingTravelApi.Controllers
             catch (Exception ex)
             {
                 return Problem("Error deleting schedule: " + ex.Message);
-            }
-        }
-
-        [HttpGet("completed/{userId}")]
-        public async Task<IActionResult> getScheduleCompletedBy(int userId)
-        {
-            try
-            {
-                var user = await _context.Users
-                    .Include(i => i.UserCompletedSchedules)!
-                    .ThenInclude(i => i.Schedule)
-                    .ThenInclude(i => i!.Tour)
-
-                    .Include(i => i.UserCompletedSchedules)!
-                    .ThenInclude(s => s.Schedule)
-                    .ThenInclude(t => t!.Tour)
-                    .ThenInclude(tm => tm!.DayOfTours!)
-                    .ThenInclude(i => i.DayActivities!)
-                    .ThenInclude(i => i.LocationActivity)
-                    .ThenInclude(i => i!.Place)
-                    .ThenInclude(i => i!.Location)
-
-                    .Include(i => i.UserCompletedSchedules)!
-                    .ThenInclude(s => s.Schedule)
-                    .ThenInclude(t => t!.Tour)
-                    .ThenInclude(t => t!.TourImages)
-                    .AsNoTracking()
-                    .Where(i => i.Id == userId).FirstOrDefaultAsync();
-                if (user == null)
-                {
-                    return NotFound($"user with id {userId} not found.");
-                }
-
-                var schedules = user.UserCompletedSchedules!.Select(i => i.Schedule).ToList() ?? [];
-                return Ok(new RestDTO<List<ScheduleDTO>>()
-                {
-                    Data = schedules.Select(i => i!.Map()).ToList()
-                });
-            }
-            catch (Exception ex)
-            {
-                return Problem("while getting schedule: " + ex.Message);
             }
         }
     }

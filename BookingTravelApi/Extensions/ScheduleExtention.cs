@@ -25,5 +25,28 @@ namespace BookingTravelApi.Extensions
                 tour = schedule.Tour!.Map(),
             };
         }
+
+        public static ScheduleDTOOfAccountant MapToScheduleOfAccountant(this Schedule schedule)
+        {
+            return new ScheduleDTOOfAccountant()
+            {
+                Id = schedule.Id,
+                TourId = schedule.TourId,
+                StartDate = schedule.StartDate,
+                EndDate = schedule.EndDate,
+                OpenDate = schedule.OpenDate,
+                MaxSlot = schedule.MaxSlot,
+                FinalPrice = schedule.FinalPrice,
+                GatheringTime = schedule.GatheringTime,
+                Code = schedule.Code,
+                Desposit = schedule.Desposit,
+
+                tour = schedule.Tour!.Map(),
+
+                ProcessingBooking = schedule.Bookings!.Where(s => s.StatusId == Status.Paid).Count(),
+                DepositBooking = schedule.Bookings!.Where(s => s.StatusId == Status.Paid).Count(),
+                PaidBooking = schedule.Bookings!.Where(s => s.StatusId == Status.Paid).Count(),
+            };
+        }
     }
 }
