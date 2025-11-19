@@ -203,6 +203,23 @@ namespace BookingTravelApi.Controllers
             }
         }
 
+        [HttpGet("RefundUser")]
+        public async Task<IActionResult> GetRefundUsers()
+        {
+            var users = await _context.Users.Where(u => u.RefundStatus == true).ToListAsync();
+
+            return Ok(new RestDTO<List<UserDTO>>()
+            {
+                Data = users.Select(i => i.Map()).ToList()
+            });
+        }
+
+        [HttpPost("CancelRefund/{id}")]
+        public async Task<IActionResult> CancelRefund(int id)
+        {
+            return await SubmitRefund(id);
+        }
+
         [HttpPost("SubmitRefund/{id}")]
         public async Task<IActionResult> SubmitRefund(int id)
         {
