@@ -38,7 +38,7 @@ namespace BookingTravelApi.Domains
         public int CountChangeLeft { get; set; }
 
         [Required]
-        public String Qr { get; set; }
+        public String Qr { get; set; } = null!;
 
         [Required]
         public DateTime ExpiredAt { get; set; }

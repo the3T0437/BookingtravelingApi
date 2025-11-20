@@ -4,6 +4,7 @@ using BookingTravelApi.DTO;
 using BookingTravelApi.DTO.otpcode;
 using BookingTravelApi.Domains;
 using Microsoft.EntityFrameworkCore;
+using BookingTravelApi.Helpers;
 
 namespace BookingTravelApi.Controllers
 {
@@ -36,7 +37,7 @@ namespace BookingTravelApi.Controllers
                 return Problem("Email không được trống");
             }
 
-            
+
             var oldOtp = await _context.OtpCodes.AsNoTracking().FirstOrDefaultAsync(o => o.Email == createOtpCodeDTO.Email);
 
             if (oldOtp != null)
@@ -82,7 +83,7 @@ namespace BookingTravelApi.Controllers
         {
             try
             {
-                var timeNow = DateTime.Now;
+                var timeNow = DateTimeHelper.GetVietNamTime();
 
                 var otpCode = await _context.OtpCodes.AsNoTracking().FirstOrDefaultAsync(o => o.Email == otpCodeDTO.Email
                 && o.Code == otpCodeDTO.Code);

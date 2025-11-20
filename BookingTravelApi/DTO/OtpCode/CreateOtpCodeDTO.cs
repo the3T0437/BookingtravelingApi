@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using BookingTravelApi.Domains;
+using BookingTravelApi.Helpers;
 
 namespace BookingTravelApi.DTO
 {
@@ -11,8 +12,8 @@ namespace BookingTravelApi.DTO
 
         public OtpCode Map()
         {
-            var timeNow = DateTime.Now;
-            
+            var timeNow = DateTimeHelper.GetVietNamTime();
+
             //tạo mã
             Random random = new Random();
             var otp = random.Next(100000, 999999).ToString();
