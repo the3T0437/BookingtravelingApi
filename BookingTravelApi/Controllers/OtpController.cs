@@ -58,13 +58,13 @@ namespace BookingTravelApi.Controllers
 
 
             // gọi phương thức gửi mail
-            bool success = await _mailService.SendMailAsync(
+            SendOtpStatus success = await _mailService.SendMailAsync(
                 otpCode.Email,
                 otpCode.Code,
                 config!.Value
             );
 
-            if (success)
+            if (success.status)
             {
                 return Ok(new RestDTO<bool>()
                 {
@@ -73,7 +73,7 @@ namespace BookingTravelApi.Controllers
             }
             else
             {
-                return Problem("Gửi email thất bại");
+                return Problem($"{success.error}");
             }
         }
 
