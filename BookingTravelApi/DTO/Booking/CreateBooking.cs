@@ -37,16 +37,11 @@ namespace BookingTravelApi.DTO.booking
                 Email = Email,
                 Phone = Phone,
                 TotalPrice = TotalPrice,
-<<<<<<< HEAD
-                CountChangeLeft = 1,
-                CreatedAt = DateTime.Now
-=======
                 CountChangeLeft = 3,
                 CreatedAt = DateTime.Now,
                 ExpiredAt = DateTime.Now,
                 Qr = "",
 
->>>>>>> fe52fb30a5b25279854e0cd9cab57aae1ac9b685
             };
         }
     }

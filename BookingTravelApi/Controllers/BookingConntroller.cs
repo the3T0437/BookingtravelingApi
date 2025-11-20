@@ -214,7 +214,6 @@ namespace BookingTravelApi.Controllers
                 var config = await _context.Configs.AsNoTracking().FirstOrDefaultAsync(c => c.Id == 1);
 
                 var booking = newBookingDTO.Map();
-<<<<<<< HEAD
                 booking.CountChangeLeft = config!.countChangeSchedule;
 
                 await _context.Bookings.AddAsync(booking);
@@ -223,15 +222,6 @@ namespace BookingTravelApi.Controllers
                 booking.Code = $"{schedule.Code}-{booking.Id}";
                 _context.Bookings.Update(booking);
                 await _context.SaveChangesAsync();
-=======
-                booking.Code = newCode;
-                await _context.Bookings.AddAsync(booking);
-                await _context.SaveChangesAsync();
-
-                await createPaymentLink(booking, DateTime.Now.AddSeconds(15));
-                await _context.SaveChangesAsync();
-                await transient.CommitAsync();
->>>>>>> fe52fb30a5b25279854e0cd9cab57aae1ac9b685
 
                 return Ok(new RestDTO<int>
                 {
