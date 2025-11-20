@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using BookingTravelApi.Domains;
+using BookingTravelApi.Helpers;
 
 namespace BookingTravelApi.DTO.notification
 {
@@ -11,9 +12,6 @@ namespace BookingTravelApi.DTO.notification
         [Required]
         public String Content { get; set; } = null!;
 
-        [Required]
-        public DateTime CreatedAt { get; set; }
-
         public Notification Map()
         {
             return new Notification()
@@ -21,7 +19,7 @@ namespace BookingTravelApi.DTO.notification
                 UserId = UserId,
                 Content = Content,
                 IsRead = false,
-                CreatedAt = CreatedAt == default ? DateTime.Now : CreatedAt,
+                CreatedAt = DateTimeHelper.GetVietNamTime(),
             };
         }
     }

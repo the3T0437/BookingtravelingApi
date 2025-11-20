@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using BookingTravelApi.Domains;
+using BookingTravelApi.Helpers;
 
 namespace BookingTravelApi.DTO.booking
 {
@@ -38,8 +39,8 @@ namespace BookingTravelApi.DTO.booking
                 Phone = Phone,
                 TotalPrice = TotalPrice,
                 CountChangeLeft = 3,
-                CreatedAt = DateTime.Now,
-                ExpiredAt = DateTime.Now,
+                CreatedAt = DateTimeHelper.GetVietNamTime(),
+                ExpiredAt = DateTimeHelper.GetVietNamTime(),
                 Qr = "",
 
             };
