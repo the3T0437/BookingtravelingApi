@@ -10,6 +10,7 @@ namespace BookingTravelApi.Domains
         public static int Processing = 1;
         public static int Deposit = 2;
         public static int Paid = 3;
+        public static int Expired = 4;
 
         [Key]
         [Required]

@@ -51,7 +51,11 @@ namespace BookingTravelApi.Controllers
                     return Ok();
                 }
 
-                if (booking.TotalPrice == booking.Schedule.FinalPrice * booking.NumPeople)
+                if (DateTime.Now > booking.ExpiredAt)
+                {
+                    booking.StatusId = Status.Expired;
+                }
+                else if (booking.TotalPrice == booking.Schedule.FinalPrice * booking.NumPeople)
                 {
                     booking.StatusId = Status.Paid;
                 }
