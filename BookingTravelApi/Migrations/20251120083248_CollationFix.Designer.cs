@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookingTravelApi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251103093514_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20251120083248_CollationFix")]
+    partial class CollationFix
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -56,6 +56,42 @@ namespace BookingTravelApi.Migrations
                     b.HasIndex("LocationActivityId");
 
                     b.ToTable("activityandlocations");
+                });
+
+            modelBuilder.Entity("BookingTravelApi.Domains.Actualcashs", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("money")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("actualcashs");
+                });
+
+            modelBuilder.Entity("BookingTravelApi.Domains.Bank", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("id"));
+
+                    b.Property<string>("name")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("id");
+
+                    b.ToTable("banks");
                 });
 
             modelBuilder.Entity("BookingTravelApi.Domains.Booking", b =>
@@ -110,6 +146,28 @@ namespace BookingTravelApi.Migrations
                     b.ToTable("bookings");
                 });
 
+            modelBuilder.Entity("BookingTravelApi.Domains.Configs", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("countChangeSchedule")
+                        .HasColumnType("int");
+
+                    b.Property<int>("timeExpiredBookingHour")
+                        .HasColumnType("int");
+
+                    b.Property<int>("timeExpiredOtpSec")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("configs");
+                });
+
             modelBuilder.Entity("BookingTravelApi.Domains.DayActivity", b =>
                 {
                     b.Property<int>("DayOfTourId")
@@ -162,6 +220,24 @@ namespace BookingTravelApi.Migrations
                     b.HasIndex("TourId");
 
                     b.ToTable("dayoftours");
+                });
+
+            modelBuilder.Entity("BookingTravelApi.Domains.ExternalImage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Path")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("externalImages");
                 });
 
             modelBuilder.Entity("BookingTravelApi.Domains.Favorite", b =>
@@ -555,21 +631,6 @@ namespace BookingTravelApi.Migrations
                     b.ToTable("tourimages");
                 });
 
-            modelBuilder.Entity("BookingTravelApi.Domains.TourLocation", b =>
-                {
-                    b.Property<int>("TourId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("LocationId")
-                        .HasColumnType("int");
-
-                    b.HasKey("TourId", "LocationId");
-
-                    b.HasIndex("LocationId");
-
-                    b.ToTable("tourlocations");
-                });
-
             modelBuilder.Entity("BookingTravelApi.Domains.User", b =>
                 {
                     b.Property<int>("Id")
@@ -601,7 +662,8 @@ namespace BookingTravelApi.Migrations
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("varchar(255)")
+                        .UseCollation("utf8mb4_bin");
 
                     b.Property<int>("Money")
                         .HasColumnType("int");
@@ -612,14 +674,17 @@ namespace BookingTravelApi.Migrations
                         .HasColumnType("varchar(255)");
 
                     b.Property<string>("Password")
-                        .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("varchar(255)")
+                        .UseCollation("utf8mb4_bin");
 
                     b.Property<string>("Phone")
                         .IsRequired()
                         .HasMaxLength(11)
                         .HasColumnType("varchar(11)");
+
+                    b.Property<bool>("RefundStatus")
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<int>("RoleId")
                         .HasColumnType("int");
@@ -633,13 +698,21 @@ namespace BookingTravelApi.Migrations
 
             modelBuilder.Entity("BookingTravelApi.Domains.UserCompletedSchedule", b =>
                 {
+                    b.Property<int>("BookingId")
+                        .HasColumnType("int");
+
                     b.Property<int>("ScheduleId")
                         .HasColumnType("int");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
-                    b.HasKey("ScheduleId", "UserId");
+                    b.Property<int>("countPeople")
+                        .HasColumnType("int");
+
+                    b.HasKey("BookingId");
+
+                    b.HasIndex("ScheduleId");
 
                     b.HasIndex("UserId");
 
@@ -872,25 +945,6 @@ namespace BookingTravelApi.Migrations
                     b.Navigation("Tour");
                 });
 
-            modelBuilder.Entity("BookingTravelApi.Domains.TourLocation", b =>
-                {
-                    b.HasOne("BookingTravelApi.Domains.Location", "Location")
-                        .WithMany("TourLocations")
-                        .HasForeignKey("LocationId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("BookingTravelApi.Domains.Tour", "Tour")
-                        .WithMany("TourLocations")
-                        .HasForeignKey("TourId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Location");
-
-                    b.Navigation("Tour");
-                });
-
             modelBuilder.Entity("BookingTravelApi.Domains.User", b =>
                 {
                     b.HasOne("BookingTravelApi.Domains.Role", "Role")
@@ -904,21 +958,25 @@ namespace BookingTravelApi.Migrations
 
             modelBuilder.Entity("BookingTravelApi.Domains.UserCompletedSchedule", b =>
                 {
-                    b.HasOne("BookingTravelApi.Domains.Schedule", "Schedule")
+                    b.HasOne("BookingTravelApi.Domains.Booking", "Booking")
+                        .WithOne("UserCompletedSchedule")
+                        .HasForeignKey("BookingTravelApi.Domains.UserCompletedSchedule", "BookingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BookingTravelApi.Domains.Schedule", null)
                         .WithMany("UserCompletedSchedules")
                         .HasForeignKey("ScheduleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BookingTravelApi.Domains.User", "User")
+                    b.HasOne("BookingTravelApi.Domains.User", null)
                         .WithMany("UserCompletedSchedules")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Schedule");
-
-                    b.Navigation("User");
+                    b.Navigation("Booking");
                 });
 
             modelBuilder.Entity("BookingTravelApi.Domains.Activity", b =>
@@ -926,6 +984,11 @@ namespace BookingTravelApi.Migrations
                     b.Navigation("ActivityAndLocations");
 
                     b.Navigation("DayActivities");
+                });
+
+            modelBuilder.Entity("BookingTravelApi.Domains.Booking", b =>
+                {
+                    b.Navigation("UserCompletedSchedule");
                 });
 
             modelBuilder.Entity("BookingTravelApi.Domains.DayOfTour", b =>
@@ -936,8 +999,6 @@ namespace BookingTravelApi.Migrations
             modelBuilder.Entity("BookingTravelApi.Domains.Location", b =>
                 {
                     b.Navigation("Places");
-
-                    b.Navigation("TourLocations");
                 });
 
             modelBuilder.Entity("BookingTravelApi.Domains.LocationActivity", b =>
@@ -992,8 +1053,6 @@ namespace BookingTravelApi.Migrations
                     b.Navigation("Schedules");
 
                     b.Navigation("TourImages");
-
-                    b.Navigation("TourLocations");
                 });
 
             modelBuilder.Entity("BookingTravelApi.Domains.User", b =>

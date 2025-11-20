@@ -13,9 +13,18 @@ namespace BookingTravelApi.Domains
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.Entity<User>()
+            .Property(u => u.Email)
+            .UseCollation("utf8mb4_bin");
+
+            modelBuilder.Entity<User>()
+            .Property(u => u.Password)
+            .UseCollation("utf8mb4_bin");
+
             CreatePrimaryKey(modelBuilder);
             CreateForeignKey(modelBuilder);
         }
+
         public DbSet<Configs> Configs => Set<Configs>();
         public DbSet<Actualcashs> Actualcashs => Set<Actualcashs>();
         public DbSet<Bank> Banks => Set<Bank>();
@@ -109,11 +118,12 @@ namespace BookingTravelApi.Domains
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<UserCompletedSchedule>()
-                .HasOne(t => t.Booking)
-                .WithOne(f => f.UserCompletedSchedule)
-                .HasForeignKey<UserCompletedSchedule>(t => t.BookingId)
+                .HasOne(u => u.Booking)
+                .WithOne(b => b.UserCompletedSchedule)
+                .HasForeignKey<UserCompletedSchedule>(u => u.BookingId)
                 .IsRequired()
                 .OnDelete(DeleteBehavior.Cascade);
+
 
             modelBuilder.Entity<User>()
                 .HasOne(t => t.Role)
