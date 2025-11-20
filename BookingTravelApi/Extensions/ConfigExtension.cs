@@ -10,9 +10,8 @@ namespace BookingTravelApi.Extensions
             return new ConfigDTO()
             {
                 Id = config.Id,
-                countChangeSchedule = config.countChangeSchedule,
-                timeExpiredBookingHour = config.timeExpiredBookingHour,
-                timeExpiredOtpSec = config.timeExpiredOtpSec,
+                Name = config.Name,
+                Value = config.Value
             };
         }
     }
