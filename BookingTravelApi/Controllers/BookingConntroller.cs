@@ -244,7 +244,7 @@ namespace BookingTravelApi.Controllers
                 Quantity = 1,
                 Price = booking.TotalPrice
             };
-            
+
             var response = await _paymentService.createPayment(booking.Id, [item], expiredAt);
             booking.Qr = response.QrCode;
             booking.ExpiredAt = expiredAt;
