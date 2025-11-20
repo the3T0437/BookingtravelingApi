@@ -215,7 +215,7 @@ namespace BookingTravelApi.Controllers
                 var config = await _context.Configs.AsNoTracking().FirstOrDefaultAsync(c => c.Id == 1);
 
                 var booking = newBookingDTO.Map();
-                booking.CountChangeLeft = config!.countChangeSchedule;
+                booking.CountChangeLeft = config!.Value;
 
                 await _context.Bookings.AddAsync(booking);
                 await _context.SaveChangesAsync();
