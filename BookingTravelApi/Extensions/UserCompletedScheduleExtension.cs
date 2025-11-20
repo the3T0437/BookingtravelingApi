@@ -9,9 +9,8 @@ namespace BookingTravelApi.Extensions
         {
             return new UserCompletedScheduleDTO()
             {
-                BookingId = userCompletedSchedule.BookingId,
-                Schedule = userCompletedSchedule.Booking!.Schedule!.Map(),
-                Booking = userCompletedSchedule.Booking.Map()
+                CountPeople = userCompletedSchedule.countPeople, 
+                Booking = userCompletedSchedule.Booking!.Map()
             };
         }
     }

@@ -8,8 +8,7 @@ namespace BookingTravelApi.DTO.usercompletedschedule
 {
     public class UserCompletedScheduleDTO
     {
-        public int BookingId {get; set;}
-        public ScheduleDTO? Schedule {get; set;}
+        public int CountPeople {get; set;}
         public BookingDTO? Booking {get; set;}
 
     }
