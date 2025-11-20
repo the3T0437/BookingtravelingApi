@@ -38,10 +38,16 @@ namespace BookingTravelApi.Domains
         public int CountChangeLeft { get; set; }
 
         [Required]
+        public String Qr { get; set; }
+
+        [Required]
+        public DateTime ExpiredAt { get; set; }
+
+        [Required]
         public DateTime CreatedAt { get; set; }
 
         public Status? Status { get; set; }
-        public UserCompletedSchedule? UserCompletedSchedule {get; set;}
+        public UserCompletedSchedule? UserCompletedSchedule { get; set; }
         public Schedule? Schedule { get; set; }
         public User? User { get; set; }
     }

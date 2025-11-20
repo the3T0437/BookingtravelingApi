@@ -1,9 +1,12 @@
+using System.Runtime.CompilerServices;
 using BookingTravelApi.Domains;
 using BookingTravelApi.DTO;
 using BookingTravelApi.DTO.booking;
 using BookingTravelApi.Extensions;
+using BookingTravelApi.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using PayOS.Models.V2.PaymentRequests;
 
 namespace BookingTravelApi.Controllers
 {
@@ -12,11 +15,13 @@ namespace BookingTravelApi.Controllers
     public class BookingController : Controller
     {
         private ApplicationDbContext _context;
+        private PaymentService _paymentService;
         private readonly ILogger<BookingController> _logger;
-        public BookingController(ILogger<BookingController> logger, ApplicationDbContext context)
+        public BookingController(ILogger<BookingController> logger, ApplicationDbContext context, PaymentService paymentService)
         {
             _context = context;
             _logger = logger;
+            _paymentService = paymentService;
         }
 
         [HttpGet("byUser/{userId}")]
@@ -121,8 +126,8 @@ namespace BookingTravelApi.Controllers
                 .AsNoTracking().FirstAsync();
 
                 var booking = query.Map();
-                
-                if(booking.TotalPrice / booking.NumPeople == booking.Schedule.FinalPrice)
+
+                if (booking.TotalPrice / booking.NumPeople == booking.Schedule.FinalPrice)
                 {
                     booking.payType = true;
                 }
@@ -200,6 +205,8 @@ namespace BookingTravelApi.Controllers
         [HttpPost(Name = "CreateBooking")]
         public async Task<IActionResult> createBooking(CreateBookingDTO newBookingDTO)
         {
+            using var transient = await _context.Database.BeginTransactionAsync();
+
             try
             {
                 var schedule = await _context.Schedules.FindAsync(newBookingDTO.ScheduleId);
@@ -221,9 +228,12 @@ namespace BookingTravelApi.Controllers
 
                 var booking = newBookingDTO.Map();
                 booking.Code = newCode;
-
                 await _context.Bookings.AddAsync(booking);
                 await _context.SaveChangesAsync();
+
+                await createPaymentLink(booking, DateTime.Now.AddSeconds(15));
+                await _context.SaveChangesAsync();
+                await transient.CommitAsync();
 
                 return Ok(new RestDTO<int>
                 {
@@ -232,8 +242,23 @@ namespace BookingTravelApi.Controllers
             }
             catch (Exception ex)
             {
-                return Problem("create fail");
+                await transient.RollbackAsync();
+                return Problem($"create fail {ex.Message}");
             }
+        }
+
+        private async Task createPaymentLink(Booking booking, DateTime expiredAt)
+        {
+            PaymentLinkItem item = new PaymentLinkItem()
+            {
+                Name = $"booking ${booking.Id}",
+                Quantity = 1,
+                Price = booking.TotalPrice
+            };
+            
+            var response = await _paymentService.createPayment(booking.Id, [item], expiredAt);
+            booking.Qr = response.QrCode;
+            booking.ExpiredAt = expiredAt;
         }
 
         [HttpPut("updateScheduleBooking")]
@@ -423,7 +448,7 @@ namespace BookingTravelApi.Controllers
 
                 _context.Bookings.Remove(booking);
                 await _context.SaveChangesAsync();
-                
+
                 return Ok(new RestDTO<Boolean>()
                 {
                     Data = true
