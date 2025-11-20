@@ -37,7 +37,7 @@ namespace BookingTravelApi.Controllers
                 return Problem("Email không được trống");
             }
 
-            
+
             var oldOtp = await _context.OtpCodes.AsNoTracking().FirstOrDefaultAsync(o => o.Email == createOtpCodeDTO.Email);
 
             if (oldOtp != null)
@@ -45,7 +45,7 @@ namespace BookingTravelApi.Controllers
                 _context.OtpCodes.Remove(oldOtp);
             }
 
-            var config = await _context.Configs.FindAsync(1);
+            var config = await _context.Configs.FindAsync(3);
 
             DateTime now = DateTimeHelper.GetVietNamTime();
             var time = now.AddMinutes(config!.Value);
