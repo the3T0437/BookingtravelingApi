@@ -27,7 +27,7 @@ namespace BookingTravelApi.Controllers
             _logger = logger;
         }
 
-        [HttpGet("{scheduleId}")]
+        [HttpGet("schedule/{scheduleId}")]
         [ResponseCache(NoStore = true)]
         public async Task<IActionResult> GetCompletedBookings(int scheduleId)
         {
@@ -38,8 +38,10 @@ namespace BookingTravelApi.Controllers
                 .Include(u => u.Booking)
                 .ThenInclude(b => b!.Schedule)
                 .ThenInclude(t => t!.Tour)
+
                 .Include(u => u.Booking)
                 .ThenInclude(b => b!.User)
+
                 .Include(u => u.Booking)
                 .ThenInclude(b => b!.Status)
                 .AsNoTracking()
@@ -55,6 +57,36 @@ namespace BookingTravelApi.Controllers
             catch (Exception ex)
             {
                 return Problem($"Error get completed bookings: {ex.Message}");
+            }
+        }
+
+        [HttpGet("booking/{bookingId}")]
+        public async Task<IActionResult> getBooking(int bookingId)
+        {
+            try
+            {
+                var query = await _context.UserCompletedSchedules
+                .Where(b => b.BookingId == bookingId)
+                .Include(u => u.Booking)
+                .ThenInclude(b => b!.Schedule)
+                .ThenInclude(t => t!.Tour)
+                
+                .Include(u => u.Booking)
+                .ThenInclude(st => st!.Status)
+
+                .Include(u => u.Booking)
+                .ThenInclude(us => us!.User)
+                .AsNoTracking().ToArrayAsync();
+
+                var booking = query.Select(i => i.Map()).ToArray();
+                return Ok(new RestDTO<UserCompletedScheduleDTO[]?>()
+                {
+                    Data = booking
+                });
+            }
+            catch (IOException ex)
+            {
+                return Problem($"Get booking fail {ex.Message}");
             }
         }
 

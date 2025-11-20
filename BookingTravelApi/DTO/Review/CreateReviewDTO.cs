@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using BookingTravelApi.Domains;
+using BookingTravelApi.Helpers;
 
 namespace BookingTravelApi.DTO.review
 {
@@ -19,9 +20,6 @@ namespace BookingTravelApi.DTO.review
         [Required]
         public int ScheduleId { get; set; }
 
-        [Required]
-        public DateTime CreatedAt { get; set; }
-
         public Review Map()
         {
             return new Review()
@@ -30,7 +28,7 @@ namespace BookingTravelApi.DTO.review
                 Rating = Rating,
                 Content = Content,
                 ScheduleId = ScheduleId,
-                CreatedAt = CreatedAt == default ? DateTime.Now : CreatedAt,
+                CreatedAt = DateTimeHelper.GetVietNamTime(),
             };
         }
     }
