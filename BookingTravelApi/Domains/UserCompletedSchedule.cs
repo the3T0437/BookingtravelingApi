@@ -13,9 +13,6 @@ namespace BookingTravelApi.Domains
         [Required]
         public int countPeople { get; set; }
 
-        public int UserId { get; set; }
-        public int ScheduleId { get; set; }
-
         public Booking? Booking { get; set; }
     }
 }

@@ -26,7 +26,7 @@ namespace BookingTravelApi.DTO.booking
 
         public Booking Map()
         {
-            var random = new Random(); 
+            var random = new Random();
             return new Booking()
             {
                 ScheduleId = ScheduleId,
@@ -37,8 +37,11 @@ namespace BookingTravelApi.DTO.booking
                 Email = Email,
                 Phone = Phone,
                 TotalPrice = TotalPrice,
-                CountChangeLeft = 1,
-                CreatedAt = DateTime.Now
+                CountChangeLeft = 3,
+                CreatedAt = DateTime.Now,
+                ExpiredAt = DateTime.Now,
+                Qr = "",
+
             };
         }
     }

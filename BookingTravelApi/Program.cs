@@ -4,6 +4,8 @@ using BookingTravelApi.Services;
 using DotNetEnv;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
+using PayOS;
+using PayOS.Models.V1.Payouts;
 
 namespace BookingTravelApi;
 
@@ -37,6 +39,17 @@ public class Program
                 options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
             );
         }
+
+        builder.Services.AddSingleton<PayOSClient>(op =>
+        {
+            var clientId = Environment.GetEnvironmentVariable("ClientId");
+            var apiKey = Environment.GetEnvironmentVariable("ApiKey");
+            var checksumKey = Environment.GetEnvironmentVariable("ChecksumKey");
+            PayOS.PayOSClient payOS = new PayOSClient(clientId, apiKey, checksumKey);
+
+            return payOS;
+        });
+        builder.Services.AddScoped<PaymentService>();
 
         builder.Services.AddControllers(); builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
