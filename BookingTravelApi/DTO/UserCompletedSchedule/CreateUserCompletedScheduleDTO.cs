@@ -1,22 +1,25 @@
-// using System.ComponentModel.DataAnnotations;
-// using BookingTravelApi.Domains;
+using System.ComponentModel.DataAnnotations;
+using BookingTravelApi.Domains;
 
-// namespace BookingTravelApi.DTO.Activity
-// {
-//     public class CreateUserCompletedScheduleDTO
-//     {
-//         [Required]
-//         public int UserId { get; set; }
+namespace BookingTravelApi.DTO.Activity
+{
+    public class CreateUserCompletedScheduleDTO
+    {
+        [Required]
+        public int BookingId { get; set; }
 
-//         [Required]
-//         public int ScheduleId { get; set; }
-//         public UserCompletedSchedule Map()
-//         {
-//             return new UserCompletedSchedule()
-//             {
-//                 UserId = UserId,
-//                 ScheduleId = ScheduleId
-//             };
-//         }
-//     }
-// }
+        [Required]
+        public int countPeople { get; set; }
+
+        public UserCompletedSchedule Map()
+        {
+            return new UserCompletedSchedule()
+            {
+                BookingId = BookingId,
+                countPeople = countPeople,
+                ScheduleId = 0,
+                UserId = 0
+            };
+        }
+    }
+}

@@ -154,7 +154,7 @@ namespace BookingTravelApi.Migrations
                     b.Property<int>("countChangeSchedule")
                         .HasColumnType("int");
 
-                    b.Property<int>("timeExpiredBookingSec")
+                    b.Property<int>("timeExpiredBookingHour")
                         .HasColumnType("int");
 
                     b.Property<int>("timeExpiredOtpSec")
@@ -659,7 +659,8 @@ namespace BookingTravelApi.Migrations
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("varchar(255)")
+                        .UseCollation("utf8mb4_bin");
 
                     b.Property<int>("Money")
                         .HasColumnType("int");
@@ -671,7 +672,8 @@ namespace BookingTravelApi.Migrations
 
                     b.Property<string>("Password")
                         .HasMaxLength(255)
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("varchar(255)")
+                        .UseCollation("utf8mb4_bin");
 
                     b.Property<string>("Phone")
                         .IsRequired()
@@ -696,10 +698,10 @@ namespace BookingTravelApi.Migrations
                     b.Property<int>("BookingId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ScheduleId")
+                    b.Property<int>("ScheduleId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("UserId")
+                    b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.Property<int>("countPeople")
@@ -961,11 +963,15 @@ namespace BookingTravelApi.Migrations
 
                     b.HasOne("BookingTravelApi.Domains.Schedule", null)
                         .WithMany("UserCompletedSchedules")
-                        .HasForeignKey("ScheduleId");
+                        .HasForeignKey("ScheduleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("BookingTravelApi.Domains.User", null)
                         .WithMany("UserCompletedSchedules")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Booking");
                 });
