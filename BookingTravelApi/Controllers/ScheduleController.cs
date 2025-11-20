@@ -15,9 +15,9 @@ namespace BookingTravelApi.Controllers
     public class ScheduleController : Controller
     {
         private ApplicationDbContext _context;
-        private readonly ILogger<LocationController> _logger;
+        private readonly ILogger<ScheduleController> _logger;
 
-        public ScheduleController(ILogger<LocationController> logger, ApplicationDbContext context)
+        public ScheduleController(ILogger<ScheduleController> logger, ApplicationDbContext context)
         {
             _context = context;
             _logger = logger;

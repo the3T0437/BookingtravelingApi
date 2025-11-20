@@ -13,8 +13,8 @@ namespace BookingTravelApi.Controllers
     public class FavoriteController : Controller
     {
         private ApplicationDbContext _context;
-        private readonly ILogger<BookingController> _logger;
-        public FavoriteController(ILogger<BookingController> logger, ApplicationDbContext context)
+        private readonly ILogger<FavoriteController> _logger;
+        public FavoriteController(ILogger<FavoriteController> logger, ApplicationDbContext context)
         {
             _context = context;
             _logger = logger;

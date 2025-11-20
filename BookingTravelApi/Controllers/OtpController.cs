@@ -16,9 +16,9 @@ namespace BookingTravelApi.Controllers
 
         private MailService _mailService;
         private ApplicationDbContext _context;
-        private readonly ILogger<LocationController> _logger;
+        private readonly ILogger<OTPController> _logger;
 
-        public OTPController(ILogger<LocationController> logger, ApplicationDbContext context, MailService mailService)
+        public OTPController(ILogger<OTPController> logger, ApplicationDbContext context, MailService mailService)
         {
             _context = context;
             _logger = logger;

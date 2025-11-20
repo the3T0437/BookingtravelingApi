@@ -13,9 +13,9 @@ namespace BookingTravelApi.Controllers
     public class LocationActivityController : Controller
     {
         private ApplicationDbContext _context;
-        private readonly ILogger<LocationController> _logger;
+        private readonly ILogger<LocationActivityController> _logger;
 
-        public LocationActivityController(ILogger<LocationController> logger, ApplicationDbContext context)
+        public LocationActivityController(ILogger<LocationActivityController> logger, ApplicationDbContext context)
         {
             _context = context;
             _logger = logger;
