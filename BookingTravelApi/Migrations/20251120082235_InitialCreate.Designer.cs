@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookingTravelApi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251118113016_FinalSchemaChanges")]
-    partial class FinalSchemaChanges
+    [Migration("20251120082235_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -157,7 +157,7 @@ namespace BookingTravelApi.Migrations
                     b.Property<int>("countChangeSchedule")
                         .HasColumnType("int");
 
-                    b.Property<int>("timeExpiredBookingSec")
+                    b.Property<int>("timeExpiredBookingHour")
                         .HasColumnType("int");
 
                     b.Property<int>("timeExpiredOtpSec")
@@ -699,10 +699,10 @@ namespace BookingTravelApi.Migrations
                     b.Property<int>("BookingId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ScheduleId")
+                    b.Property<int>("ScheduleId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("UserId")
+                    b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.Property<int>("countPeople")
@@ -964,11 +964,15 @@ namespace BookingTravelApi.Migrations
 
                     b.HasOne("BookingTravelApi.Domains.Schedule", null)
                         .WithMany("UserCompletedSchedules")
-                        .HasForeignKey("ScheduleId");
+                        .HasForeignKey("ScheduleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("BookingTravelApi.Domains.User", null)
                         .WithMany("UserCompletedSchedules")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Booking");
                 });
