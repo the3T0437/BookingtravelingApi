@@ -15,5 +15,17 @@ namespace BookingTravelApi.Domains
         public String Name { get; set; } = null!;
 
         public ICollection<Place>? Places { get; set; }
+
+        public override bool Equals(object? obj)
+        {
+            if (obj is Location other)
+                return Id == other.Id && Name == other.Name;
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Id, Name);
+        }
     }
 }
