@@ -59,12 +59,8 @@ namespace BookingTravelApi.Controllers
         {
             try
             {
-                var booking = await _context.Bookings.AsNoTracking().FirstOrDefaultAsync(b => b.Id == newUserSchedule.BookingId);
-
                 var userSchedule = newUserSchedule.Map();
-                userSchedule.ScheduleId = booking!.ScheduleId;
-                userSchedule.UserId = booking!.UserId;
-
+               
                 await _context.UserCompletedSchedules.AddAsync(userSchedule);
                 await _context.SaveChangesAsync();
 

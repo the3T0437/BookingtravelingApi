@@ -53,7 +53,6 @@ namespace BookingTravelApi.Domains
         public Role? Role { get; set; }
         public ICollection<Helpful>? Helpfuls { get; set; }
         public ICollection<Review>? Reviews { get; set; }
-        public ICollection<UserCompletedSchedule>? UserCompletedSchedules { get; set; }
         public ICollection<Favorite>? Favorites { get; set; }
         public ICollection<Booking>? Bookings { get; set; }
     }

@@ -17,8 +17,6 @@ namespace BookingTravelApi.DTO.Activity
             {
                 BookingId = BookingId,
                 countPeople = countPeople,
-                ScheduleId = 0,
-                UserId = 0
             };
         }
     }
