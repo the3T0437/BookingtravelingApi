@@ -154,7 +154,7 @@ namespace BookingTravelApi.Migrations
                     b.Property<int>("countChangeSchedule")
                         .HasColumnType("int");
 
-                    b.Property<int>("timeExpiredBookingSec")
+                    b.Property<int>("timeExpiredBookingHour")
                         .HasColumnType("int");
 
                     b.Property<int>("timeExpiredOtpSec")
