@@ -1,19 +1,21 @@
 using MimeKit;
 using MailKit.Net.Smtp;
 using MailKit.Security;
+using DotNetEnv;
 
 namespace BookingTravelApi.Services
 {
     public class MailService
     {
+        
         private const string SmtpHost = "smtp.gmail.com";
         private const int SmtpPort = 587; // Cổng tiêu chuẩn cho TLS/STARTTLS
 
         // Thông tin đăng nhập và hiển thị
         private const string SenderName = "Dịch vụ gửi Email của bookingtour"; // Tên hiển thị
-        private const string SenderEmailId = "nguyenphamphuongnam05@gmail.com"; // Địa chỉ email gửi
-        private const string SmtpUsername = "nguyenphamphuongnam05@gmail.com"; // Tên đăng nhập SMTP 
-        private const string SmtpPassword = "aknw pevn hyza vapc"; // Mật khẩu ứng dụng 
+        private string SenderEmailId = Environment.GetEnvironmentVariable("Email") ?? ""; // Địa chỉ email gửi
+        private string SmtpUsername = Environment.GetEnvironmentVariable("Email") ?? ""; // Tên đăng nhập SMTP 
+        private string SmtpPassword = Environment.GetEnvironmentVariable("AppPassword") ?? ""; // Mật khẩu ứng dụng 
 
         public async Task<bool> SendMailAsync(string toEmail, string body, int timeValidity)
         {
