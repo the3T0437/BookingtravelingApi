@@ -129,7 +129,7 @@ namespace BookingTravelApi.Controllers
 
                 if (booking.TotalPrice / booking.NumPeople == booking.Schedule.FinalPrice)
                 {
-                    booking.payType = true;
+                    booking.PayType = true;
                 }
                 return Ok(new RestDTO<BookingDTO>()
                 {
