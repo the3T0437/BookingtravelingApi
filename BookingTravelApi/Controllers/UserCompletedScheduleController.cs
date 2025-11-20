@@ -22,6 +22,7 @@ namespace BookingTravelApi.Controllers
             _logger = logger;
         }
 
+<<<<<<< HEAD
         [HttpGet("{scheduleId}")]
         [ResponseCache(NoStore = true)]
         public async Task<IActionResult> getUsersCompletedSchedule(int? scheduleId = null)
@@ -128,6 +129,93 @@ namespace BookingTravelApi.Controllers
                 return Problem($"Error delete {ex.Message}");
             }
         }
+=======
+        // [HttpGet("{scheduleId}")]
+        // [ResponseCache(NoStore = true)]
+        // public async Task<IActionResult> getUsersCompletedSchedule(int? scheduleId = null)
+        // {
+        //     try
+        //     {
+        //         if (scheduleId == null)
+        //         {
+        //             return Problem("id not found");
+        //         }
+
+        //         var query = _context.UserCompletedSchedules
+        //         .Where(g => g.ScheduleId == scheduleId)
+        //         .Include(u => u.User)
+
+        //         .Include(u => u.Schedule)
+        //         .ThenInclude(s => s!.Bookings)
+        //         .AsNoTracking();
+
+        //         var userScheduleDTO = await query.Select(i => i.Map()).ToArrayAsync();
+
+        //         return Ok(new RestDTO<UserCompletedScheduleDTO[]?>()
+        //         {
+        //             Data = userScheduleDTO
+        //         });
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         return Problem("Error get ScheduleCompleted");
+        //     }
+        // }
+
+        [HttpPost]
+        public async Task<IActionResult> createUserCompletedSchedule(CreateUserCompletedScheduleDTO newUserSchedule)
+        {
+            try
+            {
+                var booking = await _context.Bookings.AsNoTracking().FirstOrDefaultAsync(b => b.Id == newUserSchedule.BookingId);
+
+                var userSchedule = newUserSchedule.Map();
+                userSchedule.ScheduleId = booking!.ScheduleId;
+                userSchedule.UserId = booking!.UserId;
+
+                await _context.UserCompletedSchedules.AddAsync(userSchedule);
+                await _context.SaveChangesAsync();
+
+                return Ok(new RestDTO<int>()
+                {
+                    Data = userSchedule.BookingId
+                });
+            }
+            catch (Exception ex)
+            {
+                return Problem("Error create");
+            }
+
+        }
+
+        // [HttpDelete(Name = "DeleteUserCompletedSchedule")]
+        // public async Task<IActionResult> deleteUserCompletedSchedule(int userId, int scheduleId)
+        // {
+        //     try
+        //     {
+        //         var userSchedule = await _context.UserCompletedSchedules
+        //         .Where(g => g.UserId == userId && g.ScheduleId == scheduleId)
+        //         .FirstOrDefaultAsync();
+
+        //         if (userSchedule == null)
+        //         {
+        //             return NotFound($"Place with Id {userId} or {scheduleId} not found.");
+        //         }
+
+        //         _context.UserCompletedSchedules.Remove(userSchedule);
+        //         await _context.SaveChangesAsync();
+
+        //         return Ok(new RestDTO<Boolean>()
+        //         {
+        //             Data = true
+        //         });
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         return Problem("Error delete");
+        //     }
+        // }
+>>>>>>> main
 
     }
 }

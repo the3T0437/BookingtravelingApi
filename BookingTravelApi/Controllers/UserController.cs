@@ -71,7 +71,7 @@ namespace BookingTravelApi.Controllers
         }
 
         [HttpPost("check-email-account")]
-        public async Task<IActionResult> CheckAccount(CheckAccount checkAccount)
+        public async Task<IActionResult> CheckEmailAccount(CheckAccount checkAccount)
         {
             bool result = true;
 
@@ -210,13 +210,7 @@ namespace BookingTravelApi.Controllers
                 Data = users.Select(i => i.Map()).ToList()
             });
         }
-
-        [HttpPost("CancelRefund/{id}")]
-        public async Task<IActionResult> CancelRefund(int id)
-        {
-            return await SubmitRefund(id);
-        }
-
+        
         [HttpPost("SubmitRefund/{id}")]
         public async Task<IActionResult> SubmitRefund(int id)
         {
