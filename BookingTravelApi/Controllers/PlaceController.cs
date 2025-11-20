@@ -15,9 +15,9 @@ namespace BookingTravelApi.Controllers
     public class PlaceController : Controller
     {
         private ApplicationDbContext _context;
-        private readonly ILogger<LocationController> _logger;
+        private readonly ILogger<PlaceController> _logger;
 
-        public PlaceController(ILogger<LocationController> logger, ApplicationDbContext context)
+        public PlaceController(ILogger<PlaceController> logger, ApplicationDbContext context)
         {
             _context = context;
             _logger = logger;
