@@ -76,7 +76,7 @@ public class Program
             RequestPath = AppConfig.GetRequestImagePath()
         });
 
-        app.UseExceptionHandler("/error");
+        // app.UseExceptionHandler("/error");
 
         app.UseHttpsRedirection();
 
