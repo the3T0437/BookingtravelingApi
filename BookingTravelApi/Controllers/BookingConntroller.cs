@@ -211,29 +211,17 @@ namespace BookingTravelApi.Controllers
             {
                 var schedule = await _context.Schedules.FindAsync(newBookingDTO.ScheduleId);
                 if (schedule == null) return Problem("scheduleId not Found");
-
-                var scheduleCode = schedule.Code;
-                string newCode;
-                var random = new Random();
-                bool exists;
-
-                do
-                {
-                    var randomNumber = random.Next(1000, 999999);
-                    newCode = $"{scheduleCode}-{randomNumber}";
-                    exists = await _context.Bookings.AnyAsync(b => b.Code == newCode);
-                } while (exists);
-
-
+                var config = await _context.Configs.AsNoTracking().FirstOrDefaultAsync(c => c.Id == 1);
 
                 var booking = newBookingDTO.Map();
-                booking.Code = newCode;
+                booking.CountChangeLeft = config!.countChangeSchedule;
+
                 await _context.Bookings.AddAsync(booking);
                 await _context.SaveChangesAsync();
 
-                await createPaymentLink(booking, DateTime.Now.AddSeconds(15));
+                booking.Code = $"{schedule.Code}-{booking.Id}";
+                _context.Bookings.Update(booking);
                 await _context.SaveChangesAsync();
-                await transient.CommitAsync();
 
                 return Ok(new RestDTO<int>
                 {

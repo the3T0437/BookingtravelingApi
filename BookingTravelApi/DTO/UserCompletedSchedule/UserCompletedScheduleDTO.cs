@@ -8,12 +8,8 @@ namespace BookingTravelApi.DTO.usercompletedschedule
 {
     public class UserCompletedScheduleDTO
     {
-        public DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; }
-        public String Code { get; set; } = null!;
-        public String? Name { get; set; } = null!;
-        public String AvatarPath { get; set; } = null!;
-        public List<BookingDTO> Booking { get; set; } = null!;
+        public int CountPeople {get; set;}
+        public BookingDTO? Booking {get; set;}
 
     }
 }

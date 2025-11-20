@@ -10,13 +10,13 @@ namespace BookingTravelApi.DTO.Activity
 
         [Required]
         public int countPeople { get; set; }
-
+        
         public UserCompletedSchedule Map()
         {
             return new UserCompletedSchedule()
             {
-                BookingId = BookingId,
-                countPeople = countPeople,
+                BookingId =  this.BookingId,
+                countPeople = this.countPeople
             };
         }
     }

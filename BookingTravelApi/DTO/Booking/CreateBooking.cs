@@ -31,7 +31,7 @@ namespace BookingTravelApi.DTO.booking
             {
                 ScheduleId = ScheduleId,
                 UserId = UserId,
-                StatusId = 1,
+                StatusId = Status.Processing,
                 NumPeople = NumPeople,
                 Code = "String",
                 Email = Email,
