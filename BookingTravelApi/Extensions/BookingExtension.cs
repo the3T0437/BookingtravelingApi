@@ -17,8 +17,9 @@ namespace BookingTravelApi.Extensions
                 TotalPrice = booking.TotalPrice,
                 CountChangeLeft = booking.CountChangeLeft,
                 CreatedAt = booking.CreatedAt,
-                payType = false,
-
+                PayType = false,
+                ExpiredAt = booking.ExpiredAt,               
+                Qr = booking.Qr,
                 Status = booking.Status!.Map(),
                 Schedule = booking.Schedule!.Map(),
                 User = booking.User!.Map()
