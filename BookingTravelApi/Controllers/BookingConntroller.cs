@@ -3,6 +3,7 @@ using BookingTravelApi.Domains;
 using BookingTravelApi.DTO;
 using BookingTravelApi.DTO.booking;
 using BookingTravelApi.Extensions;
+using BookingTravelApi.Helpers;
 using BookingTravelApi.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -34,7 +35,7 @@ namespace BookingTravelApi.Controllers
                 {
                     return Problem("id not found");
                 }
-                var now = DateTime.Now;
+                var now = DateTimeHelper.GetVietNamTime();
 
                 var query = await _context.Bookings
                 .Where(b => b.UserId == userId && b.Schedule!.StartDate > now)
@@ -154,7 +155,7 @@ namespace BookingTravelApi.Controllers
                     return Problem("id not found");
                 }
 
-                var now = DateTime.Now;
+                var now = DateTimeHelper.GetVietNamTime();
 
                 var query = await _context.Bookings
                 .Where(b => b.ScheduleId == scheduleId && b.Schedule!.StartDate > now)
