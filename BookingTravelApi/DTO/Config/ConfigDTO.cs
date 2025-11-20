@@ -4,14 +4,9 @@ namespace BookingTravelApi.DTO.config
 {
     public class ConfigDTO
     {
-        [Required]
         public int Id { get; set; }
-        [Required]
-        public int countChangeSchedule { get; set; }
-        [Required]
-        public int timeExpiredBookingHour { get; set; }
-        [Required]
-        public int timeExpiredOtpSec { get; set; }
+        public String Name { get; set; } = null!;
+        public int Value { get; set; }
 
     }
 }

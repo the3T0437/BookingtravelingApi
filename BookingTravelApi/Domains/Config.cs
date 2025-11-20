@@ -8,15 +8,12 @@ namespace BookingTravelApi.Domains
     {
         [Key]
         [Required]
-        public int Id { get; set; }
+        public int Id  { get; set; }
+
+        [MaxLength(255)]
+        public String Name {get; set;} = null!;
 
         [Required]
-        public int countChangeSchedule {get; set;}
-
-        [Required]
-        public int timeExpiredBookingHour {get; set;}
-
-        [Required]
-        public int timeExpiredOtpSec {get; set;}
+        public int Value {get; set;}    
     }
 }
