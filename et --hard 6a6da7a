@@ -1,0 +1,170 @@
+[33m3ca5ad1[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mdev_tinh[m[33m)[m test
+[33me73fcf1[m[33m ([m[1;32mmain[m[33m)[m pull
+[33mb9841a7[m pull main
+[33m315d15a[m Merge pull request #60 from the3T0437/dev_thuong
+[33m8254721[m get schedules for accountant, reception
+[33m4dfd831[m Merge branch 'main' into dev_thuong
+[33m9553397[m Merge pull request #59 from the3T0437/dev_nam
+[33m4460e6e[m meger main 2
+[33m87abfe9[m Merge branch 'main' into dev_thuong
+[33m3441e6f[m Merge pull request #58 from the3T0437/dev_nam
+[33m1adbbd5[m meger main
+[33m26e7f84[m update domain (database)
+[33ma1195e0[m Merge branch 'main' into dev_thuong
+[33mdda88fc[m staging
+[33m6a6da7a[m Merge pull request #57 from the3T0437/dev_tinh
+[33mca0ff18[m[33m ([m[1;31morigin/dev_tinh[m[33m)[m checkreview
+[33ma3f9494[m checkreview
+[33m9b9f565[m Merge pull request #56 from the3T0437/dev_nam
+[33m221317c[m Merge branch 'main' into dev_nam
+[33m0a45bfc[m update usercontroller
+[33m63ba48e[m Merge branch 'main' into dev_thuong
+[33m24a6f9d[m Merge pull request #55 from the3T0437/dev_nam
+[33m4ab9d3e[m Merge branch 'main' into dev_nam
+[33m3a3cc73[m update shceduleController
+[33mb1f97e7[m updatebooking
+[33m88018ac[m Merge pull request #54 from the3T0437/dev_tinh
+[33m55d107c[m Merge pull request #53 from the3T0437/dev_nam
+[33m230aa19[m Merge branch 'main' into dev_nam
+[33m7130dd0[m update login user
+[33m872281f[m refundStatus
+[33m491ec4a[m Merge pull request #52 from the3T0437/dev_tinh
+[33m4249930[m totalstartandrating
+[33m91f583c[m Merge pull request #51 from the3T0437/dev_tinh
+[33m602ea0c[m update booking
+[33m45668f1[m tinh
+[33m23311a8[m Merge branch 'main' into dev_thuong
+[33mc355d96[m Merge pull request #50 from the3T0437/dev_nam
+[33m187ffa7[m update bookingcontroller
+[33mf735158[m staging
+[33m6a17bbc[m Merge pull request #49 from the3T0437/dev_thuong
+[33m75e2571[m Merge branch 'main' into dev_thuong
+[33md2ab895[m helpful reviews
+[33m0cbe5c3[m Merge pull request #48 from the3T0437/dev_nam
+[33m2649806[m Merge branch 'main' into dev_nam
+[33m90b9aea[m update BookingController
+[33m7deac60[m Merge pull request #47 from the3T0437/dev_thuong
+[33me238005[m Merge branch 'main' into dev_thuong
+[33me3ab134[m staging
+[33m374f4c7[m newCodeBooking
+[33ma71dc50[m Merge pull request #46 from the3T0437/dev_tinh
+[33m5dae674[m codeBongking
+[33m6e1eaa4[m merge
+[33mf461703[m code
+[33m6fdef1f[m Merge pull request #45 from the3T0437/dev_tinh
+[33mc839bfa[m Merge branch 'main' into dev_thuong
+[33ma3ff019[m api to store external images
+[33m02591ab[m Merge pull request #44 from the3T0437/dev_nam
+[33m068a963[m update UserController
+[33m6f7161a[m update user
+[33mc87d4b8[m update user
+[33m9359b3a[m update user
+[33m8e65def[m merge main
+[33m9c9ce0d[m Merge pull request #43 from the3T0437/dev_tinh
+[33m11c46de[m Merge pull request #42 from the3T0437/dev_nam
+[33m3d5a202[m Merge branch 'main' into dev_nam
+[33mc48d1b3[m add bank
+[33me440b53[m update user
+[33mdf0b97c[m a
+[33mfd06051[m[33m ([m[1;32mdev_nam[m[33m)[m update user
+[33m8d60413[m update user
+[33mbb5cc30[m Merge pull request #41 from the3T0437/dev_nam
+[33md7a559c[m update UserController add check-account
+[33meb1dd65[m merge main
+[33m40a0216[m merge main
+[33mc4bec3c[m Merge pull request #39 from the3T0437/dev_tinh
+[33m6663c32[m merge main
+[33m3a796e3[m Merge pull request #40 from the3T0437/dev_nam
+[33mc62c12a[m Merge branch 'main' into dev_nam
+[33ma006917[m update userController
+[33m8d7e047[m favorite
+[33me6f9ad7[m update userController
+[33m011a316[m booking
+[33m320a4f0[m Merge pull request #38 from the3T0437/dev_thuong
+[33m021696a[m make map to tourDTO be less retrict
+[33ma19c3b9[m Merge pull request #37 from the3T0437/dev_thuong
+[33m50b7ac2[m change booking, get schedules by tour id
+[33m948822b[m merge main dev_tinh
+[33m3dea27a[m Merge branch 'main' into dev_thuong
+[33m934481f[m get completed schedule
+[33m065ace3[m booking
+[33m459597d[m Merge pull request #36 from the3T0437/dev_tinh
+[33mdc354b0[m Merge pull request #35 from the3T0437/dev_thuong
+[33m761864c[m change tour models
+[33m6623d3d[m get most favorite, most recent, search tour
+[33maa18d61[m fix can't delete location activity
+[33m1bcc460[m Merge pull request #34 from the3T0437/dev_nam
+[33m90fe494[m update LocationActivitiController
+[33m8ac2478[m Merge pull request #33 from the3T0437/dev_nam
+[33mb55e56f[m Merge branch 'main' into dev_nam
+[33m30fe4fa[m update LocationActivityController
+[33m903c927[m Merge pull request #32 from the3T0437/dev_thuong
+[33m8216d23[m fix location activity can't return when updated completed
+[33mb6e95fc[m Merge pull request #31 from the3T0437/dev_thuong
+[33m35195b6[m Merge branch 'main' into dev_thuong
+[33m2e54fd9[m add percent deposit param create tour
+[33mc1c897e[m Merge pull request #30 from the3T0437/dev_nam
+[33m16b0bf1[m update Schedule
+[33m93f262c[m Merge pull request #29 from the3T0437/dev_nam
+[33mb6938c7[m update StafController
+[33m2f53084[m Merge pull request #28 from the3T0437/dev_nam
+[33mf3438cb[m Merge branch 'main' into dev_nam
+[33m98a27b8[m update scheduleController, create gétcheduleAssignment
+[33m3d4bdc2[m Merge pull request #26 from the3T0437/dev_nam
+[33mc8ce2a5[m Merge branch 'main' into dev_nam
+[33m0f83ff9[m done screen schedule_assigment
+[33m8610b77[m Merge pull request #25 from the3T0437/dev_tinh
+[33m84f4264[m Merge branch 'main' into dev_thuong
+[33m4042ed8[m avtuser
+[33m925f212[m update tour dto
+[33m1406e04[m schedule
+[33m8dcc1b0[m Merge pull request #24 from the3T0437/dev_nam
+[33m82b2bc4[m update GuideController
+[33mae05e2b[m Merge pull request #23 from the3T0437/dev_nam
+[33m679c1d9[m update location in Schedule
+[33m5b110f2[m Merge pull request #22 from the3T0437/dev_nam
+[33m896a2a6[m Merge branch 'main' into dev_nam the commit.
+[33me9a61f6[m Merge pull request #21 from the3T0437/dev_tinh
+[33m497c851[m update schedulecontroller
+[33m261e2d2[m cmt
+[33mc671fa9[m dev_tinh
+[33m417bd47[m v1
+[33mc49418d[m guide
+[33m8793c4c[m Merge pull request #20 from the3T0437/dev_nam
+[33mb1e66c9[m dont StaffController
+[33m6683d30[m Merge pull request #19 from the3T0437/dev_nam
+[33m1cbf50e[m update ScheduleController and StaffController
+[33mbae162d[m main
+[33m14d82c3[m Merge pull request #18 from the3T0437/dev_nam
+[33m48df6e0[m update ScheduleController
+[33m812cb73[m Merge pull request #17 from the3T0437/dev_thuong
+[33md1c72da[m Merge branch 'main' into dev_thuong
+[33mc37acd4[m fix schedule can't get imformation of tour
+[33m5792742[m update DTO
+[33md6958cd[m Merge pull request #16 from the3T0437/dev_thuong
+[33m50deab0[m change some query param to path param
+[33m39a0862[m Merge branch 'main' of https://github.com/the3T0437/BookingtravelingApi
+[33m2e23d29[m remove dto for return json
+[33m4499be9[m Merge pull request #15 from the3T0437/dev_thuong
+[33m32867f5[m delete location activity
+[33m23d7f8b[m Merge pull request #14 from the3T0437/dev_nam
+[33m602b3c6[m update assignment
+[33m92f324b[m Merge pull request #13 from the3T0437/dev_thuong
+[33m8744b71[m Merge branch 'main' into dev_thuong
+[33m96db3d8[m update
+[33ma0c0769[m Merge pull request #12 from the3T0437/dev_nam
+[33mbd698ee[m Merge branch 'main' into dev_thuong
+[33mfccb908[m update
+[33m657f3c5[m change data type of time of day activity, data type gathering time of schedule
+[33m71ed2f7[m change data type of time of day activity, data type gathering time of schedule
+[33m26871b3[m Merge branch 'main' into dev_nam
+[33m2b7cb98[m update login
+[33ma31ca4e[m Merge pull request #11 from the3T0437/dev_thuong
+[33mc61ef89[m Merge branch 'main' into dev_thuong
+[33m6342257[m change data type of time of day activity, data type gathering time of schedule
+[33m438a3b6[m Merge pull request #10 from the3T0437/dev_nam
+[33m4523d60[m Merge branch 'main' into dev_nam
+[33m9fbc1d0[m verify otp  done
+[33m93ea4a5[m Merge pull request #9 from the3T0437/dev_thuong
+[33m6b96f5a[m u
+[33m2ec6339[m send gmail don
