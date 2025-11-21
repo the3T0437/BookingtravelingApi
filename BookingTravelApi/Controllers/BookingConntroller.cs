@@ -215,6 +215,7 @@ namespace BookingTravelApi.Controllers
                 var schedule = await _context.Schedules.FindAsync(newBookingDTO.ScheduleId);
                 if (schedule == null) return Problem("scheduleId not Found");
                 var config = await _context.Configs.AsNoTracking().FirstOrDefaultAsync(c => c.Id == 1);
+                var expiredBookingHours = (await _context.Configs.AsNoTracking().FirstOrDefaultAsync(c => c.Id == Configs.TimeExpiredBookingHour))?.Value ?? 3;
 
                 var booking = newBookingDTO.Map();
                 booking.CountChangeLeft = config!.Value;
@@ -224,9 +225,10 @@ namespace BookingTravelApi.Controllers
 
                 booking.Code = $"{schedule.Code}-{booking.Id}";
                 _context.Bookings.Update(booking);
-                await createPaymentLink(booking, DateTime.UtcNow.AddHours(7).AddHours(1));
+                //await createPaymentLink(booking, DateTime.UtcNow.AddHours(7).AddHours(expiredBookingHours));
+                await createPaymentLink(booking, DateTime.UtcNow.AddHours(7).AddSeconds(15));
                 await _context.SaveChangesAsync();
-
+                await transient.CommitAsync();
                 return Ok(new RestDTO<int>
                 {
                     Data = booking.Id
