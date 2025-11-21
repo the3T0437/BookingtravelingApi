@@ -78,7 +78,7 @@ namespace BookingTravelApi.Controllers
             if (stars != null)
             {
                 query = query
-                    .Where(i => 
+                    .Where(i =>
                         i.Schedules
                             .SelectMany(s => s.Reviews)
                             .Select(i => i.Rating)
@@ -151,9 +151,9 @@ namespace BookingTravelApi.Controllers
         {
             var query = _context.Tours.AsQueryable();
             query = query
-                .Where(t => t.Schedules.Any(s => s.OpenDate > DateTime.Now))
+                .Where(t => t.Schedules.Any(s => s.OpenDate > DateTime.UtcNow.AddHours(7)))
                 .OrderBy(t => t.Schedules
-                    .Where(s => s.OpenDate > DateTime.Now)
+                    .Where(s => s.OpenDate > DateTime.UtcNow.AddHours(7))
                     .Select(s => (DateTime?)s.StartDate)
                     .Min() ?? DateTime.MaxValue);
 

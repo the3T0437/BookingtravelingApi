@@ -11,8 +11,8 @@ namespace BookingTravelApi.DTO
 
         public OtpCode Map()
         {
-            var timeNow = DateTime.Now;
-            
+            var timeNow = DateTime.UtcNow.AddHours(7);
+
             //tạo mã
             Random random = new Random();
             var otp = random.Next(100000, 999999).ToString();

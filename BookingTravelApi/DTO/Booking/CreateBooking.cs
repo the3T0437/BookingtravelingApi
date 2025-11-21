@@ -38,8 +38,8 @@ namespace BookingTravelApi.DTO.booking
                 Phone = Phone,
                 TotalPrice = TotalPrice,
                 CountChangeLeft = 3,
-                CreatedAt = DateTime.Now,
-                ExpiredAt = DateTime.Now,
+                CreatedAt = DateTime.UtcNow.AddHours(7),
+                ExpiredAt = DateTime.UtcNow.AddHours(7),
                 Qr = "",
 
             };

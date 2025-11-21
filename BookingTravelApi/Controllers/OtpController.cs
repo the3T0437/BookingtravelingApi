@@ -36,7 +36,7 @@ namespace BookingTravelApi.Controllers
                 return Problem("Email không được trống");
             }
 
-            
+
             var oldOtp = await _context.OtpCodes.AsNoTracking().FirstOrDefaultAsync(o => o.Email == createOtpCodeDTO.Email);
 
             if (oldOtp != null)
@@ -46,7 +46,7 @@ namespace BookingTravelApi.Controllers
 
             var config = await _context.Configs.FindAsync(1);
 
-            DateTime now = DateTime.Now;
+            DateTime now = DateTime.UtcNow.AddHours(7);
             var time = now.AddMinutes(config!.timeExpiredOtpSec);
 
             var otpCode = createOtpCodeDTO.Map();
@@ -82,7 +82,7 @@ namespace BookingTravelApi.Controllers
         {
             try
             {
-                var timeNow = DateTime.Now;
+                var timeNow = DateTime.UtcNow.AddHours(7);
 
                 var otpCode = await _context.OtpCodes.AsNoTracking().FirstOrDefaultAsync(o => o.Email == otpCodeDTO.Email
                 && o.Code == otpCodeDTO.Code);

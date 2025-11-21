@@ -52,21 +52,20 @@ namespace BookingTravelApi.Controllers
                     return Ok();
                 }
 
-                if (DateTime.Now > booking.ExpiredAt)
+                if (DateTime.UtcNow.AddHours(7) > booking.ExpiredAt)
                 {
-                    booking.StatusId = Status.Expired;
                     booking.User!.Money += booking.TotalPrice;
-                await WriteSomeFile($"expired {booking.Id}");
+                    await WriteSomeFile($"expired {booking.Id}");
                 }
                 else if (booking.TotalPrice == booking.Schedule.FinalPrice * booking.NumPeople)
                 {
                     booking.StatusId = Status.Paid;
-                await WriteSomeFile($"paid {booking.Id}");
+                    await WriteSomeFile($"paid {booking.Id}");
                 }
                 else
                 {
                     booking.StatusId = Status.Deposit;
-                await WriteSomeFile($"deposit {booking.Id}");
+                    await WriteSomeFile($"deposit {booking.Id}");
                 }
 
                 await _context.SaveChangesAsync();

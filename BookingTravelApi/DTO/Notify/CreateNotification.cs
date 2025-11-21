@@ -21,7 +21,7 @@ namespace BookingTravelApi.DTO.notification
                 UserId = UserId,
                 Content = Content,
                 IsRead = false,
-                CreatedAt = CreatedAt == default ? DateTime.Now : CreatedAt,
+                CreatedAt = CreatedAt == default ? DateTime.UtcNow.AddHours(7) : CreatedAt,
             };
         }
     }

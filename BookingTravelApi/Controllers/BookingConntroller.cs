@@ -34,10 +34,11 @@ namespace BookingTravelApi.Controllers
                 {
                     return Problem("id not found");
                 }
-                var now = DateTime.Now;
+                var now = DateTime.UtcNow.AddHours(7);
 
                 var query = await _context.Bookings
                 .Where(b => b.UserId == userId && b.Schedule!.StartDate > now)
+                .Where(b => now < b.ExpiredAt || b.StatusId != Status.Processing)
                 .Include(st => st.Status)
                 .Include(us => us.User)
 
@@ -154,10 +155,11 @@ namespace BookingTravelApi.Controllers
                     return Problem("id not found");
                 }
 
-                var now = DateTime.Now;
+                var now = DateTime.UtcNow.AddHours(7);
 
                 var query = await _context.Bookings
                 .Where(b => b.ScheduleId == scheduleId && b.Schedule!.StartDate > now)
+                .Where(b => now < b.ExpiredAt || b.StatusId != Status.Processing)
                 .Include(st => st.Status)
                 .Include(us => us.User)
 
@@ -231,7 +233,7 @@ namespace BookingTravelApi.Controllers
                 await _context.Bookings.AddAsync(booking);
                 await _context.SaveChangesAsync();
 
-                await createPaymentLink(booking, DateTime.Now.AddSeconds(15));
+                await createPaymentLink(booking, DateTime.UtcNow.AddHours(7).AddHours(1));
                 await _context.SaveChangesAsync();
                 await transient.CommitAsync();
 
@@ -255,7 +257,7 @@ namespace BookingTravelApi.Controllers
                 Quantity = 1,
                 Price = booking.TotalPrice
             };
-            
+
             var response = await _paymentService.createPayment(booking.Id, [item], expiredAt);
             booking.Qr = response.QrCode;
             booking.ExpiredAt = expiredAt;
@@ -470,7 +472,7 @@ namespace BookingTravelApi.Controllers
                 return NotFound(new ErrorDTO("Không tìm thấy hóa đơn tương ứng"));
             }
 
-            if (booking.Schedule!.StartDate.AddDays(-3) < DateTime.Now)
+            if (booking.Schedule!.StartDate.AddDays(-3) < DateTime.UtcNow.AddHours(7))
             {
                 return BadRequest(new ErrorDTO("Đã quá ngày để có thể đổi"));
             }

@@ -30,7 +30,7 @@ namespace BookingTravelApi.DTO.review
                 Rating = Rating,
                 Content = Content,
                 ScheduleId = ScheduleId,
-                CreatedAt = CreatedAt == default ? DateTime.Now : CreatedAt,
+                CreatedAt = CreatedAt == default ? DateTime.UtcNow.AddHours(7) : CreatedAt,
             };
         }
     }
