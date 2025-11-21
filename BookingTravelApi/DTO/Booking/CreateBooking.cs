@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using BookingTravelApi.Domains;
+using BookingTravelApi.Helpers;
 
 namespace BookingTravelApi.DTO.booking
 {
@@ -26,20 +27,19 @@ namespace BookingTravelApi.DTO.booking
 
         public Booking Map()
         {
-            var random = new Random();
             return new Booking()
             {
                 ScheduleId = ScheduleId,
                 UserId = UserId,
-                StatusId = 1,
+                StatusId = Status.Processing,
                 NumPeople = NumPeople,
                 Code = "String",
                 Email = Email,
                 Phone = Phone,
                 TotalPrice = TotalPrice,
                 CountChangeLeft = 3,
-                CreatedAt = DateTime.UtcNow.AddHours(7),
-                ExpiredAt = DateTime.UtcNow.AddHours(7),
+                CreatedAt = DateTimeHelper.GetVietNamTime(),
+                ExpiredAt = DateTimeHelper.GetVietNamTime(),
                 Qr = "",
 
             };

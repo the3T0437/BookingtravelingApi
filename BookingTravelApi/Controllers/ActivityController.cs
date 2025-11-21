@@ -2,8 +2,6 @@ using System.Linq.Dynamic.Core;
 using BookingTravelApi.Domains;
 using BookingTravelApi.DTO;
 using BookingTravelApi.DTO.Activity;
-using BookingTravelApi.DTO.Location;
-using BookingTravelApi.DTO.place;
 using BookingTravelApi.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -15,9 +13,9 @@ namespace BookingTravelApi.Controllers
     public class ActivityController : Controller
     {
         private ApplicationDbContext _context;
-        private readonly ILogger<LocationController> _logger;
+        private readonly ILogger<ActivityController> _logger;
 
-        public ActivityController(ILogger<LocationController> logger, ApplicationDbContext context)
+        public ActivityController(ILogger<ActivityController> logger, ApplicationDbContext context)
         {
             _context = context;
             _logger = logger;

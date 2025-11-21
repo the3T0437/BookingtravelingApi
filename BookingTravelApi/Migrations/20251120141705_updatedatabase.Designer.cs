@@ -4,6 +4,7 @@ using BookingTravelApi.Domains;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookingTravelApi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251120141705_updatedatabase")]
+    partial class updatedatabase
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -113,17 +116,10 @@ namespace BookingTravelApi.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<DateTime>("ExpiredAt")
-                        .HasColumnType("datetime(6)");
-
                     b.Property<int>("NumPeople")
                         .HasColumnType("int");
 
                     b.Property<string>("Phone")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Qr")
                         .IsRequired()
                         .HasColumnType("longtext");
 
@@ -158,12 +154,13 @@ namespace BookingTravelApi.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("varchar(255)");
+                    b.Property<int>("countChangeSchedule")
+                        .HasColumnType("int");
 
-                    b.Property<int>("Value")
+                    b.Property<int>("timeExpiredBookingHour")
+                        .HasColumnType("int");
+
+                    b.Property<int>("timeExpiredOtpSec")
                         .HasColumnType("int");
 
                     b.HasKey("Id");

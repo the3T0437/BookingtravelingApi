@@ -1,3 +1,4 @@
+using BookingTravelApi.DTO.booking;
 using BookingTravelApi.DTO.Tour;
 
 namespace BookingTravelApi.DTO.schedule

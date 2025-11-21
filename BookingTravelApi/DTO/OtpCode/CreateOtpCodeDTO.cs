@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using BookingTravelApi.Domains;
+using BookingTravelApi.Helpers;
 
 namespace BookingTravelApi.DTO
 {
@@ -11,7 +12,7 @@ namespace BookingTravelApi.DTO
 
         public OtpCode Map()
         {
-            var timeNow = DateTime.UtcNow.AddHours(7);
+            var timeNow = DateTimeHelper.GetVietNamTime();
 
             //tạo mã
             Random random = new Random();

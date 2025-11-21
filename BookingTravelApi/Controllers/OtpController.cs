@@ -4,6 +4,7 @@ using BookingTravelApi.DTO;
 using BookingTravelApi.DTO.otpcode;
 using BookingTravelApi.Domains;
 using Microsoft.EntityFrameworkCore;
+using BookingTravelApi.Helpers;
 
 namespace BookingTravelApi.Controllers
 {
@@ -15,9 +16,9 @@ namespace BookingTravelApi.Controllers
 
         private MailService _mailService;
         private ApplicationDbContext _context;
-        private readonly ILogger<LocationController> _logger;
+        private readonly ILogger<OTPController> _logger;
 
-        public OTPController(ILogger<LocationController> logger, ApplicationDbContext context, MailService mailService)
+        public OTPController(ILogger<OTPController> logger, ApplicationDbContext context, MailService mailService)
         {
             _context = context;
             _logger = logger;
@@ -37,6 +38,7 @@ namespace BookingTravelApi.Controllers
             }
 
 
+
             var oldOtp = await _context.OtpCodes.AsNoTracking().FirstOrDefaultAsync(o => o.Email == createOtpCodeDTO.Email);
 
             if (oldOtp != null)
@@ -44,10 +46,10 @@ namespace BookingTravelApi.Controllers
                 _context.OtpCodes.Remove(oldOtp);
             }
 
-            var config = await _context.Configs.FindAsync(1);
+            var config = await _context.Configs.FindAsync(3);
 
-            DateTime now = DateTime.UtcNow.AddHours(7);
-            var time = now.AddMinutes(config!.timeExpiredOtpSec);
+            DateTime now = DateTimeHelper.GetVietNamTime();
+            var time = now.AddMinutes(config!.Value);
 
             var otpCode = createOtpCodeDTO.Map();
             otpCode.ExpiryTime = time;
@@ -60,7 +62,7 @@ namespace BookingTravelApi.Controllers
             bool success = await _mailService.SendMailAsync(
                 otpCode.Email,
                 otpCode.Code,
-                config!.timeExpiredOtpSec
+                config!.Value
             );
 
             if (success)
@@ -82,7 +84,7 @@ namespace BookingTravelApi.Controllers
         {
             try
             {
-                var timeNow = DateTime.UtcNow.AddHours(7);
+                var timeNow = DateTimeHelper.GetVietNamTime();
 
                 var otpCode = await _context.OtpCodes.AsNoTracking().FirstOrDefaultAsync(o => o.Email == otpCodeDTO.Email
                 && o.Code == otpCodeDTO.Code);
