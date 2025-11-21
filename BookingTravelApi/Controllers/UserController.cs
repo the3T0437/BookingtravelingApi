@@ -43,7 +43,7 @@ namespace BookingTravelApi.Controllers
             });
         }
 
-        [HttpPost("loginbyemail")]
+        [HttpPost("login-or-create-byemail")]
         public async Task<IActionResult> LoginByEmail([FromBody] loginEmailDTO login)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == login.email);
