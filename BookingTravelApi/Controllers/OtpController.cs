@@ -31,51 +31,68 @@ namespace BookingTravelApi.Controllers
         [Route("send")]
         public async Task<IActionResult> SendOTP(CreateOtpCodeDTO createOtpCodeDTO)
         {
-
-            if (string.IsNullOrEmpty(createOtpCodeDTO.Email))
+            try
             {
-                return Problem("Email không được trống");
-            }
-
-
-
-            var oldOtp = await _context.OtpCodes.AsNoTracking().FirstOrDefaultAsync(o => o.Email == createOtpCodeDTO.Email);
-
-            if (oldOtp != null)
-            {
-                _context.OtpCodes.Remove(oldOtp);
-            }
-
-            var config = await _context.Configs.FindAsync(3);
-
-            DateTime now = DateTimeHelper.GetVietNamTime();
-            var time = now.AddMinutes(config!.Value);
-
-            var otpCode = createOtpCodeDTO.Map();
-            otpCode.ExpiryTime = time;
-
-            _context.OtpCodes.Add(otpCode);
-            await _context.SaveChangesAsync();
-
-
-            // gọi phương thức gửi mail
-            bool success = await _mailService.SendMailAsync(
-                otpCode.Email,
-                otpCode.Code,
-                config!.Value
-            );
-
-            if (success)
-            {
-                return Ok(new RestDTO<bool>()
+                if (string.IsNullOrEmpty(createOtpCodeDTO.Email))
                 {
-                    Data = true
+                    return Problem("Email không được trống");
+                }
+
+
+
+                var oldOtp = await _context.OtpCodes.AsNoTracking().FirstOrDefaultAsync(o => o.Email == createOtpCodeDTO.Email);
+
+                if (oldOtp != null)
+                {
+                    _context.OtpCodes.Remove(oldOtp);
+                }
+
+                var config = await _context.Configs.FindAsync(3);
+
+                DateTime now = DateTimeHelper.GetVietNamTime();
+                var time = now.AddMinutes(config!.Value);
+
+                var otpCode = createOtpCodeDTO.Map();
+                otpCode.ExpiryTime = time;
+
+                _context.OtpCodes.Add(otpCode);
+                await _context.SaveChangesAsync();
+
+
+                // gọi phương thức gửi mail
+                SendOtpStatus success = await _mailService.SendMailAsync(
+                    otpCode.Email,
+                    otpCode.Code,
+                    config!.Value
+                );
+
+                Console.WriteLine($"Result: {success.Status} - {success.Message}");
+
+                if (success.Status)
+                {
+                    return Ok(new RestDTO<bool>()
+                    {
+                        Data = true
+                    });
+                }
+                else
+                {
+                    return Problem($"{success.Message}");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    success = false,
+                    error = ex.Message,
+                    type = ex.GetType().Name,
+                    innerError = ex.InnerException?.Message,
+                    stackTrace = ex.StackTrace
                 });
             }
-            else
-            {
-                return Problem("Gửi email thất bại");
-            }
+
         }
 
         [HttpPost]
