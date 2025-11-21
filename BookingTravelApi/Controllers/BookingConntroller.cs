@@ -39,6 +39,7 @@ namespace BookingTravelApi.Controllers
 
                 var query = await _context.Bookings
                 .Where(b => b.UserId == userId && b.Schedule!.StartDate > now)
+                .Where(b => now < b.ExpiredAt || b.StatusId != Status.Processing)
                 .Include(st => st.Status)
                 .Include(us => us.User)
 
@@ -159,6 +160,7 @@ namespace BookingTravelApi.Controllers
 
                 var query = await _context.Bookings
                 .Where(b => b.ScheduleId == scheduleId && b.Schedule!.StartDate > now)
+                .Where(b => now < b.ExpiredAt || b.StatusId != Status.Processing)
                 .Include(st => st.Status)
                 .Include(us => us.User)
 
@@ -222,6 +224,7 @@ namespace BookingTravelApi.Controllers
 
                 booking.Code = $"{schedule.Code}-{booking.Id}";
                 _context.Bookings.Update(booking);
+                await createPaymentLink(booking, DateTime.UtcNow.AddHours(7).AddHours(1));
                 await _context.SaveChangesAsync();
 
                 return Ok(new RestDTO<int>
@@ -459,7 +462,7 @@ namespace BookingTravelApi.Controllers
                 return NotFound(new ErrorDTO("Không tìm thấy hóa đơn tương ứng"));
             }
 
-            if (booking.Schedule!.StartDate.AddDays(-3) < DateTime.Now)
+            if (booking.Schedule!.StartDate.AddDays(-3) < DateTime.UtcNow.AddHours(7))
             {
                 return BadRequest(new ErrorDTO("Đã quá ngày để có thể đổi"));
             }

@@ -55,7 +55,7 @@ namespace BookingTravelApi.Controllers
         [ResponseCache(NoStore = true)]
         public async Task<IActionResult> getScheduleAssignment(int tourId)
         {
-            var timeNow = DateTime.Now;
+            var timeNow = DateTime.UtcNow.AddHours(7);
 
             // lấy ra các schedule có open date trong tương lai
             var query = _context.Schedules.Where(
@@ -87,7 +87,7 @@ namespace BookingTravelApi.Controllers
         [ResponseCache(NoStore = true)]
         public async Task<IActionResult> getScheduleAssignmentByIdTour(int idtour)
         {
-            var timeNow = DateTime.Now;
+            var timeNow = DateTime.UtcNow.AddHours(7);
 
             var query = _context.Schedules
                 .Where(s => s.TourId == idtour)
@@ -164,7 +164,7 @@ namespace BookingTravelApi.Controllers
         public async Task<IActionResult> GetSchedulesForAccountant()
         {
 
-            var now = DateTime.Now;
+            var now = DateTime.UtcNow.AddHours(7);
 
             var query = _context.Schedules
                 .Where(
@@ -202,7 +202,7 @@ namespace BookingTravelApi.Controllers
         public async Task<IActionResult> GetSchedulesForReception()
         {
 
-            var now = DateTime.Now;
+            var now = DateTime.UtcNow.AddHours(7);
             var startDate = new DateTime(now.Year, now.Month, now.Day);
             var endDate = startDate.AddDays(1);
 
@@ -240,7 +240,7 @@ namespace BookingTravelApi.Controllers
         public async Task<IActionResult> getSchedulesUser()
         {
 
-            var now = DateTime.Now;
+            var now = DateTime.UtcNow.AddHours(7);
 
             var query = _context.Schedules
             .Include(s => s.Tour)
