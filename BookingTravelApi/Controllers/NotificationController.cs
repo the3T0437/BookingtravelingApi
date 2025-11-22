@@ -12,10 +12,56 @@ namespace BookingTravelApi.DTO.Controllers
     {
         private ApplicationDbContext _context;
         private readonly ILogger<NotificationController> _logger;
-        public NotificationController(ILogger<NotificationController> logger, ApplicationDbContext context)
+        private readonly FirebaseNotificationService _notificationService;
+        public NotificationController(ILogger<NotificationController> logger, ApplicationDbContext context, FirebaseNotificationService notificationService)
         {
             _context = context;
             _logger = logger;
+            _notificationService = notificationService;
+        }
+
+        [HttpPost("send")]
+        public async Task<IActionResult> SendNotification([FromBody] PushNotificationRequest request)
+        {
+            try
+            {
+                var response = await _notificationService.SendNotification(
+                    request.Token,
+                    request.Title,
+                    request.Body
+                );
+
+                return Ok(new RestDTO<bool>
+                {
+                    Data = true
+                });
+            }
+            catch (Exception ex)
+            {
+                return Problem($"Lỗi {ex.Message}");
+            }
+        }
+
+        [HttpPost("send-multiple")]
+        public async Task<IActionResult> SendMultipleNotifications([FromBody] MultipleNotificationRequest request)
+        {
+            try
+            {
+                var response = await _notificationService.SendMulticastNotification(
+                    request.Tokens,
+                    request.Title,
+                    request.Body
+                );
+
+                return Ok(new RestDTO<bool>
+                {
+                    Data = true
+                });
+            }
+            catch (Exception ex)
+            {
+                return Problem($"Lỗi {ex.Message}");
+            }
         }
 
         [HttpGet("{userId}")]
@@ -111,7 +157,7 @@ namespace BookingTravelApi.DTO.Controllers
                     Data = true
                 });
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return Problem("Delete Notification fail");
             }
