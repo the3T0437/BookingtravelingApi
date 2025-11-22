@@ -29,7 +29,7 @@ namespace BookingTravelApi.Extensions
                 Description = tour.Description,
 
                 DayOfTours = tour.DayOfTours?.Select(i => i.Map()).ToList() ?? [],
-                TourImages = tour.TourImages?.Select(i => $"http://{Host}{AppConfig.GetRequestImagePath()}/{i.Path}").ToList() ?? [],
+                TourImages = tour.TourImages?.Select(i => ImageInfrastructure.GetLinkToImage(i.Path)).ToList() ?? [],
                 Locations = locations.ToList().Select(i => i.Map()).ToList(),
                 Places = setPlaces.Select(i => i!.Map()).ToList(),
 

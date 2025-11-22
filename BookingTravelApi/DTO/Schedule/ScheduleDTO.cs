@@ -10,6 +10,7 @@ namespace BookingTravelApi.DTO.schedule
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public DateTime OpenDate { get; set; }
+        public int BookedSlot { get; set; }
         public int MaxSlot { get; set; }
         public int FinalPrice { get; set; }
         public TimeSpan GatheringTime { get; set; }

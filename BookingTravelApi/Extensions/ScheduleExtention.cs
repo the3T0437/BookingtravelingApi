@@ -9,6 +9,9 @@ namespace BookingTravelApi.Extensions
     {
         public static ScheduleDTO Map(this Schedule schedule)
         {
+            var paidBooking = schedule.Bookings?.Where(i => i.StatusId != Status.Processing).Select(i => i.NumPeople).Sum() ?? 0;
+            var processingBooking = schedule.Bookings?.Where(i => i.StatusId == Status.Processing && i.ExpiredAt > DateTime.UtcNow.AddHours(7)).Select(i => i.NumPeople).Sum() ?? 0;
+
             return new ScheduleDTO()
             {
                 Id = schedule.Id,
@@ -16,18 +19,21 @@ namespace BookingTravelApi.Extensions
                 StartDate = schedule.StartDate,
                 EndDate = schedule.EndDate,
                 OpenDate = schedule.OpenDate,
+                BookedSlot = paidBooking + processingBooking,
                 MaxSlot = schedule.MaxSlot,
                 FinalPrice = schedule.FinalPrice,
                 GatheringTime = schedule.GatheringTime,
                 Code = schedule.Code,
                 Desposit = schedule.Desposit,
-
                 tour = schedule.Tour!.Map(),
             };
         }
 
         public static ScheduleDTOOfAccountant MapToScheduleOfAccountant(this Schedule schedule)
         {
+            var paidBooking = schedule.Bookings?.Where(i => i.StatusId != Status.Processing).Select(i => i.NumPeople).Sum() ?? 0;
+            var processingBooking = schedule.Bookings?.Where(i => i.StatusId == Status.Processing && i.ExpiredAt > DateTime.UtcNow.AddHours(7)).Select(i => i.NumPeople).Sum() ?? 0;
+
             return new ScheduleDTOOfAccountant()
             {
                 Id = schedule.Id,
@@ -36,6 +42,7 @@ namespace BookingTravelApi.Extensions
                 EndDate = schedule.EndDate,
                 OpenDate = schedule.OpenDate,
                 MaxSlot = schedule.MaxSlot,
+                BookedSlot = paidBooking + processingBooking,
                 FinalPrice = schedule.FinalPrice,
                 GatheringTime = schedule.GatheringTime,
                 Code = schedule.Code,

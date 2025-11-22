@@ -8,7 +8,7 @@ namespace BookingTravelApi.Domains
     public class Configs
     {
         public static readonly int CountChangeSchedule = 1;
-        public static readonly int TimeExpiredBookingHour = 2;
+        public static readonly int TimeExpiredBookingSeconds = 2;
         public static readonly int TimeExpiredOtpMinutes = 3;
 
         [Key]
