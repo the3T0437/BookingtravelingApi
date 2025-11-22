@@ -213,6 +213,7 @@ namespace BookingTravelApi.Controllers
                     staff.CCCD_back_path = CCCDBack;
                 }
 
+
                 await _context.SaveChangesAsync();
                 ImageInfrastructure.DeleteImages(oldImages);
 
