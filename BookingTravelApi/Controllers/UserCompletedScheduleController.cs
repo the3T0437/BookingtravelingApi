@@ -70,7 +70,7 @@ namespace BookingTravelApi.Controllers
                 .Include(u => u.Booking)
                 .ThenInclude(b => b!.Schedule)
                 .ThenInclude(t => t!.Tour)
-                
+
                 .Include(u => u.Booking)
                 .ThenInclude(st => st!.Status)
 
@@ -97,7 +97,7 @@ namespace BookingTravelApi.Controllers
             try
             {
                 var userSchedule = newUserSchedule.Map();
-               
+
                 await _context.UserCompletedSchedules.AddAsync(userSchedule);
                 await _context.SaveChangesAsync();
 
@@ -108,7 +108,7 @@ namespace BookingTravelApi.Controllers
             }
             catch (Exception ex)
             {
-                return Problem("Error create");
+                return Problem($"Error create: {ex.Message}");
             }
 
         }
