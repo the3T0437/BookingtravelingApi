@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using BookingTravelApi.Extensions;
 using BookingTravelApi.DTO.ScheduleAssignmentDTO;
 using Org.BouncyCastle.Asn1.Cms;
+using System.Collections.Immutable;
 
 namespace BookingTravelApi.Controllers
 {
@@ -355,6 +356,43 @@ namespace BookingTravelApi.Controllers
             catch (Exception ex)
             {
                 return Problem("Error deleting schedule: " + ex.Message);
+            }
+        }
+
+
+        [HttpGet("completed/{userId}")]
+        public async Task<IActionResult> getScheduleCompletedBy(int userId)
+        {
+            try
+            {
+                var schedules = await _context.Bookings
+                    .Where(i => i.UserId == userId)
+                    .Where(i => i.UserCompletedSchedule != null)
+                    .Include(i => i.Schedule)!
+                    .ThenInclude(i => i!.Tour)
+
+                    .Include(s => s.Schedule)
+                    .ThenInclude(t => t!.Tour)
+                    .ThenInclude(tm => tm!.DayOfTours!)
+                    .ThenInclude(i => i.DayActivities!)
+                    .ThenInclude(i => i.LocationActivity)
+                    .ThenInclude(i => i!.Place)
+                    .ThenInclude(i => i!.Location)
+
+                    .Include(s => s.Schedule)
+                    .ThenInclude(t => t!.Tour)
+                    .ThenInclude(t => t!.TourImages)
+                    .AsNoTracking()
+                    .Select(i => i.Schedule).ToListAsync();
+
+                return Ok(new RestDTO<List<ScheduleDTO>>()
+                {
+                    Data = schedules.Select(i => i!.Map()).ToList()
+                });
+            }
+            catch (Exception ex)
+            {
+                return Problem("while getting schedule: " + ex.Message);
             }
         }
     }
