@@ -125,6 +125,7 @@ namespace BookingTravelApi.Controllers
                 }
 
                 query.countPeople = updateBooking.countPeople;
+                
 
                 _context.UserCompletedSchedules.Update(query);
                 await _context.SaveChangesAsync();
