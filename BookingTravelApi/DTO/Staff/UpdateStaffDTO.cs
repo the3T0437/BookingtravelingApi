@@ -35,12 +35,14 @@ namespace BookingTravelApi.DTO.staff
         public DateTime CCCDIssueDate { get; set; }
 
         [Required]
-        [MaxLength(255)]
-        public String CCCD_front_path { get; set; } = null!;
+        public String CCCD_front_image { get; set; } = null!;
 
         [Required]
-        [MaxLength(255)]
-        public String CCCD_back_path { get; set; } = null!;
+        public String CCCD_back_image { get; set; } = null!;
+
+        public bool IsRetainCCCDFront { get; set; } = true;
+
+        public bool IsRetainCCCDBack { get; set; } = true;
 
         [Required]
         public DateTime EndWorkingDate { get; set; }
@@ -56,8 +58,6 @@ namespace BookingTravelApi.DTO.staff
             staff.DateOfBirth = DateOfBirth;
             staff.StartWorkingDate = StartWorkingDate;
             staff.CCCDIssueDate = CCCDIssueDate;
-            staff.CCCD_front_path = CCCD_front_path;
-            staff.CCCD_back_path = CCCD_back_path;
             staff.EndWorkingDate = EndWorkingDate;
 
             if (staff.User != null)

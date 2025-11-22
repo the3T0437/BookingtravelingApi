@@ -6,6 +6,13 @@ namespace BookingTravelApi.Infrastructure
 {
     public class ImageInfrastructure
     {
+        public static String GetLinkToImage(String path)
+        {
+            var Host = Environment.GetEnvironmentVariable("Host");
+
+            return $"http://{Host}{AppConfig.GetRequestImagePath()}/{path}";
+        }
+
         public static async Task<List<String>> WriteImages(List<String> imagesBase64)
         {
             List<String> paths = [];
@@ -58,7 +65,8 @@ namespace BookingTravelApi.Infrastructure
         {
             foreach (var path in paths)
             {
-                try { 
+                try
+                {
                     DeleteImage(path);
                 }
                 catch (DirectoryNotFoundException)
