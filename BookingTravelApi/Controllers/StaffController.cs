@@ -23,6 +23,27 @@ namespace BookingTravelApi.Controllers
             _logger = logger;
         }
 
+        [HttpGet("getstaffs-byroleid/{roleId}")]
+        [ResponseCache(NoStore = true)]
+        public async Task<IActionResult> GetStaffs(int roleId)
+        {
+            var role = await _context.Roles.FindAsync(roleId);
+            var query = _context.Staffs.Include(s => s.User).ThenInclude(u => u!.Role).AsNoTracking();
+
+            if (role != null)
+            {
+                query = query.Where(q => q.User.RoleId == roleId);
+            }
+
+            var staffDTOs = await query.Select(i => i.Map()).ToArrayAsync();
+
+
+            return Ok(new RestDTO<StaffDTO[]?>()
+            {
+                Data = staffDTOs
+            });
+        }
+
         [HttpGet]
         [ResponseCache(NoStore = true)]
         public async Task<IActionResult> GetStaffs()
