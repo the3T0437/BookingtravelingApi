@@ -58,6 +58,9 @@ public class Program
         // Đăng ký MailService
         builder.Services.AddTransient<MailService>();
 
+        // Đăng ký push notification
+        builder.Services.AddSingleton<FirebaseNotificationService>();
+
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.
