@@ -30,6 +30,8 @@ namespace BookingTravelApi.Controllers
         {
 
             var query = _context.Schedules
+            .Include(i => i.Bookings)
+
             .Include(s => s.Tour)
             .ThenInclude(t => t.TourImages)
 
@@ -128,6 +130,8 @@ namespace BookingTravelApi.Controllers
         public async Task<IActionResult> GetScheduleById(int id)
         {
             var schedule = await _context.Schedules
+            .Include(i => i.Bookings)
+
             .Include(s => s.Tour)
             .ThenInclude(t => t.TourImages)
 
@@ -210,6 +214,8 @@ namespace BookingTravelApi.Controllers
                 .Where(
                     s => startDate <= s.StartDate && s.StartDate < endDate
                 )
+                .Include(i => i.Bookings)
+
                 .Include(s => s.Tour)
                 .ThenInclude(t => t!.TourImages)
 
@@ -243,6 +249,8 @@ namespace BookingTravelApi.Controllers
             var now = DateTime.UtcNow.AddHours(7);
 
             var query = _context.Schedules
+            .Include(i => i.Bookings)
+
             .Include(s => s.Tour)
             .ThenInclude(t => t.TourImages)
 
