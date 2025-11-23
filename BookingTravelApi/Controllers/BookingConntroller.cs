@@ -356,46 +356,14 @@ namespace BookingTravelApi.Controllers
                     return NotFound($" ID {updateStatusBooking.Id} not found.");
                 }
 
+                if (updateStatusBooking.StatusId == Status.Processing)
+                {
+                }
+
                 updateStatusBooking.UpdateEntity(booking);
                 await _context.SaveChangesAsync();
 
-                var query = await _context.Bookings
-                .Where(b => b.Id == booking.Id)
-                .Include(st => st.Status)
-                .Include(us => us.User)
-
-                .Include(s => s.Schedule)
-                .ThenInclude(t => t!.Tour)
-                .ThenInclude(ti => ti!.DayOfTours!)
-                .ThenInclude(d => d.DayActivities!)
-                .ThenInclude(da => da.Activity!)
-
-                .Include(s => s.Schedule)
-                .ThenInclude(t => t!.Tour)
-                .ThenInclude(d => d!.DayOfTours)
-                !.ThenInclude(d => d.DayActivities!)
-                .ThenInclude(da => da.LocationActivity!)
-                .ThenInclude(lo => lo.Place!)
-                .ThenInclude(p => p.Location)
-
-                .Include(s => s.Schedule)
-                .ThenInclude(t => t!.Tour)
-                .ThenInclude(i => i!.DayOfTours!)
-                !.ThenInclude(i => i.DayActivities!)
-                !.ThenInclude(i => i.LocationActivity)
-                !.ThenInclude(i => i!.ActivityAndLocations)
-                !.ThenInclude(i => i.Activity)
-
-                .Include(s => s.Schedule)
-                .ThenInclude(t => t!.Tour)
-                .ThenInclude(tm => tm!.TourImages)
-                .AsNoTracking().FirstOrDefaultAsync();
-
-                var bookings = query!.Map();
-                return Ok(new RestDTO<BookingDTO>()
-                {
-                    Data = bookings
-                });
+                return await getBookingId(booking.Id);
             }
             catch (Exception ex)
             {
