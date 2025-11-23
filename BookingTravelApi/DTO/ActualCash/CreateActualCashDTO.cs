@@ -8,13 +8,16 @@ namespace BookingTravelApi.DTO.createActualCashDTO
     {
         [Required]
         public int money { get; set; }
+        [Required]
+        public int BookingId { get; set; }
 
         public Actualcashs Map()
         {
             return new Actualcashs
             {
                 money = money,
-                CreatedAt = DateTimeHelper.GetVietNamTime()
+                CreatedAt = DateTimeHelper.GetVietNamTime(),
+                BookingId = BookingId
             };
         }
     }

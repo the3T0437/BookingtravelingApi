@@ -62,5 +62,6 @@ namespace BookingTravelApi.Domains
         public UserCompletedSchedule? UserCompletedSchedule { get; set; }
         public Schedule? Schedule { get; set; }
         public User? User { get; set; }
+        public Actualcashs? Actualcashs {get; set;}
     }
 }
