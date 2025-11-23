@@ -26,25 +26,101 @@ namespace BookingTravelApi.Controllers
             _logger = logger;
         }
 
+        [HttpGet("get-by-bookingid/{BookingId}")]
+        [ResponseCache(NoStore = true)]
+        public async Task<IActionResult> GetActualCashByBookingId(int BookingId)
+        {
+            try
+            {
+                var actualCash = await _context.Actualcashs.AsNoTracking().FirstOrDefaultAsync(a => a.BookingId == BookingId);
+
+                if(actualCash == null)
+                {
+                    return NotFound("Lỗi Id not found");
+                }
+
+                return Ok(new RestDTO<ActualCashDTO>
+                {
+                    Data = actualCash.Map()
+                });
+            }
+            catch (Exception e)
+            {
+                return Problem($"Lỗi {e.Message}");
+            }
+        }
+
+        [HttpGet("{Id}")]
+        [ResponseCache(NoStore = true)]
+        public async Task<IActionResult> GetActualCash(int Id)
+        {
+            try
+            {
+                var actualCash = await _context.Actualcashs.AsNoTracking().FirstOrDefaultAsync(a => a.Id == Id);
+
+                if(actualCash == null)
+                {
+                    return NotFound("Lỗi Id not found");
+                }
+
+                return Ok(new RestDTO<ActualCashDTO>
+                {
+                    Data = actualCash.Map()
+                });
+            }
+            catch (Exception e)
+            {
+                return Problem($"Lỗi {e.Message}");
+            }
+        }
+
+
+        [HttpGet()]
+        [ResponseCache(NoStore = true)]
+        public async Task<IActionResult> GetActualCashs()
+        {
+            try
+            {
+                var actualCashs = await _context.Actualcashs.AsNoTracking().ToArrayAsync();
+                var result = actualCashs.Select(a => a.Map()).ToList();
+
+                return Ok(new RestDTO<List<ActualCashDTO>>
+                {
+                    Data = result
+                });
+            }
+            catch (Exception e)
+            {
+                return Problem($"Lỗi {e.Message}");
+            }
+        }
+
         [HttpGet("actualcash-month")]
         [ResponseCache(NoStore = true)]
         public async Task<IActionResult> GetActualCashMonth()
         {
-            var actualCashs = await _context.Actualcashs.AsNoTracking().ToArrayAsync();
-
-            if (actualCashs == null)
+            try
             {
-                return Problem("Danh sách trống");
+                var actualCashs = await _context.Actualcashs.AsNoTracking().ToArrayAsync();
+
+                if (actualCashs == null)
+                {
+                    return Problem("Danh sách trống");
+                }
+
+                var timeNow = DateTimeHelper.GetVietNamTime();
+
+                var resultActualCashs = actualCashs.Where(a => a.CreatedAt.Year == timeNow.Year).ToList();
+
+                return Ok(new RestDTO<ActualCashMonthDTO>
+                {
+                    Data = resultActualCashs.MapMonth()
+                });
             }
-
-            var timeNow = DateTimeHelper.GetVietNamTime();
-
-            var resultActualCashs = actualCashs.Where(a => a.CreatedAt.Year == timeNow.Year).ToList();
-
-            return Ok(new RestDTO<ActualCashMonthDTO>
+            catch (Exception e)
             {
-                Data = resultActualCashs.MapMonth()
-            });
+                return Problem($"Lỗi {e.Message}");
+            }
         }
 
         [HttpGet("actualcash-year")]
@@ -89,6 +165,7 @@ namespace BookingTravelApi.Controllers
                 }
 
                 actualCash.money = updateActualCashDTO.money;
+                actualCash.BookingId = updateActualCashDTO.BookingId;
 
                 _context.Actualcashs.Update(actualCash);
                 await _context.SaveChangesAsync();

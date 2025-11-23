@@ -8,5 +8,7 @@ namespace BookingTravelApi.DTO.updateActualCashDTO
         public int Id { get; set; }
         [Required]
         public int money { get; set; }
+        [Required]
+        public int BookingId {get; set;}
     }
 }
