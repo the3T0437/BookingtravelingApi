@@ -7,6 +7,9 @@ using Microsoft.EntityFrameworkCore;
 using BookingTravelApi.Extensions;
 using BookingTravelApi.DTO.ScheduleAssignmentDTO;
 using Org.BouncyCastle.Asn1.Cms;
+using System.Collections.Immutable;
+using Microsoft.EntityFrameworkCore.Query;
+using System.ComponentModel.DataAnnotations;
 
 namespace BookingTravelApi.Controllers
 {
@@ -15,9 +18,9 @@ namespace BookingTravelApi.Controllers
     public class ScheduleController : Controller
     {
         private ApplicationDbContext _context;
-        private readonly ILogger<LocationController> _logger;
+        private readonly ILogger<ScheduleController> _logger;
 
-        public ScheduleController(ILogger<LocationController> logger, ApplicationDbContext context)
+        public ScheduleController(ILogger<ScheduleController> logger, ApplicationDbContext context)
         {
             _context = context;
             _logger = logger;
@@ -30,6 +33,8 @@ namespace BookingTravelApi.Controllers
         {
 
             var query = _context.Schedules
+            .Include(i => i.Bookings)
+
             .Include(s => s.Tour)
             .ThenInclude(t => t.TourImages)
 
@@ -55,7 +60,7 @@ namespace BookingTravelApi.Controllers
         [ResponseCache(NoStore = true)]
         public async Task<IActionResult> getScheduleAssignment(int tourId)
         {
-            var timeNow = DateTime.Now;
+            var timeNow = DateTime.UtcNow.AddHours(7);
 
             // lấy ra các schedule có open date trong tương lai
             var query = _context.Schedules.Where(
@@ -87,7 +92,7 @@ namespace BookingTravelApi.Controllers
         [ResponseCache(NoStore = true)]
         public async Task<IActionResult> getScheduleAssignmentByIdTour(int idtour)
         {
-            var timeNow = DateTime.Now;
+            var timeNow = DateTime.UtcNow.AddHours(7);
 
             var query = _context.Schedules
                 .Where(s => s.TourId == idtour)
@@ -128,6 +133,8 @@ namespace BookingTravelApi.Controllers
         public async Task<IActionResult> GetScheduleById(int id)
         {
             var schedule = await _context.Schedules
+            .Include(i => i.Bookings)
+
             .Include(s => s.Tour)
             .ThenInclude(t => t.TourImages)
 
@@ -164,7 +171,7 @@ namespace BookingTravelApi.Controllers
         public async Task<IActionResult> GetSchedulesForAccountant()
         {
 
-            var now = DateTime.Now;
+            var now = DateTime.UtcNow.AddHours(7);
 
             var query = _context.Schedules
                 .Where(
@@ -202,7 +209,7 @@ namespace BookingTravelApi.Controllers
         public async Task<IActionResult> GetSchedulesForReception()
         {
 
-            var now = DateTime.Now;
+            var now = DateTime.UtcNow.AddHours(7);
             var startDate = new DateTime(now.Year, now.Month, now.Day);
             var endDate = startDate.AddDays(1);
 
@@ -210,6 +217,8 @@ namespace BookingTravelApi.Controllers
                 .Where(
                     s => startDate <= s.StartDate && s.StartDate < endDate
                 )
+                .Include(i => i.Bookings)
+
                 .Include(s => s.Tour)
                 .ThenInclude(t => t!.TourImages)
 
@@ -240,9 +249,11 @@ namespace BookingTravelApi.Controllers
         public async Task<IActionResult> getSchedulesUser()
         {
 
-            var now = DateTime.Now;
+            var now = DateTime.UtcNow.AddHours(7);
 
             var query = _context.Schedules
+            .Include(i => i.Bookings)
+
             .Include(s => s.Tour)
             .ThenInclude(t => t.TourImages)
 
@@ -347,6 +358,146 @@ namespace BookingTravelApi.Controllers
             catch (Exception ex)
             {
                 return Problem("Error deleting schedule: " + ex.Message);
+            }
+        }
+
+
+        [HttpGet("completed/{userId}")]
+        public async Task<IActionResult> getScheduleCompletedBy(int userId)
+        {
+            try
+            {
+                var schedules = await _context.Bookings
+                    .Where(i => i.UserId == userId)
+                    .Where(i => i.UserCompletedSchedule != null)
+                    .Include(i => i.Schedule)!
+                    .ThenInclude(i => i!.Tour)
+
+                    .Include(s => s.Schedule)
+                    .ThenInclude(t => t!.Tour)
+                    .ThenInclude(tm => tm!.DayOfTours!)
+                    .ThenInclude(i => i.DayActivities!)
+                    .ThenInclude(i => i.LocationActivity)
+                    .ThenInclude(i => i!.Place)
+                    .ThenInclude(i => i!.Location)
+
+                    .Include(s => s.Schedule)
+                    .ThenInclude(t => t!.Tour)
+                    .ThenInclude(t => t!.TourImages)
+                    .AsNoTracking()
+                    .Select(i => i.Schedule).ToListAsync();
+
+                return Ok(new RestDTO<List<ScheduleDTO>>()
+                {
+                    Data = schedules.Select(i => i!.Map()).ToList()
+                });
+            }
+            catch (Exception ex)
+            {
+                return Problem("while getting schedule: " + ex.Message);
+            }
+        }
+
+        [HttpGet("Staff")]
+        public async Task<IActionResult> getSchedulesOfGuide(
+            [Required] int staffId,
+            String? filter = null,
+            int? provinceId = null,
+            int? placeId = null,
+            DateTime? startDate = null,
+            DateTime? endDate = null,
+            int? stars = null)
+        {
+            try
+            {
+                //staff id
+                var query = _context.Schedules.AsQueryable()
+                    .Where(i => i.Guides!.Any(i => i.StaffId == staffId))
+                    .Where(i => i.EndDate > DateTime.UtcNow.AddHours(7));
+
+                //search string
+                var searchStr = filter?.Trim();
+                if (!String.IsNullOrEmpty(searchStr))
+                {
+                    query = query.Where(i => i.Tour!.Title.Contains(searchStr));
+                }
+
+                //start date, end date
+                if (startDate != null && endDate != null)
+                {
+                    query = query
+                        .Where(s => s.StartDate >= startDate && s.EndDate <= endDate);
+                }
+                else if (startDate != null)
+                {
+                    query = query
+                        .Where(s => s.StartDate >= startDate);
+                }
+                else if (endDate != null)
+                {
+                    query = query
+                        .Where(s => s.EndDate <= endDate);
+                }
+
+                //province
+                if (provinceId != null)
+                {
+                    query = query
+                        .Where(i => i.Tour!.DayOfTours!
+                            .SelectMany(dayOfTour => dayOfTour.DayActivities!)
+                            .Select(i => i.LocationActivity)
+                            .Select(i => i!.Place)
+                            .Select(i => i!.Location)
+                            .Any(i => i!.Id == provinceId));
+                }
+
+                //Place Id
+                if (placeId != null)
+                {
+                    query = query
+                        .Where(i => i.Tour!.DayOfTours!
+                            .SelectMany(dayOfTour => dayOfTour.DayActivities!)
+                            .Select(i => i.LocationActivity)
+                            .Select(i => i!.Place)
+                            .Any(i => i!.Id == placeId));
+                }
+
+                //stars
+                if (stars != null)
+                {
+                    query = query
+                        .Where(i =>
+                            Math.Floor(i.Reviews!
+                            .Select(i => i.Rating)
+                            .Average()) == stars);
+                }
+
+                var schedules = await query
+                    .Include(i => i.Bookings)
+                    .Include(i => i.Reviews)
+
+                    .Include(i => i!.Tour)
+
+                    .Include(t => t!.Tour)
+                    .ThenInclude(tm => tm!.DayOfTours!)
+                    .ThenInclude(i => i.DayActivities!)
+                    .ThenInclude(i => i.LocationActivity)
+                    .ThenInclude(i => i!.Place)
+                    .ThenInclude(i => i!.Location)
+
+                    .Include(t => t!.Tour)
+                    .ThenInclude(t => t!.TourImages)
+                    .AsNoTracking()
+                    .ToListAsync();
+
+                return Ok(new RestDTO<List<ScheduleDTOOfAdmin>>()
+                {
+                    Data = schedules.Select(i => i!.MapToScheduleOfAdmin()).ToList()
+                });
+            }
+            catch (Exception ex)
+            {
+                return Problem("while getting schedule: " + ex.Message);
             }
         }
     }

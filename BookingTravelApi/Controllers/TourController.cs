@@ -78,7 +78,7 @@ namespace BookingTravelApi.Controllers
             if (stars != null)
             {
                 query = query
-                    .Where(i => 
+                    .Where(i =>
                         i.Schedules
                             .SelectMany(s => s.Reviews)
                             .Select(i => i.Rating)
@@ -118,7 +118,7 @@ namespace BookingTravelApi.Controllers
         public async Task<IActionResult> getMostFavoriteTour()
         {
             var query = _context.Tours.AsQueryable();
-            query = query.Include(i => i.Favorites).OrderBy(i => i.Favorites!.Count).Reverse();
+            query = query.OrderByDescending(i => i.TotalStars / i.TotalReviews).ThenByDescending(i => i.TotalReviews);
 
             var tours = await query.Include(t => t.TourImages!)
                 .Include(ti => ti.DayOfTours!)
@@ -136,7 +136,7 @@ namespace BookingTravelApi.Controllers
                 !.ThenInclude(i => i.LocationActivity)
                 !.ThenInclude(i => i.ActivityAndLocations)
                 !.ThenInclude(i => i.Activity)
-                .Take(3)
+                // .Take(3)
                 .ToListAsync();
             var tourDTOs = tours.Select(i => i.Map()).ToArray();
 
@@ -151,9 +151,9 @@ namespace BookingTravelApi.Controllers
         {
             var query = _context.Tours.AsQueryable();
             query = query
-                .Where(t => t.Schedules.Any(s => s.OpenDate > DateTime.Now))
+                .Where(t => t.Schedules.Any(s => s.OpenDate > DateTime.UtcNow.AddHours(7)))
                 .OrderBy(t => t.Schedules
-                    .Where(s => s.OpenDate > DateTime.Now)
+                    .Where(s => s.OpenDate > DateTime.UtcNow.AddHours(7))
                     .Select(s => (DateTime?)s.StartDate)
                     .Min() ?? DateTime.MaxValue);
 
@@ -296,8 +296,8 @@ namespace BookingTravelApi.Controllers
                         .Where((imagePath) => retainImages.Contains(imagePath) == false)
                         .ToList();
                     newImagePaths = await ImageInfrastructure.WriteImages(updateTourDTO.TourImages);
-                    newImagePaths.AddRange(retainImages);
-                    var tourImages = newImagePaths.Select(i => new TourImage() { Path = i }).ToList();
+                    retainImages.AddRange(newImagePaths);
+                    var tourImages = retainImages.Select(i => new TourImage() { Path = i }).ToList();
                     tour.TourImages = tourImages;
                 }
 

@@ -12,9 +12,9 @@ namespace BookingTravelApi.Controllers
     public class ConfigController : Controller
     {
         private ApplicationDbContext _context;
-        private readonly ILogger<UserController> _logger;
+        private readonly ILogger<ConfigController> _logger;
 
-        public ConfigController(ILogger<UserController> logger, ApplicationDbContext context)
+        public ConfigController(ILogger<ConfigController> logger, ApplicationDbContext context)
         {
             _context = context;
             _logger = logger;

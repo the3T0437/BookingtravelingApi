@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Mvc;
 
 namespace BookingTravelApi.Domains
 {
@@ -18,6 +19,17 @@ namespace BookingTravelApi.Domains
 
         [Required]
         public int StatusId { get; set; }
+
+        [NotMapped]
+        public int ActualStatusId
+        {
+            get
+            {
+                if (StatusId == Status.Processing && DateTime.UtcNow.AddHours(7) > ExpiredAt)
+                    return Status.Expired;
+                return StatusId;
+            }
+        }
 
         [Required]
         public int NumPeople { get; set; }
@@ -50,5 +62,6 @@ namespace BookingTravelApi.Domains
         public UserCompletedSchedule? UserCompletedSchedule { get; set; }
         public Schedule? Schedule { get; set; }
         public User? User { get; set; }
+        public Actualcashs? Actualcashs {get; set;}
     }
 }

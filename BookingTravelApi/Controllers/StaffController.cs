@@ -6,6 +6,8 @@ using BookingTravelApi.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BookingTravelApi.DTO;
+using BookingTravelApi.Infrastructure;
+using Microsoft.IdentityModel.Tokens;
 
 namespace BookingTravelApi.Controllers
 {
@@ -19,6 +21,27 @@ namespace BookingTravelApi.Controllers
         {
             _context = context;
             _logger = logger;
+        }
+
+        [HttpGet("getstaffs-byroleid/{roleId}")]
+        [ResponseCache(NoStore = true)]
+        public async Task<IActionResult> GetStaffs(int roleId)
+        {
+            var role = await _context.Roles.FindAsync(roleId);
+            var query = _context.Staffs.Include(s => s.User).ThenInclude(u => u!.Role).AsNoTracking();
+
+            if (role != null)
+            {
+                query = query.Where(q => q.User.RoleId == roleId);
+            }
+
+            var staffDTOs = await query.Select(i => i.Map()).ToArrayAsync();
+
+
+            return Ok(new RestDTO<StaffDTO[]?>()
+            {
+                Data = staffDTOs
+            });
         }
 
         [HttpGet]
@@ -99,7 +122,11 @@ namespace BookingTravelApi.Controllers
         [ResponseCache(NoStore = true)]
         public async Task<IActionResult> GetStaffById(int id)
         {
-            var staff = await _context.Staffs.Include(s => s.User).ThenInclude(u => u!.Role).AsNoTracking().FirstOrDefaultAsync(s => s.UserId == id);
+            var staff = await _context.Staffs
+                .Include(s => s.User)
+                .ThenInclude(u => u!.Role)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(s => s.UserId == id);
 
             if (staff == null)
             {
@@ -118,15 +145,19 @@ namespace BookingTravelApi.Controllers
             try
             {
                 var staff = newStaffDTO.Map();
+                var listImages = new List<String>();
+                listImages.Add(newStaffDTO.CCCD_front_image);
+                listImages.Add(newStaffDTO.CCCD_back_image);
+
+                var listPaths = await ImageInfrastructure.WriteImages(listImages);
+                staff.CCCD_front_path = listPaths[0];
+                staff.CCCD_back_path = listPaths[1];
 
                 _context.Staffs.Add(staff);
                 await _context.SaveChangesAsync();
 
 
-                return Ok(new RestDTO<int>()
-                {
-                    Data = staff.UserId
-                });
+                return await GetStaffById(staff.UserId);
             }
             catch (Exception ex)
             {
@@ -137,6 +168,18 @@ namespace BookingTravelApi.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdateStaff(UpdateStaffDTO updatedStaffDTO)
         {
+            if (!updatedStaffDTO.IsRetainCCCDFront && updatedStaffDTO.CCCD_front_image.IsNullOrEmpty())
+            {
+                return BadRequest(new ErrorDTO("Chưa truyền ảnh trước CCCD"));
+            }
+            if (!updatedStaffDTO.IsRetainCCCDBack && updatedStaffDTO.CCCD_back_image.IsNullOrEmpty())
+            {
+                return BadRequest(new ErrorDTO("Chưa truyền ảnh trước CCCD"));
+            }
+
+            var tempImages = new List<String>();
+            var oldImages = new List<String>();
+
             try
             {
                 var staff = await _context.Staffs.Include(s => s.User).FirstOrDefaultAsync(s => s.UserId == updatedStaffDTO.UserId);
@@ -147,15 +190,38 @@ namespace BookingTravelApi.Controllers
                 }
 
                 updatedStaffDTO.UpdateEntity(staff);
-                await _context.SaveChangesAsync();
-
-                return Ok(new RestDTO<Boolean>()
+                if (!updatedStaffDTO.IsRetainCCCDFront)
                 {
-                    Data = true
-                });
+                    var CCCDFront = await ImageInfrastructure.WriteImage(updatedStaffDTO.CCCD_front_image);
+                    if (CCCDFront == null)
+                    {
+                        throw new Exception("Can't write CCCDFront image");
+                    }
+                    oldImages.Add(staff.CCCD_front_path);
+                    tempImages.Add(CCCDFront);
+                    staff.CCCD_front_path = CCCDFront;
+                }
+                if (!updatedStaffDTO.IsRetainCCCDBack)
+                {
+                    var CCCDBack = await ImageInfrastructure.WriteImage(updatedStaffDTO.CCCD_back_image);
+                    if (CCCDBack == null)
+                    {
+                        throw new Exception("Can't write CCCDFront image");
+                    }
+                    oldImages.Add(staff.CCCD_back_path);
+                    tempImages.Add(CCCDBack);
+                    staff.CCCD_back_path = CCCDBack;
+                }
+
+
+                await _context.SaveChangesAsync();
+                ImageInfrastructure.DeleteImages(oldImages);
+
+                return await GetStaffById(staff.UserId);
             }
             catch (Exception ex)
             {
+                ImageInfrastructure.DeleteImages(tempImages);
                 return Problem("Error updating the staff: " + ex.Message);
             }
         }
@@ -165,18 +231,24 @@ namespace BookingTravelApi.Controllers
         {
             try
             {
-                var staff = await _context.Staffs.FindAsync(id);
+                var staff = await _context.Staffs
+                    .Include(s => s.User)
+                    .ThenInclude(u => u!.Role)
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(s => s.UserId == id);
                 if (staff == null)
                 {
                     return NotFound($"id {id} not found");
                 }
+                ImageInfrastructure.DeleteImage(staff.CCCD_front_path);
+                ImageInfrastructure.DeleteImage(staff.CCCD_back_path);
 
                 _context.Staffs.Remove(staff);
                 await _context.SaveChangesAsync();
 
-                return Ok(new RestDTO<Boolean>()
+                return Ok(new RestDTO<StaffDTO>()
                 {
-                    Data = true
+                    Data = staff.Map()
                 });
             }
             catch (Exception ex)

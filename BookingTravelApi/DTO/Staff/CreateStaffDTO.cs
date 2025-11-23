@@ -14,8 +14,8 @@ namespace BookingTravelApi.DTO.staff
         public DateTime DateOfBirth { get; set; }
         public DateTime StartWorkingDate { get; set; }
         public DateTime CCCDIssueDate { get; set; }
-        public string CCCD_front_path { get; set; } = null!;
-        public string CCCD_back_path { get; set; } = null!;
+        public string CCCD_front_image { get; set; } = null!;
+        public string CCCD_back_image { get; set; } = null!;
         public DateTime EndWorkingDate { get; set; }
 
 
@@ -26,7 +26,7 @@ namespace BookingTravelApi.DTO.staff
         {
             return new Staff()
             {
-               
+
                 Code = Code,
                 IsActive = IsActive,
                 CCCD = CCCD,
@@ -34,10 +34,10 @@ namespace BookingTravelApi.DTO.staff
                 DateOfBirth = DateOfBirth,
                 StartWorkingDate = StartWorkingDate,
                 CCCDIssueDate = CCCDIssueDate,
-                CCCD_front_path = CCCD_front_path,
-                CCCD_back_path = CCCD_back_path,
+                CCCD_front_path = "",
+                CCCD_back_path = "",
                 EndWorkingDate = EndWorkingDate,
-                
+
                 User = User!.Map(),
             };
         }

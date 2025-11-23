@@ -20,7 +20,8 @@ namespace BookingTravelApi.Extensions
                 Phone = user.Phone,
                 AvatarPath = user.AvatarPath,
                 BankBranch = user.BankBranch,
-                RefundStatus = user.RefundStatus
+                RefundStatus = user.RefundStatus,
+                Token = user.Token
             };
         }
     }

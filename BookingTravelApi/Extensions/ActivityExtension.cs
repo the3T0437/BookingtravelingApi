@@ -1,6 +1,5 @@
 using BookingTravelApi.Domains;
 using BookingTravelApi.DTO.Activity;
-using BookingTravelApi.DTO.LocationActivity;
 
 namespace BookingTravelApi.Extensions
 {

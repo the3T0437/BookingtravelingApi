@@ -2,12 +2,13 @@ using MimeKit;
 using MailKit.Net.Smtp;
 using MailKit.Security;
 using DotNetEnv;
+using BookingTravelApi.DTO.otpcode;
 
 namespace BookingTravelApi.Services
 {
     public class MailService
     {
-        
+
         private const string SmtpHost = "smtp.gmail.com";
         private const int SmtpPort = 587; // Cổng tiêu chuẩn cho TLS/STARTTLS
 
@@ -17,7 +18,7 @@ namespace BookingTravelApi.Services
         private string SmtpUsername = Environment.GetEnvironmentVariable("Email") ?? ""; // Tên đăng nhập SMTP 
         private string SmtpPassword = Environment.GetEnvironmentVariable("AppPassword") ?? ""; // Mật khẩu ứng dụng 
 
-        public async Task<bool> SendMailAsync(string toEmail, string body, int timeValidity)
+        public async Task<SendOtpStatus> SendMailAsync(string toEmail, string body, int timeValidity)
         {
             try
             {
@@ -80,12 +81,11 @@ namespace BookingTravelApi.Services
                     await mailClient.DisconnectAsync(true);
                 }
 
-                return true;
+                return new SendOtpStatus("", true);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Lỗi gửi email: {ex.Message}");
-                return false;
+                return new SendOtpStatus($"Lỗi {ex.Message}", false);
             }
         }
     }

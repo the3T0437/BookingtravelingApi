@@ -14,8 +14,8 @@ namespace BookingTravelApi.Controllers
     public class ExternalImageController : Controller
     {
         private ApplicationDbContext _context;
-        private readonly ILogger<BookingController> _logger;
-        public ExternalImageController(ILogger<BookingController> logger, ApplicationDbContext context)
+        private readonly ILogger<ExternalImageController> _logger;
+        public ExternalImageController(ILogger<ExternalImageController> logger, ApplicationDbContext context)
         {
             _context = context;
             _logger = logger;

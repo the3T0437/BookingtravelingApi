@@ -70,7 +70,7 @@ namespace BookingTravelApi.Controllers
                 .Include(u => u.Booking)
                 .ThenInclude(b => b!.Schedule)
                 .ThenInclude(t => t!.Tour)
-                
+
                 .Include(u => u.Booking)
                 .ThenInclude(st => st!.Status)
 
@@ -97,7 +97,7 @@ namespace BookingTravelApi.Controllers
             try
             {
                 var userSchedule = newUserSchedule.Map();
-               
+
                 await _context.UserCompletedSchedules.AddAsync(userSchedule);
                 await _context.SaveChangesAsync();
 
@@ -108,26 +108,83 @@ namespace BookingTravelApi.Controllers
             }
             catch (Exception ex)
             {
-                return Problem("Error create");
+                return Problem($"Error create: {ex.Message}");
             }
 
         }
 
         [HttpPut(Name = "updateUserCompletedSchedule")]
-        public async Task<IActionResult> updateUserCompletedSchedule(UpdateUserCompletedScheduleDTO updateBooking)
+        public async Task<IActionResult> updateUserCompletedSchedule(UpdateUserCompletedScheduleDTO updateUserCompletedScheduleDTO)
         {
             try
             {
-                var query = await _context.UserCompletedSchedules.Where(b => b.BookingId == updateBooking.BookingId).FirstOrDefaultAsync();
-                if (query == null)
+                var userCompletedSchedule = await _context.UserCompletedSchedules
+                .Include(u => u.Booking)
+                .ThenInclude(b => b.User)
+
+                .Include(u => u.Booking)
+                .ThenInclude(b => b.Actualcashs)
+
+                .Include(u => u.Booking)
+                .ThenInclude(b => b.Schedule)
+
+                .Where(b => b.BookingId == updateUserCompletedScheduleDTO.BookingId).FirstOrDefaultAsync();
+
+                if (userCompletedSchedule == null)
                 {
-                    return Problem("Update fail");
+                    return NotFound("userComplete not found");
                 }
 
-                query.countPeople = updateBooking.countPeople;
-                
+                var booking = userCompletedSchedule.Booking;
+                var actualCash = booking.Actualcashs;
+                var user = booking.User;
+                var schedule = booking.Schedule;
 
-                _context.UserCompletedSchedules.Update(query);
+
+                int oldActualCash = actualCash.money;
+
+                userCompletedSchedule.countPeople = updateUserCompletedScheduleDTO.countPeople;
+
+
+                int nonNumPeople = booking.NumPeople - updateUserCompletedScheduleDTO.countPeople;
+
+                double percent = Convert.ToDouble(100 - schedule.Desposit) / 100.0;
+                var tmp = Convert.ToInt32(schedule.FinalPrice * percent);
+
+
+                if (nonNumPeople == 0)
+                {
+                    actualCash.money = updateUserCompletedScheduleDTO.countPeople * schedule.FinalPrice;
+                }
+                else if (nonNumPeople < booking.NumPeople)
+                {
+                    actualCash.money = booking.NumPeople * Convert.ToInt32(schedule.FinalPrice * schedule.Desposit / 100);
+                    actualCash.money += updateUserCompletedScheduleDTO.countPeople * tmp;
+
+                    // if(booking.ActualStatusId == Status.Paid)
+                    // {
+                    //     user.Money = nonNumPeople * tmp;
+                    // }
+                }
+                else if (nonNumPeople == booking.NumPeople)
+                {
+                    actualCash.money = booking.NumPeople * Convert.ToInt32(schedule.FinalPrice * schedule.Desposit / 100);
+
+                    // if(booking.ActualStatusId == Status.Paid)
+                    // {
+                    //     user.Money = nonNumPeople * tmp;
+                    // }
+                }
+
+                int newActualCash = actualCash.money;
+                int diff = newActualCash - oldActualCash;
+
+                if (diff < 0)
+                {
+                    user.Money += Math.Abs(diff);
+                }
+
+                _context.UserCompletedSchedules.Update(userCompletedSchedule);
                 await _context.SaveChangesAsync();
 
                 return Ok(new RestDTO<Boolean>()
