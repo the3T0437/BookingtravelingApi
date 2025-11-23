@@ -37,6 +37,11 @@ namespace BookingTravelApi.Controllers
                 return NotFound($"user not found");
             }
 
+            user.Token = login.token;
+
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+
             return Ok(new RestDTO<UserDTO>()
             {
                 Data = user.Map()
@@ -50,7 +55,7 @@ namespace BookingTravelApi.Controllers
 
             if (user == null)
             {
-                var newUserDTO = new CreateUserDTO(3, null, login.name, login.email, "", 0, "", "", login.photoUrl, "");
+                var newUserDTO = new CreateUserDTO(3, null, login.name, login.email, "", 0, "", "", login.photoUrl, "", login.token);
 
                 var newUser = newUserDTO.Map();
 
@@ -61,6 +66,13 @@ namespace BookingTravelApi.Controllers
                 {
                     Data = newUser.Map()
                 });
+            }
+            else
+            {
+                user.Token = login.token;
+
+                _context.Users.Update(user);
+                await _context.SaveChangesAsync();
             }
 
             return Ok(new RestDTO<UserDTO>
@@ -210,7 +222,7 @@ namespace BookingTravelApi.Controllers
                 Data = users.Select(i => i.Map()).ToList()
             });
         }
-        
+
         [HttpPost("SubmitRefund/{id}")]
         public async Task<IActionResult> SubmitRefund(int id)
         {

@@ -21,14 +21,16 @@ namespace BookingTravelApi.DTO.Controllers
         }
 
         [HttpPost("send")]
-        public async Task<IActionResult> SendNotification([FromBody] PushNotificationRequest request)
+        public async Task<IActionResult> SendNotification([FromBody] PushNotificationRequest pushNotificationRequest)
         {
             try
             {
+                var user = await _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Id == pushNotificationRequest.userId);
+
                 var response = await _notificationService.SendNotification(
-                    request.Token,
-                    request.Title,
-                    request.Body
+                    user.Token,
+                    pushNotificationRequest.Title,
+                    pushNotificationRequest.Body
                 );
 
                 return Ok(new RestDTO<bool>

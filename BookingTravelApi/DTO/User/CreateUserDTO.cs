@@ -37,6 +37,9 @@ namespace BookingTravelApi.DTO.user
         [MaxLength(255)]
         public String BankBranch { get; set; } = null!;
 
+        [MaxLength(255)]
+        public string? Token { get; set; }
+
         public CreateUserDTO(
              int roleId,
              string password,
@@ -47,7 +50,8 @@ namespace BookingTravelApi.DTO.user
              string? bankNumber = null,
              string? bank = null,
              string? avatarPath = null,
-             string? bankBranch = null)
+             string? bankBranch = null,
+             string? Token = null)
         {
             RoleId = roleId;
             Password = password;
@@ -59,6 +63,7 @@ namespace BookingTravelApi.DTO.user
             Bank = bank ?? "string";
             AvatarPath = avatarPath ?? "string";
             BankBranch = bankBranch ?? "string";
+            this.Token = Token;
         }
 
         public User Map()
@@ -75,7 +80,8 @@ namespace BookingTravelApi.DTO.user
                 Phone = Phone,
                 AvatarPath = AvatarPath,
                 BankBranch = BankBranch,
-                RefundStatus = false
+                RefundStatus = false,
+                Token = Token
             };
         }
     }
