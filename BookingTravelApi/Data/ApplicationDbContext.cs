@@ -64,6 +64,13 @@ namespace BookingTravelApi.Domains
 
         static private void CreateForeignKey(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Actualcashs>()
+                .HasOne(a => a.Booking)
+                .WithOne(b => b.Actualcashs)
+                .HasForeignKey<Actualcashs>(actualcashs => actualcashs.BookingId)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Cascade);
+                
             modelBuilder.Entity<Staff>()
                 .HasOne(t => t.User)
                 .WithOne(f => f.Staff)
