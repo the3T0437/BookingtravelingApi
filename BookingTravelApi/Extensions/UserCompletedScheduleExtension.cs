@@ -10,6 +10,7 @@ namespace BookingTravelApi.Extensions
             return new UserCompletedScheduleDTO()
             {
                 CountPeople = userCompletedSchedule.countPeople, 
+                Actualcashs = userCompletedSchedule.Booking!.Actualcashs!.Map(),
                 Booking = userCompletedSchedule.Booking!.Map()
             };
         }
