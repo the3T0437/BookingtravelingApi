@@ -8,6 +8,8 @@ using BookingTravelApi.Extensions;
 using BookingTravelApi.DTO.ScheduleAssignmentDTO;
 using Org.BouncyCastle.Asn1.Cms;
 using System.Collections.Immutable;
+using Microsoft.EntityFrameworkCore.Query;
+using System.ComponentModel.DataAnnotations;
 
 namespace BookingTravelApi.Controllers
 {
@@ -388,6 +390,109 @@ namespace BookingTravelApi.Controllers
                 return Ok(new RestDTO<List<ScheduleDTO>>()
                 {
                     Data = schedules.Select(i => i!.Map()).ToList()
+                });
+            }
+            catch (Exception ex)
+            {
+                return Problem("while getting schedule: " + ex.Message);
+            }
+        }
+
+        [HttpGet("Staff")]
+        public async Task<IActionResult> getSchedulesOfGuide(
+            [Required] int staffId,
+            String? filter = null,
+            int? provinceId = null,
+            int? placeId = null,
+            DateTime? startDate = null,
+            DateTime? endDate = null,
+            int? stars = null)
+        {
+            try
+            {
+                //staff id
+                var query = _context.Schedules.AsQueryable()
+                    .Where(i => i.Guides!.Any(i => i.StaffId == staffId))
+                    .Where(i => i.EndDate > DateTime.UtcNow.AddHours(7));
+
+                //search string
+                var searchStr = filter?.Trim();
+                if (!String.IsNullOrEmpty(searchStr))
+                {
+                    query = query.Where(i => i.Tour!.Title.Contains(searchStr));
+                }
+
+                //start date, end date
+                if (startDate != null && endDate != null)
+                {
+                    query = query
+                        .Where(s => s.StartDate >= startDate && s.EndDate <= endDate);
+                }
+                else if (startDate != null)
+                {
+                    query = query
+                        .Where(s => s.StartDate >= startDate);
+                }
+                else if (endDate != null)
+                {
+                    query = query
+                        .Where(s => s.EndDate <= endDate);
+                }
+
+                //province
+                if (provinceId != null)
+                {
+                    query = query
+                        .Where(i => i.Tour!.DayOfTours!
+                            .SelectMany(dayOfTour => dayOfTour.DayActivities!)
+                            .Select(i => i.LocationActivity)
+                            .Select(i => i!.Place)
+                            .Select(i => i!.Location)
+                            .Any(i => i!.Id == provinceId));
+                }
+
+                //Place Id
+                if (placeId != null)
+                {
+                    query = query
+                        .Where(i => i.Tour!.DayOfTours!
+                            .SelectMany(dayOfTour => dayOfTour.DayActivities!)
+                            .Select(i => i.LocationActivity)
+                            .Select(i => i!.Place)
+                            .Any(i => i!.Id == placeId));
+                }
+
+                //stars
+                if (stars != null)
+                {
+                    query = query
+                        .Where(i =>
+                            Math.Floor(i.Reviews!
+                            .Select(i => i.Rating)
+                            .Average()) == stars);
+                }
+
+                var schedules = await query
+                    .Include(i => i.Bookings)
+                    .Include(i => i.Reviews)
+
+                    .Include(i => i!.Tour)
+
+                    .Include(t => t!.Tour)
+                    .ThenInclude(tm => tm!.DayOfTours!)
+                    .ThenInclude(i => i.DayActivities!)
+                    .ThenInclude(i => i.LocationActivity)
+                    .ThenInclude(i => i!.Place)
+                    .ThenInclude(i => i!.Location)
+
+                    .Include(t => t!.Tour)
+                    .ThenInclude(t => t!.TourImages)
+                    .AsNoTracking()
+                    .ToListAsync();
+
+                return Ok(new RestDTO<List<ScheduleDTOOfAdmin>>()
+                {
+                    Data = schedules.Select(i => i!.MapToScheduleOfAdmin()).ToList()
                 });
             }
             catch (Exception ex)
