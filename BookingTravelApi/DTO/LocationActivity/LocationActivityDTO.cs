@@ -8,5 +8,6 @@ namespace BookingTravelApi.DTO.LocationActivity
         public int Id { get; set; }
         public string Name { get; set; } = null!;
         public PlaceDTO? Place { get; set; } = null!;
+        public List<ActivityDTO>? Activities { get; set; } = null!;
     }
 }
