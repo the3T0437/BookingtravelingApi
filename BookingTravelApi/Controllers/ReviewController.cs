@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.Linq.Dynamic.Core;
 using BookingTravelApi.Domains;
 using BookingTravelApi.DTO;
@@ -21,14 +22,78 @@ namespace BookingTravelApi.Controllers
             _logger = logger;
         }
 
-        [HttpPost("getReviews")]
+        [HttpGet("getSpecifiedReview")]
         [ResponseCache(NoStore = true)]
-        public async Task<IActionResult> getReviewUser(GetReviewDTO getReviewDTO)
+        public async Task<IActionResult> getReviewUser([Required] int userId, [Required] int scheduleId)
+        {
+            try
+            {
+                var review = await _context.Reviews
+                .Where(u => u.ScheduleId == scheduleId && u.UserId == userId)
+                .Include(t => t.User)
+
+                .Include(i => i.Helpfuls)
+
+                .Include(s => s.Schedule)
+                .ThenInclude(g => g!.Tour)
+
+                .Include(s => s.Schedule)
+                .ThenInclude(g => g!.Guides)
+                !.ThenInclude(st => st!.Staff)
+                .ThenInclude(us => us!.User)
+                .AsNoTracking().FirstOrDefaultAsync();
+
+                return Ok(new RestDTO<ReviewDTO?>()
+                {
+                    Data = review?.Map()
+                });
+            }
+            catch (Exception ex)
+            {
+                return Problem($"ERROR GuidesscheduleId");
+            }
+        }
+
+        [HttpGet("getReviewOfSchedule")]
+        [ResponseCache(NoStore = true)]
+        public async Task<IActionResult> getReviewSchedule([Required] int scheduleId)
+        {
+            try
+            {
+                var reviews = await _context.Reviews
+                .Where(u => u.ScheduleId == scheduleId)
+                .Include(t => t.User)
+
+                .Include(i => i.Helpfuls)
+
+                .Include(s => s.Schedule)
+                .ThenInclude(g => g!.Tour)
+
+                .Include(s => s.Schedule)
+                .ThenInclude(g => g!.Guides)
+                !.ThenInclude(st => st!.Staff)
+                .ThenInclude(us => us!.User)
+                .AsNoTracking().Select(i => i.Map()).ToListAsync();
+
+                return Ok(new RestDTO<List<ReviewDTO>>()
+                {
+                    Data = reviews
+                });
+            }
+            catch (Exception ex)
+            {
+                return Problem($"ERROR GuidesscheduleId");
+            }
+        }
+
+        [HttpGet("getReviews")]
+        [ResponseCache(NoStore = true)]
+        public async Task<IActionResult> getReviewUser([Required] int tourId, int? userId)
         {
             try
             {
                 var query = await _context.Reviews
-                .Where(u => u.Schedule != null && u.Schedule!.TourId == getReviewDTO.TourId)
+                .Where(u => u.Schedule != null && u.Schedule!.TourId == tourId)
                 .Include(t => t.User)
 
                 .Include(i => i.Helpfuls)
@@ -45,15 +110,15 @@ namespace BookingTravelApi.Controllers
                 var reviews = query.Select(i => i.Map()).ToList();
 
 
-                if (getReviewDTO.UserId != null)
+                if (userId != null)
                 {
                     var helpfulList = await _context.Helpfuls
-                        .Where(i => i.UserId == getReviewDTO.UserId && i.Review.Schedule!.TourId == getReviewDTO.TourId)
+                        .Where(i => i.UserId == userId && i.Review.Schedule!.TourId == tourId)
                         .ToListAsync();
 
                     var helpfulReviewIds = helpfulList.Select(i => i.ReviewId).ToList();
 
-                    reviews = reviews.Select( i =>
+                    reviews = reviews.Select(i =>
                     {
                         if (helpfulReviewIds.Contains(i.Id))
                         {
@@ -81,7 +146,7 @@ namespace BookingTravelApi.Controllers
             try
             {
                 var reviewSchesule = await _context.Reviews.Where(r => r.UserId == newReviewDTO.UserId && r.ScheduleId == newReviewDTO.ScheduleId).FirstOrDefaultAsync();
-                if(reviewSchesule != null)
+                if (reviewSchesule != null)
                 {
                     return BadRequest("Review existed");
                 }
@@ -92,7 +157,7 @@ namespace BookingTravelApi.Controllers
                 var schedule = await _context.Schedules.Include(s => s.Tour).FirstOrDefaultAsync(s => s.Id == review.ScheduleId);
                 schedule!.Tour!.TotalReviews += 1;
                 schedule!.Tour!.TotalStars += review.Rating;
-                
+
                 await _context.Reviews.AddAsync(review);
                 await _context.SaveChangesAsync();
 
