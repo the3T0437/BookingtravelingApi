@@ -140,36 +140,49 @@ namespace BookingTravelApi.Controllers
                 var user = booking.User;
                 var schedule = booking.Schedule;
 
+
+                int oldActualCash = actualCash.money;
+
                 userCompletedSchedule.countPeople = updateUserCompletedScheduleDTO.countPeople;
 
 
                 int nonNumPeople = booking.NumPeople - updateUserCompletedScheduleDTO.countPeople;
+
+                double percent = Convert.ToDouble(100 - schedule.Desposit) / 100.0;
+                var tmp = Convert.ToInt32(schedule.FinalPrice * percent);
+
+
                 if (nonNumPeople == 0)
                 {
                     actualCash.money = updateUserCompletedScheduleDTO.countPeople * schedule.FinalPrice;
                 }
                 else if (nonNumPeople < booking.NumPeople)
                 {
-                    actualCash.money = booking.NumPeople * Convert.ToInt32(schedule.FinalPrice * schedule.Desposit/100);
-                    double a = Convert.ToDouble(100 - schedule.Desposit)/100.0;
-                    var tmp = Convert.ToInt32(schedule.FinalPrice *  a);
+                    actualCash.money = booking.NumPeople * Convert.ToInt32(schedule.FinalPrice * schedule.Desposit / 100);
+                    actualCash.money += updateUserCompletedScheduleDTO.countPeople * tmp;
 
-                    actualCash.money += updateUserCompletedScheduleDTO.countPeople * Convert.ToInt32(schedule.FinalPrice *  (100 - schedule.Desposit)/100);
-
-                    if(booking.ActualStatusId == Status.Paid)
-                    {
-                        user.Money = nonNumPeople * Convert.ToInt32(schedule.FinalPrice *  (100 - schedule.Desposit)/100);
-                    }
+                    // if(booking.ActualStatusId == Status.Paid)
+                    // {
+                    //     user.Money = nonNumPeople * tmp;
+                    // }
                 }
                 else if (nonNumPeople == booking.NumPeople)
                 {
-                    if(booking.ActualStatusId == Status.Paid)
-                    {
-                        user.Money = nonNumPeople * Convert.ToInt32(schedule.FinalPrice *  (100 - schedule.Desposit)/100);
-                    }
+                    actualCash.money = booking.NumPeople * Convert.ToInt32(schedule.FinalPrice * schedule.Desposit / 100);
+
+                    // if(booking.ActualStatusId == Status.Paid)
+                    // {
+                    //     user.Money = nonNumPeople * tmp;
+                    // }
                 }
 
+                int newActualCash = actualCash.money;
+                int diff = newActualCash - oldActualCash;
 
+                if (diff < 0)
+                {
+                    user.Money += Math.Abs(diff);
+                }
 
                 _context.UserCompletedSchedules.Update(userCompletedSchedule);
                 await _context.SaveChangesAsync();
