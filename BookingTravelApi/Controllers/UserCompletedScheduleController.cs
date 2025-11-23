@@ -44,6 +44,9 @@ namespace BookingTravelApi.Controllers
 
                 .Include(u => u.Booking)
                 .ThenInclude(b => b!.Status)
+
+                .Include(u => u.Booking)
+                .ThenInclude(b => b!.Actualcashs)
                 .AsNoTracking()
                 .ToListAsync();
 
@@ -76,6 +79,9 @@ namespace BookingTravelApi.Controllers
 
                 .Include(u => u.Booking)
                 .ThenInclude(us => us!.User)
+
+                .Include(u => u.Booking)
+                .ThenInclude(b => b!.Actualcashs)
                 .AsNoTracking().ToArrayAsync();
 
                 var booking = query.Select(i => i.Map()).ToArray();
