@@ -48,6 +48,10 @@ namespace BookingTravelApi.Domains
         [Required]
         public bool RefundStatus { get; set; } = false;
 
+        [Required]
+        [MaxLength(255)]
+        public String? Token { get; set; }
+
         public Staff? Staff { get; set; }
         public ICollection<Notification>? Notification { get; set; }
         public Role? Role { get; set; }
