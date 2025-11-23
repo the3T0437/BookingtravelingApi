@@ -49,6 +49,7 @@ namespace BookingTravelApi.DTO.staff
 
         public UpdateUserDTO? User { get; set; }
 
+
         public void UpdateEntity(Staff staff)
         {
             staff.Code = Code;

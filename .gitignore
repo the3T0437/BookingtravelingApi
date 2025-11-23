@@ -61,3 +61,6 @@ nunit-*.xml
 wwwroot/
 images/
 .vs/
+
+# Firebase Admin SDK Credentials
+BookingTravelApi/Config/firebase-adminsdk.json
