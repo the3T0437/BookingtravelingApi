@@ -18,10 +18,10 @@ namespace BookingTravelApi.Extensions
                 CountChangeLeft = booking.CountChangeLeft,
                 CreatedAt = booking.CreatedAt,
                 PayType = false,
-                ExpiredAt = booking.ExpiredAt,               
+                ExpiredAt = booking.ExpiredAt,
                 Qr = booking.Qr,
                 Status = booking.Status!.Map(),
-                Schedule = booking.Schedule!.Map(),
+                Schedule = booking.Schedule?.Map(),
                 User = booking.User!.Map()
             };
         }

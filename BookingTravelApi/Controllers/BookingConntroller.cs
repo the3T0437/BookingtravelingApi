@@ -156,6 +156,38 @@ namespace BookingTravelApi.Controllers
                     return Problem("id not found");
                 }
 
+                var querySchedule = _context.Schedules
+                .Include(t => t!.Tour)
+                .ThenInclude(ti => ti!.DayOfTours!)
+                .ThenInclude(d => d.DayActivities!)
+                .ThenInclude(da => da.Activity!)
+
+                .Include(t => t!.Tour)
+                .ThenInclude(d => d!.DayOfTours)
+                !.ThenInclude(d => d.DayActivities!)
+                .ThenInclude(da => da.LocationActivity!)
+                .ThenInclude(lo => lo.Place!)
+                .ThenInclude(p => p.Location)
+
+                .Include(t => t!.Tour)
+                .ThenInclude(i => i!.DayOfTours!)
+                !.ThenInclude(i => i.DayActivities!)
+                !.ThenInclude(i => i.LocationActivity)
+                !.ThenInclude(i => i!.ActivityAndLocations)
+                !.ThenInclude(i => i.Activity)
+
+                .Include(t => t!.Tour)
+                .ThenInclude(tm => tm!.TourImages)
+
+                .Include(i => i!.Bookings)
+                .AsNoTracking();
+
+                var schedule = await querySchedule.FirstOrDefaultAsync();
+                if (schedule == null)
+                {
+                    return BadRequest($"Schedule {scheduleId} not found");
+                }
+
                 var now = DateTimeHelper.GetVietNamTime();
 
                 var query = await _context.Bookings
@@ -163,39 +195,18 @@ namespace BookingTravelApi.Controllers
                 .Where(b => now < b.ExpiredAt || b.StatusId != Status.Processing)
                 .Include(st => st.Status)
                 .Include(us => us.User)
-
-                .Include(s => s.Schedule)
-                .ThenInclude(t => t!.Tour)
-                .ThenInclude(ti => ti!.DayOfTours!)
-                .ThenInclude(d => d.DayActivities!)
-                .ThenInclude(da => da.Activity!)
-
-                .Include(s => s.Schedule)
-                .ThenInclude(t => t!.Tour)
-                .ThenInclude(d => d!.DayOfTours)
-                !.ThenInclude(d => d.DayActivities!)
-                .ThenInclude(da => da.LocationActivity!)
-                .ThenInclude(lo => lo.Place!)
-                .ThenInclude(p => p.Location)
-
-                .Include(s => s.Schedule)
-                .ThenInclude(t => t!.Tour)
-                .ThenInclude(i => i!.DayOfTours!)
-                !.ThenInclude(i => i.DayActivities!)
-                !.ThenInclude(i => i.LocationActivity)
-                !.ThenInclude(i => i!.ActivityAndLocations)
-                !.ThenInclude(i => i.Activity)
-
-                .Include(s => s.Schedule)
-                .ThenInclude(t => t!.Tour)
-                .ThenInclude(tm => tm!.TourImages)
                 .AsNoTracking().ToListAsync();
 
-                var booking = query.Select(i => i.Map()).ToArray();
+                var bookings = query.Select(i =>
+                {
+                    var booking = i.Map();
+                    booking.Schedule = schedule!.Map();
+                    return booking;
+                }).ToArray();
 
                 return Ok(new RestDTO<BookingDTO[]?>()
                 {
-                    Data = booking
+                    Data = bookings
                 });
 
             }
@@ -350,14 +361,24 @@ namespace BookingTravelApi.Controllers
         {
             try
             {
-                var booking = await _context.Bookings.FirstOrDefaultAsync(s => s.Id == updateStatusBooking.Id);
+                var booking = await _context.Bookings.Include(i => i.Schedule).FirstOrDefaultAsync(s => s.Id == updateStatusBooking.Id);
                 if (booking == null)
                 {
                     return NotFound($" ID {updateStatusBooking.Id} not found.");
                 }
 
-                if (updateStatusBooking.StatusId == Status.Processing)
+                var actualCash = await _context.Actualcashs.Where(i => i.BookingId == updateStatusBooking.Id).FirstOrDefaultAsync();
+                var deposit = booking.Schedule!.Desposit * booking.Schedule.FinalPrice / 100;
+                if (actualCash != null)
                 {
+                    if (updateStatusBooking.StatusId == Status.Processing)
+                    {
+                        actualCash.money -= deposit;
+                    }
+                    else
+                    {
+                        actualCash.money += deposit;
+                    }
                 }
 
                 updateStatusBooking.UpdateEntity(booking);
