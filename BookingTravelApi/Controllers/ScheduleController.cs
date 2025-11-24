@@ -294,6 +294,25 @@ namespace BookingTravelApi.Controllers
                 _context.Schedules.Add(schedule);
                 await _context.SaveChangesAsync();
 
+                var tour = _context.Tours.Where(i => i.Id == newScheduleDTO.TourId).First();
+                var words = tour.Title.Split(" ", StringSplitOptions.RemoveEmptyEntries);
+                var prefix = "";
+                switch (words.Count())
+                {
+                    case 0:
+                        prefix = "UK";
+                        break;
+                    case 1:
+                        prefix = String.Concat(words[0].ElementAt(0), words[0].ElementAt(0));
+                        break;
+                    default:
+                        prefix = String.Concat(words[0].ElementAt(0), words[1].ElementAt(0));
+                        break;
+                }
+                var code = String.Concat(prefix, schedule.Id.ToString());
+                schedule.Code = code;
+                await _context.SaveChangesAsync();
+
                 // var scheduleDTOid = _context.Schedules.fin
 
                 return Ok(new RestDTO<int>()
