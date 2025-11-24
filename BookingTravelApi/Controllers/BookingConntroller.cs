@@ -226,8 +226,22 @@ namespace BookingTravelApi.Controllers
 
             try
             {
-                var schedule = await _context.Schedules.FindAsync(newBookingDTO.ScheduleId);
-                if (schedule == null) return Problem("scheduleId not Found");
+                var schedule = await _context.Schedules
+                    .Include(i => i.Bookings)
+                    .Where(i => i.Id == newBookingDTO.ScheduleId)
+                    .FirstOrDefaultAsync();
+
+                if (schedule == null) return NotFound("scheduleId not Found");
+                var maxSlot = schedule.MaxSlot;
+                var paidBooking = schedule.Bookings?.Where(i => i.StatusId != Status.Processing).Select(i => i.NumPeople).Sum() ?? 0;
+                var processingBooking = schedule.Bookings?.Where(i => i.StatusId == Status.Processing && i.ExpiredAt > DateTime.UtcNow.AddHours(7)).Select(i => i.NumPeople).Sum() ?? 0;
+                var bookedSlot = paidBooking + processingBooking;
+
+                if (maxSlot < bookedSlot + newBookingDTO.NumPeople)
+                {
+                    return BadRequest(new ErrorDTO("Vượt quá số người có thể đặt chuyến đi"));
+                }
+
                 var config = await _context.Configs.AsNoTracking().FirstOrDefaultAsync(c => c.Id == 1);
                 var expiredBookingSeconds = (await _context.Configs.AsNoTracking().FirstOrDefaultAsync(c => c.Id == Configs.TimeExpiredBookingSeconds))?.Value ?? 3;
 
@@ -405,16 +419,18 @@ namespace BookingTravelApi.Controllers
                     return Problem($"Id {bookingId} not found.");
                 }
 
-                if (booking.StatusId == 1)
-                {
-                    return Problem("Cannot delete schedule while booking is processing.");
-                }
-
                 var user = await _context.Users.FirstOrDefaultAsync(s => s.Id == booking.UserId);
-                user!.Money = booking.TotalPrice;
+                if (booking.StatusId != Status.Processing)
+                {
+                    var deposit = booking.Schedule!.FinalPrice * booking.Schedule!.Desposit / 100 * booking.NumPeople;
+                    user!.Money += booking.TotalPrice - deposit;
+
+                    booking.StatusId = Status.Processing;
+                }
                 _context.Users.Update(user);
 
-                _context.Bookings.Remove(booking);
+                booking.ExpiredAt = DateTime.MinValue;
+                _context.Bookings.Update(booking);
                 await _context.SaveChangesAsync();
 
                 return Ok(new RestDTO<Boolean>()
