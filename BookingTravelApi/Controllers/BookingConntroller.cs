@@ -194,7 +194,7 @@ namespace BookingTravelApi.Controllers
                 var now = DateTimeHelper.GetVietNamTime();
 
                 var query = await _context.Bookings
-                .Where(b => b.ScheduleId == scheduleId && b.Schedule!.StartDate > now)
+                .Where(b => b.ScheduleId == scheduleId)
                 .Where(b => now < b.ExpiredAt || b.StatusId != Status.Processing)
                 .Include(st => st.Status)
                 .Include(us => us.User)
