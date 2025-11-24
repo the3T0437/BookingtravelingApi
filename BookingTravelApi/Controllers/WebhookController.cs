@@ -1,6 +1,7 @@
 using System.Linq.Dynamic.Core;
 using BookingTravelApi.Domains;
 using BookingTravelApi.DTO;
+using BookingTravelApi.DTO.booking;
 using BookingTravelApi.DTO.ChangePassword;
 using BookingTravelApi.DTO.checkAccount;
 using BookingTravelApi.DTO.loginDTO;
@@ -9,6 +10,7 @@ using BookingTravelApi.DTO.updatePassword;
 using BookingTravelApi.DTO.user;
 using BookingTravelApi.Extensions;
 using BookingTravelApi.Infrastructure;
+using BookingTravelApi.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PayOS;
@@ -23,12 +25,14 @@ namespace BookingTravelApi.Controllers
         private PayOSClient _payOs;
         private ApplicationDbContext _context;
         private readonly ILogger<WebhookController> _logger;
+        private ChangeStatusBookingService _changeStatusBookingService;
 
-        public WebhookController(ILogger<WebhookController> logger, ApplicationDbContext context, PayOSClient payOs)
+        public WebhookController(ILogger<WebhookController> logger, ApplicationDbContext context, PayOSClient payOs, ChangeStatusBookingService changeStatusBookingService)
         {
             _context = context;
             _logger = logger;
             _payOs = payOs;
+            _changeStatusBookingService = changeStatusBookingService;
         }
 
         [HttpPost("payment")]
@@ -59,12 +63,22 @@ namespace BookingTravelApi.Controllers
                 }
                 else if (booking.TotalPrice == booking.Schedule.FinalPrice * booking.NumPeople)
                 {
-                    booking.StatusId = Status.Paid;
+                    var updateStatusBooking = new UpdateStatusBookingDTO()
+                    {
+                        Id = booking.Id,
+                        StatusId = Status.Paid
+                    };
+                    await _changeStatusBookingService.ChangeStatusOfBooking(updateStatusBooking);
                     await WriteSomeFile($"paid {booking.Id}");
                 }
                 else
                 {
-                    booking.StatusId = Status.Deposit;
+                    var updateStatusBooking = new UpdateStatusBookingDTO()
+                    {
+                        Id = booking.Id,
+                        StatusId = Status.Deposit
+                    };
+                    await _changeStatusBookingService.ChangeStatusOfBooking(updateStatusBooking);
                     await WriteSomeFile($"deposit {booking.Id}");
                 }
 
