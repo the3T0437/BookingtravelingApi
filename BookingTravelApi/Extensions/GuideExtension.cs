@@ -10,6 +10,7 @@ namespace BookingTravelApi.Extensions
         {
             return new GuideDTO()
             {
+                NameStaff = guide.Staff!.User!.Name,
                 schedule = guide.Schedule!.Map()
             };
         } 

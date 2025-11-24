@@ -9,8 +9,8 @@ namespace BookingTravelApi.DTO.guide
 {
     public class GuideDTO
     {
+        public String NameStaff { get; set; } = null!;
         public ScheduleDTO schedule { get; set; } = null!;
-             
     }
 }
 
