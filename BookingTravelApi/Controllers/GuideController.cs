@@ -39,6 +39,8 @@ namespace BookingTravelApi.Controllers
                 .Include(S => S.Schedule)
                 .ThenInclude(t => t!.Tour)
                 .ThenInclude(im => im!.TourImages)
+                .Include(t => t.Staff)
+                .ThenInclude(s => s!.User)
                 .AsNoTracking().ToListAsync();
 
                 var guideDTOs = query.Select(i => i.Map()).ToArray();
