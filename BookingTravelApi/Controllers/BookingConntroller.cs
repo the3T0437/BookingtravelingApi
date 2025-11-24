@@ -1,3 +1,4 @@
+using System.Data;
 using System.Runtime.CompilerServices;
 using BookingTravelApi.Domains;
 using BookingTravelApi.DTO;
@@ -18,11 +19,13 @@ namespace BookingTravelApi.Controllers
         private ApplicationDbContext _context;
         private PaymentService _paymentService;
         private readonly ILogger<BookingController> _logger;
-        public BookingController(ILogger<BookingController> logger, ApplicationDbContext context, PaymentService paymentService)
+        private ChangeStatusBookingService _changeStatusBookingService;
+        public BookingController(ILogger<BookingController> logger, ApplicationDbContext context, PaymentService paymentService, ChangeStatusBookingService changeStatusBookingService)
         {
             _context = context;
             _logger = logger;
             _paymentService = paymentService;
+            _changeStatusBookingService = changeStatusBookingService;
         }
 
         [HttpGet("byUser/{userId}")]
@@ -185,7 +188,7 @@ namespace BookingTravelApi.Controllers
                 var schedule = await querySchedule.FirstOrDefaultAsync();
                 if (schedule == null)
                 {
-                    return BadRequest($"Schedule {scheduleId} not found");
+                    return NotFound($"Schedule {scheduleId} not found");
                 }
 
                 var now = DateTimeHelper.GetVietNamTime();
@@ -368,7 +371,7 @@ namespace BookingTravelApi.Controllers
                 }
 
                 var actualCash = await _context.Actualcashs.Where(i => i.BookingId == updateStatusBooking.Id).FirstOrDefaultAsync();
-                var deposit = booking.Schedule!.Desposit * booking.Schedule.FinalPrice / 100;
+                var deposit = booking.Schedule!.Desposit * booking.Schedule.FinalPrice / 100 * booking.NumPeople;
                 if (actualCash != null)
                 {
                     if (updateStatusBooking.StatusId == Status.Processing)
@@ -380,6 +383,21 @@ namespace BookingTravelApi.Controllers
                         actualCash.money += deposit;
                     }
                 }
+                else
+                {
+                    if (updateStatusBooking.StatusId == Status.Paid || updateStatusBooking.StatusId == Status.Deposit)
+                    {
+                        actualCash = new Actualcashs()
+                        {
+                            BookingId = updateStatusBooking.Id,
+                            CreatedAt = DateTime.UtcNow.AddHours(7),
+                            money = deposit
+                        };
+
+                        await _context.Actualcashs.AddAsync(actualCash);
+                    }
+                }
+
 
                 updateStatusBooking.UpdateEntity(booking);
                 await _context.SaveChangesAsync();
@@ -388,7 +406,7 @@ namespace BookingTravelApi.Controllers
             }
             catch (Exception ex)
             {
-                return Problem($"Update fail {ex.Message}");
+                return BadRequest($"Update fail {ex.Message}");
             }
         }
 
