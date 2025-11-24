@@ -96,17 +96,60 @@ namespace BookingTravelApi.Controllers
             }
         }
 
-
         [HttpPost]
         public async Task<IActionResult> createUserCompletedSchedule(CreateUserCompletedScheduleDTO newUserSchedule)
         {
             try
             {
+                var booking = await _context.Bookings
+                .Include(b => b.User)
+                .Include(b => b.Actualcashs)
+                .Include(b => b.Schedule)
+                .Where(b => b.Id == newUserSchedule.BookingId).FirstOrDefaultAsync();
+
+                if (booking == null)
+                {
+                    return BadRequest($"booking with id: {newUserSchedule.BookingId} not found");
+                }
+
+                var actualCash = booking.Actualcashs;
+                var user = booking.User;
+                var schedule = booking.Schedule;
+
+                int nonNumPeople = booking.NumPeople - newUserSchedule.countPeople;
+
+                double percent = Convert.ToDouble(100 - schedule.Desposit) / 100.0;
+                var tmp = Convert.ToInt32(schedule.FinalPrice * percent);
+
                 var userSchedule = newUserSchedule.Map();
+                if (nonNumPeople == 0)
+                {
+                    actualCash.money = newUserSchedule.countPeople * schedule.FinalPrice;
+                    await _context.UserCompletedSchedules.AddAsync(userSchedule);
+                }
+                else if (nonNumPeople < booking.NumPeople)
+                {
+                    actualCash.money = booking.NumPeople * Convert.ToInt32(schedule.FinalPrice * schedule.Desposit / 100);
+                    actualCash.money += newUserSchedule.countPeople * tmp;
 
-                await _context.UserCompletedSchedules.AddAsync(userSchedule);
+                    if (booking.ActualStatusId == Status.Paid)
+                    {
+                        user.Money += nonNumPeople * tmp;
+                    }
+                    await _context.UserCompletedSchedules.AddAsync(userSchedule);
+                }
+                else if (nonNumPeople == booking.NumPeople)
+                {
+                    actualCash.money = booking.NumPeople * Convert.ToInt32(schedule.FinalPrice * schedule.Desposit / 100);
+
+                    if (booking.ActualStatusId == Status.Paid)
+                    {
+                        user.Money += nonNumPeople * tmp;
+                        booking.StatusId = Status.Deposit;
+                    }
+                }
+
                 await _context.SaveChangesAsync();
-
                 return Ok(new RestDTO<int>()
                 {
                     Data = userSchedule.BookingId
@@ -119,90 +162,90 @@ namespace BookingTravelApi.Controllers
 
         }
 
-        [HttpPut(Name = "updateUserCompletedSchedule")]
-        public async Task<IActionResult> updateUserCompletedSchedule(UpdateUserCompletedScheduleDTO updateUserCompletedScheduleDTO)
-        {
-            try
-            {
-                var userCompletedSchedule = await _context.UserCompletedSchedules
-                .Include(u => u.Booking)
-                .ThenInclude(b => b.User)
+        // [HttpPut(Name = "updateUserCompletedSchedule")]
+        // public async Task<IActionResult> updateUserCompletedSchedule(UpdateUserCompletedScheduleDTO updateUserCompletedScheduleDTO)
+        // {
+        //     try
+        //     {
+        //         var userCompletedSchedule = await _context.UserCompletedSchedules
+        //         .Include(u => u.Booking)
+        //         .ThenInclude(b => b.User)
 
-                .Include(u => u.Booking)
-                .ThenInclude(b => b.Actualcashs)
+        //         .Include(u => u.Booking)
+        //         .ThenInclude(b => b.Actualcashs)
 
-                .Include(u => u.Booking)
-                .ThenInclude(b => b.Schedule)
+        //         .Include(u => u.Booking)
+        //         .ThenInclude(b => b.Schedule)
 
-                .Where(b => b.BookingId == updateUserCompletedScheduleDTO.BookingId).FirstOrDefaultAsync();
+        //         .Where(b => b.BookingId == updateUserCompletedScheduleDTO.BookingId).FirstOrDefaultAsync();
 
-                if (userCompletedSchedule == null)
-                {
-                    return NotFound("userComplete not found");
-                }
+        //         if (userCompletedSchedule == null)
+        //         {
+        //             return NotFound("userComplete not found");
+        //         }
 
-                var booking = userCompletedSchedule.Booking;
-                var actualCash = booking.Actualcashs;
-                var user = booking.User;
-                var schedule = booking.Schedule;
-
-
-                int oldActualCash = actualCash.money;
-
-                userCompletedSchedule.countPeople = updateUserCompletedScheduleDTO.countPeople;
+        //         var booking = userCompletedSchedule.Booking;
+        //         var actualCash = booking.Actualcashs;
+        //         var user = booking.User;
+        //         var schedule = booking.Schedule;
 
 
-                int nonNumPeople = booking.NumPeople - updateUserCompletedScheduleDTO.countPeople;
+        //         int oldActualCash = actualCash.money;
 
-                double percent = Convert.ToDouble(100 - schedule.Desposit) / 100.0;
-                var tmp = Convert.ToInt32(schedule.FinalPrice * percent);
+        //         userCompletedSchedule.countPeople = updateUserCompletedScheduleDTO.countPeople;
 
 
-                if (nonNumPeople == 0)
-                {
-                    actualCash.money = updateUserCompletedScheduleDTO.countPeople * schedule.FinalPrice;
-                }
-                else if (nonNumPeople < booking.NumPeople)
-                {
-                    actualCash.money = booking.NumPeople * Convert.ToInt32(schedule.FinalPrice * schedule.Desposit / 100);
-                    actualCash.money += updateUserCompletedScheduleDTO.countPeople * tmp;
+        //         int nonNumPeople = booking.NumPeople - updateUserCompletedScheduleDTO.countPeople;
 
-                    // if(booking.ActualStatusId == Status.Paid)
-                    // {
-                    //     user.Money = nonNumPeople * tmp;
-                    // }
-                }
-                else if (nonNumPeople == booking.NumPeople)
-                {
-                    actualCash.money = booking.NumPeople * Convert.ToInt32(schedule.FinalPrice * schedule.Desposit / 100);
+        //         double percent = Convert.ToDouble(100 - schedule.Desposit) / 100.0;
+        //         var tmp = Convert.ToInt32(schedule.FinalPrice * percent);
 
-                    // if(booking.ActualStatusId == Status.Paid)
-                    // {
-                    //     user.Money = nonNumPeople * tmp;
-                    // }
-                }
 
-                int newActualCash = actualCash.money;
-                int diff = newActualCash - oldActualCash;
+        //         if (nonNumPeople == 0)
+        //         {
+        //             actualCash.money = updateUserCompletedScheduleDTO.countPeople * schedule.FinalPrice;
+        //         }
+        //         else if (nonNumPeople < booking.NumPeople)
+        //         {
+        //             actualCash.money = booking.NumPeople * Convert.ToInt32(schedule.FinalPrice * schedule.Desposit / 100);
+        //             actualCash.money += updateUserCompletedScheduleDTO.countPeople * tmp;
 
-                if (diff < 0)
-                {
-                    user.Money += Math.Abs(diff);
-                }
+        //             // if(booking.ActualStatusId == Status.Paid)
+        //             // {
+        //             //     user.Money = nonNumPeople * tmp;
+        //             // }
+        //         }
+        //         else if (nonNumPeople == booking.NumPeople)
+        //         {
+        //             actualCash.money = booking.NumPeople * Convert.ToInt32(schedule.FinalPrice * schedule.Desposit / 100);
 
-                _context.UserCompletedSchedules.Update(userCompletedSchedule);
-                await _context.SaveChangesAsync();
+        //             // if(booking.ActualStatusId == Status.Paid)
+        //             // {
+        //             //     user.Money = nonNumPeople * tmp;
+        //             // }
+        //         }
 
-                return Ok(new RestDTO<Boolean>()
-                {
-                    Data = true
-                });
-            }
-            catch (IOException ex)
-            {
-                return Problem($"Update fail {ex.Message}");
-            }
-        }
+        //         int newActualCash = actualCash.money;
+        //         int diff = newActualCash - oldActualCash;
+
+        //         if (diff < 0)
+        //         {
+        //             user.Money += Math.Abs(diff);
+        //         }
+
+        //         _context.UserCompletedSchedules.Update(userCompletedSchedule);
+        //         await _context.SaveChangesAsync();
+
+        //         return Ok(new RestDTO<Boolean>()
+        //         {
+        //             Data = true
+        //         });
+        //     }
+        //     catch (IOException ex)
+        //     {
+        //         return Problem($"Update fail {ex.Message}");
+        //     }
+        // }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> deleteUserCompletedSchedule(int id)
@@ -211,12 +254,37 @@ namespace BookingTravelApi.Controllers
             {
                 var userSchedule = await _context.UserCompletedSchedules
                 .Where(g => g.BookingId == id)
-                .FirstOrDefaultAsync();
+                .Include(u => u.Booking)
+                .ThenInclude(b => b.User)
 
+                .Include(u => u.Booking)
+                .ThenInclude(b => b.Actualcashs)
+
+                .Include(u => u.Booking)
+                .ThenInclude(b => b.Schedule)
+                .FirstOrDefaultAsync();
                 if (userSchedule == null)
                 {
-                    return NotFound($"Place with Id {id} not found.");
+                    return NotFound($"UserCompletedSchedules with Id {id} not found.");
                 }
+
+                var booking = userSchedule.Booking;
+                var actualCash = booking.Actualcashs;
+                var user = booking.User;
+                var schedule = booking.Schedule;
+
+                double percent = Convert.ToDouble(100 - schedule.Desposit) / 100.0;
+                var tmp = Convert.ToInt32(schedule.FinalPrice * percent);
+
+                actualCash.money = booking.NumPeople * Convert.ToInt32(schedule.FinalPrice * schedule.Desposit / 100);
+
+                if (booking.ActualStatusId == Status.Paid)
+                {
+                    user.Money += booking.NumPeople * tmp;
+                    booking.StatusId = Status.Deposit;
+                }
+
+                _context.UserCompletedSchedules.Update(userSchedule);
 
                 _context.UserCompletedSchedules.Remove(userSchedule);
                 await _context.SaveChangesAsync();

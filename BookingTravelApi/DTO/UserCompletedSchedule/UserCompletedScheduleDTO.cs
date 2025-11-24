@@ -10,7 +10,6 @@ namespace BookingTravelApi.DTO.usercompletedschedule
     public class UserCompletedScheduleDTO
     {
         public int CountPeople {get; set;}
-        public ActualCashDTO? Actualcashs {get; set;}
         public BookingDTO? Booking {get; set;}
 
     }

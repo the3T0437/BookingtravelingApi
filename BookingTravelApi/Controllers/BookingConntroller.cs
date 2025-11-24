@@ -1,3 +1,4 @@
+using System.Data;
 using System.Runtime.CompilerServices;
 using BookingTravelApi.Domains;
 using BookingTravelApi.DTO;
@@ -18,11 +19,13 @@ namespace BookingTravelApi.Controllers
         private ApplicationDbContext _context;
         private PaymentService _paymentService;
         private readonly ILogger<BookingController> _logger;
-        public BookingController(ILogger<BookingController> logger, ApplicationDbContext context, PaymentService paymentService)
+        private ChangeStatusBookingService _changeStatusBookingService;
+        public BookingController(ILogger<BookingController> logger, ApplicationDbContext context, PaymentService paymentService, ChangeStatusBookingService changeStatusBookingService)
         {
             _context = context;
             _logger = logger;
             _paymentService = paymentService;
+            _changeStatusBookingService = changeStatusBookingService;
         }
 
         [HttpGet("byUser/{userId}")]
@@ -156,46 +159,57 @@ namespace BookingTravelApi.Controllers
                     return Problem("id not found");
                 }
 
-                var now = DateTimeHelper.GetVietNamTime();
-
-                var query = await _context.Bookings
-                .Where(b => b.ScheduleId == scheduleId && b.Schedule!.StartDate > now)
-                .Where(b => now < b.ExpiredAt || b.StatusId != Status.Processing)
-                .Include(st => st.Status)
-                .Include(us => us.User)
-
-                .Include(s => s.Schedule)
-                .ThenInclude(t => t!.Tour)
+                var querySchedule = _context.Schedules
+                .Include(t => t!.Tour)
                 .ThenInclude(ti => ti!.DayOfTours!)
                 .ThenInclude(d => d.DayActivities!)
                 .ThenInclude(da => da.Activity!)
 
-                .Include(s => s.Schedule)
-                .ThenInclude(t => t!.Tour)
+                .Include(t => t!.Tour)
                 .ThenInclude(d => d!.DayOfTours)
                 !.ThenInclude(d => d.DayActivities!)
                 .ThenInclude(da => da.LocationActivity!)
                 .ThenInclude(lo => lo.Place!)
                 .ThenInclude(p => p.Location)
 
-                .Include(s => s.Schedule)
-                .ThenInclude(t => t!.Tour)
+                .Include(t => t!.Tour)
                 .ThenInclude(i => i!.DayOfTours!)
                 !.ThenInclude(i => i.DayActivities!)
                 !.ThenInclude(i => i.LocationActivity)
                 !.ThenInclude(i => i!.ActivityAndLocations)
                 !.ThenInclude(i => i.Activity)
 
-                .Include(s => s.Schedule)
-                .ThenInclude(t => t!.Tour)
+                .Include(t => t!.Tour)
                 .ThenInclude(tm => tm!.TourImages)
+
+                .Include(i => i!.Bookings)
+                .AsNoTracking();
+
+                var schedule = await querySchedule.FirstOrDefaultAsync();
+                if (schedule == null)
+                {
+                    return NotFound($"Schedule {scheduleId} not found");
+                }
+
+                var now = DateTimeHelper.GetVietNamTime();
+
+                var query = await _context.Bookings
+                .Where(b => b.ScheduleId == scheduleId)
+                .Where(b => now < b.ExpiredAt || b.StatusId != Status.Processing)
+                .Include(st => st.Status)
+                .Include(us => us.User)
                 .AsNoTracking().ToListAsync();
 
-                var booking = query.Select(i => i.Map()).ToArray();
+                var bookings = query.Select(i =>
+                {
+                    var booking = i.Map();
+                    booking.Schedule = schedule!.Map();
+                    return booking;
+                }).ToArray();
 
                 return Ok(new RestDTO<BookingDTO[]?>()
                 {
-                    Data = booking
+                    Data = bookings
                 });
 
             }
@@ -212,8 +226,22 @@ namespace BookingTravelApi.Controllers
 
             try
             {
-                var schedule = await _context.Schedules.FindAsync(newBookingDTO.ScheduleId);
-                if (schedule == null) return Problem("scheduleId not Found");
+                var schedule = await _context.Schedules
+                    .Include(i => i.Bookings)
+                    .Where(i => i.Id == newBookingDTO.ScheduleId)
+                    .FirstOrDefaultAsync();
+
+                if (schedule == null) return NotFound("scheduleId not Found");
+                var maxSlot = schedule.MaxSlot;
+                var paidBooking = schedule.Bookings?.Where(i => i.StatusId != Status.Processing).Select(i => i.NumPeople).Sum() ?? 0;
+                var processingBooking = schedule.Bookings?.Where(i => i.StatusId == Status.Processing && i.ExpiredAt > DateTime.UtcNow.AddHours(7)).Select(i => i.NumPeople).Sum() ?? 0;
+                var bookedSlot = paidBooking + processingBooking;
+
+                if (maxSlot < bookedSlot + newBookingDTO.NumPeople)
+                {
+                    return BadRequest(new ErrorDTO("Vượt quá số người có thể đặt chuyến đi"));
+                }
+
                 var config = await _context.Configs.AsNoTracking().FirstOrDefaultAsync(c => c.Id == 1);
                 var expiredBookingSeconds = (await _context.Configs.AsNoTracking().FirstOrDefaultAsync(c => c.Id == Configs.TimeExpiredBookingSeconds))?.Value ?? 3;
 
@@ -350,24 +378,17 @@ namespace BookingTravelApi.Controllers
         {
             try
             {
-                var booking = await _context.Bookings.FirstOrDefaultAsync(s => s.Id == updateStatusBooking.Id);
+                var booking = await _changeStatusBookingService.ChangeStatusOfBooking(updateStatusBooking);
                 if (booking == null)
                 {
-                    return NotFound($" ID {updateStatusBooking.Id} not found.");
+                    return NotFound($"not found booking with id: {updateStatusBooking.Id}");
                 }
-
-                if (updateStatusBooking.StatusId == Status.Processing)
-                {
-                }
-
-                updateStatusBooking.UpdateEntity(booking);
-                await _context.SaveChangesAsync();
 
                 return await getBookingId(booking.Id);
             }
             catch (Exception ex)
             {
-                return Problem($"Update fail {ex.Message}");
+                return BadRequest($"Update fail {ex.Message}");
             }
         }
 
@@ -398,16 +419,18 @@ namespace BookingTravelApi.Controllers
                     return Problem($"Id {bookingId} not found.");
                 }
 
-                if (booking.StatusId == 1)
-                {
-                    return Problem("Cannot delete schedule while booking is processing.");
-                }
-
                 var user = await _context.Users.FirstOrDefaultAsync(s => s.Id == booking.UserId);
-                user!.Money = booking.TotalPrice;
+                if (booking.StatusId != Status.Processing)
+                {
+                    var deposit = booking.Schedule!.FinalPrice * booking.Schedule!.Desposit / 100 * booking.NumPeople;
+                    user!.Money += booking.TotalPrice - deposit;
+
+                    booking.StatusId = Status.Processing;
+                }
                 _context.Users.Update(user);
 
-                _context.Bookings.Remove(booking);
+                booking.ExpiredAt = DateTime.MinValue;
+                _context.Bookings.Update(booking);
                 await _context.SaveChangesAsync();
 
                 return Ok(new RestDTO<Boolean>()

@@ -50,6 +50,7 @@ public class Program
             return payOS;
         });
         builder.Services.AddScoped<PaymentService>();
+        builder.Services.AddScoped<ChangeStatusBookingService>();
 
         builder.Services.AddControllers(); builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
