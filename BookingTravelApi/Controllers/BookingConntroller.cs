@@ -364,43 +364,11 @@ namespace BookingTravelApi.Controllers
         {
             try
             {
-                var booking = await _context.Bookings.Include(i => i.Schedule).FirstOrDefaultAsync(s => s.Id == updateStatusBooking.Id);
+                var booking = await _changeStatusBookingService.ChangeStatusOfBooking(updateStatusBooking);
                 if (booking == null)
                 {
-                    return NotFound($" ID {updateStatusBooking.Id} not found.");
+                    return NotFound($"not found booking with id: {updateStatusBooking.Id}");
                 }
-
-                var actualCash = await _context.Actualcashs.Where(i => i.BookingId == updateStatusBooking.Id).FirstOrDefaultAsync();
-                var deposit = booking.Schedule!.Desposit * booking.Schedule.FinalPrice / 100 * booking.NumPeople;
-                if (actualCash != null)
-                {
-                    if (updateStatusBooking.StatusId == Status.Processing)
-                    {
-                        actualCash.money -= deposit;
-                    }
-                    else
-                    {
-                        actualCash.money += deposit;
-                    }
-                }
-                else
-                {
-                    if (updateStatusBooking.StatusId == Status.Paid || updateStatusBooking.StatusId == Status.Deposit)
-                    {
-                        actualCash = new Actualcashs()
-                        {
-                            BookingId = updateStatusBooking.Id,
-                            CreatedAt = DateTime.UtcNow.AddHours(7),
-                            money = deposit
-                        };
-
-                        await _context.Actualcashs.AddAsync(actualCash);
-                    }
-                }
-
-
-                updateStatusBooking.UpdateEntity(booking);
-                await _context.SaveChangesAsync();
 
                 return await getBookingId(booking.Id);
             }
