@@ -4,6 +4,7 @@ using BookingTravelApi.DTO;
 using BookingTravelApi.DTO.Activity;
 using BookingTravelApi.DTO.guide;
 using BookingTravelApi.DTO.TourGuide;
+using BookingTravelApi.DTO.tourGuideAssigmentDTO;
 using BookingTravelApi.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -55,7 +56,7 @@ namespace BookingTravelApi.Controllers
         }
 
         [HttpPost("{scheduleId}")]
-        public async Task<IActionResult> checkGuideAssignment([FromRoute] int scheduleId, [FromBody] List<TourGuideDTO> tourGuides)
+        public async Task<IActionResult> checkGuideAssignment([FromRoute] int scheduleId, [FromBody] List<TourGuideAssigmentDTO> tourGuides)
         {
             try
             {
