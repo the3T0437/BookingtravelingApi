@@ -10,6 +10,7 @@ using BookingTravelApi.DTO.user;
 using BookingTravelApi.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using BCrypt.Net;
 
 namespace BookingTravelApi.Controllers
 {
@@ -19,6 +20,7 @@ namespace BookingTravelApi.Controllers
     {
         private ApplicationDbContext _context;
         private readonly ILogger<UserController> _logger;
+        private const int costFactor = 12;
 
         public UserController(ILogger<UserController> logger, ApplicationDbContext context)
         {
@@ -30,11 +32,16 @@ namespace BookingTravelApi.Controllers
         [ResponseCache(NoStore = true)]
         public async Task<IActionResult> Login(Login login)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == login.email && u.Password == login.password);
-
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == login.email);
             if (user == null)
             {
-                return NotFound($"user not found");
+                return NotFound("User not found");
+            }
+
+
+            if (!BCrypt.Net.BCrypt.Verify(login.password, user.Password))
+            {
+                return Unauthorized("Sai mật khẩu");
             }
 
             user.Token = login.token;
@@ -105,9 +112,10 @@ namespace BookingTravelApi.Controllers
             {
                 return Problem("id not found");
             }
+            
+            string hashedPassword = BCrypt.Net.BCrypt.HashPassword(changePassword.newPassword, costFactor);
 
-
-            user.Password = changePassword.newPassword;
+            user.Password = hashedPassword;
 
             _context.Users.Update(user);
             await _context.SaveChangesAsync();
@@ -128,7 +136,7 @@ namespace BookingTravelApi.Controllers
                 return Problem("id not found");
             }
 
-            if (user.Password != updatePassword.oldPassword)
+            if (!BCrypt.Net.BCrypt.Verify(updatePassword.oldPassword, user.Password))
             {
                 return Ok(new RestDTO<bool>()
                 {
@@ -136,8 +144,9 @@ namespace BookingTravelApi.Controllers
                 });
             }
 
+            string hashedPassword = BCrypt.Net.BCrypt.HashPassword(updatePassword.newPassword, costFactor);
 
-            user.Password = updatePassword.newPassword;
+            user.Password = hashedPassword;
 
             _context.Users.Update(user);
             await _context.SaveChangesAsync();
@@ -170,6 +179,10 @@ namespace BookingTravelApi.Controllers
             try
             {
                 var user = newUserDTO.Map();
+
+                string hashedPassword = BCrypt.Net.BCrypt.HashPassword(user.Password, costFactor);
+
+                user.Password = hashedPassword;
 
                 _context.Users.Add(user);
                 await _context.SaveChangesAsync();
