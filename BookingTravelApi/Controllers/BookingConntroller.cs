@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Runtime.CompilerServices;
 using BookingTravelApi.Domains;
@@ -150,16 +151,12 @@ namespace BookingTravelApi.Controllers
 
         [HttpGet("bySchedule/{scheduleId}")]
         [ResponseCache(NoStore = true)]
-        public async Task<IActionResult> getBookingSchedule(int? scheduleId = null)
+        public async Task<IActionResult> getBookingSchedule([Required] int scheduleId)
         {
             try
             {
-                if (scheduleId == null)
-                {
-                    return Problem("id not found");
-                }
-
                 var querySchedule = _context.Schedules
+                .Where(i => i.Id == scheduleId)
                 .Include(t => t!.Tour)
                 .ThenInclude(ti => ti!.DayOfTours!)
                 .ThenInclude(d => d.DayActivities!)
@@ -196,6 +193,7 @@ namespace BookingTravelApi.Controllers
                 var query = await _context.Bookings
                 .Where(b => b.ScheduleId == scheduleId)
                 .Where(b => b.ExpiredAt != DateTime.MinValue)
+                .OrderByDescending(b => b.ExpiredAt)
                 .Include(st => st.Status)
                 .Include(us => us.User)
                 .AsNoTracking().ToListAsync();
@@ -433,9 +431,9 @@ namespace BookingTravelApi.Controllers
                 _context.Bookings.Update(booking);
                 await _context.SaveChangesAsync();
 
-                return Ok(new RestDTO<Boolean>()
+                return Ok(new RestDTO<BookingDTO>()
                 {
-                    Data = true
+                    Data = booking.Map()
                 });
             }
             catch (Exception ex)

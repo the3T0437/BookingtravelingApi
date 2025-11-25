@@ -37,6 +37,8 @@ namespace BookingTravelApi.Controllers
 
                 var query = await _context.Guides
                 .Where(g => g.StaffId == staffId)
+                .Where(g => g.Schedule!.EndDate >= DateTime.UtcNow.AddHours(7))
+                .OrderBy(g => g.Schedule!.StartDate)
                 .Include(S => S.Schedule)
                 .ThenInclude(t => t!.Tour)
                 .ThenInclude(im => im!.TourImages)

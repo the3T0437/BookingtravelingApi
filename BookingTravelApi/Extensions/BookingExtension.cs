@@ -20,9 +20,9 @@ namespace BookingTravelApi.Extensions
                 PayType = false,
                 ExpiredAt = booking.ExpiredAt,
                 Qr = booking.Qr,
-                Status = booking.Status!.Map(),
+                Status = booking.Status?.Map(),
                 Schedule = booking.Schedule?.Map(),
-                User = booking.User!.Map()
+                User = booking.User?.Map()
             };
         }
     }
