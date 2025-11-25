@@ -82,7 +82,7 @@ namespace BookingTravelApi.Controllers
                         i.Schedules
                             .SelectMany(s => s.Reviews)
                             .Select(i => i.Rating)
-                            .Average() > stars);
+                            .Average() >= stars);
             }
 
             query = query.OrderBy($"{SortBy} {SortOrder}");

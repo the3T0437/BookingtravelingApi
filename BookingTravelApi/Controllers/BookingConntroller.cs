@@ -434,9 +434,9 @@ namespace BookingTravelApi.Controllers
                 _context.Bookings.Update(booking);
                 await _context.SaveChangesAsync();
 
-                return Ok(new RestDTO<Boolean>()
+                return Ok(new RestDTO<BookingDTO>()
                 {
-                    Data = true
+                    Data = booking.Map()
                 });
             }
             catch (Exception ex)
