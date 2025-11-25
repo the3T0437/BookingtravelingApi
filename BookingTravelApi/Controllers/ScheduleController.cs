@@ -178,6 +178,7 @@ namespace BookingTravelApi.Controllers
                     s => s.OpenDate < now && now < s.EndDate.AddDays(1)
                 )
                 .Include(s => s.Bookings)
+                !.ThenInclude(s => s.Status)
 
                 .Include(s => s.Tour)
                 .ThenInclude(t => t!.TourImages)

@@ -50,8 +50,8 @@ namespace BookingTravelApi.Extensions
 
                 tour = schedule.Tour!.Map(),
 
-                ProcessingBooking = schedule.Bookings!.Where(s => s.StatusId == Status.Paid).Count(),
-                DepositBooking = schedule.Bookings!.Where(s => s.StatusId == Status.Paid).Count(),
+                ProcessingBooking = schedule.Bookings!.Where(s => s.StatusId == Status.Processing).Count(),
+                DepositBooking = schedule.Bookings!.Where(s => s.StatusId == Status.Deposit).Count(),
                 PaidBooking = schedule.Bookings!.Where(s => s.StatusId == Status.Paid).Count(),
             };
         }

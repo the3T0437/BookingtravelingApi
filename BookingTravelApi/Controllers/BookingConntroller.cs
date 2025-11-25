@@ -196,6 +196,7 @@ namespace BookingTravelApi.Controllers
                 var query = await _context.Bookings
                 .Where(b => b.ScheduleId == scheduleId)
                 .Where(b => b.ExpiredAt != DateTime.MinValue)
+                .OrderByDescending(b => b.ExpiredAt)
                 .Include(st => st.Status)
                 .Include(us => us.User)
                 .AsNoTracking().ToListAsync();

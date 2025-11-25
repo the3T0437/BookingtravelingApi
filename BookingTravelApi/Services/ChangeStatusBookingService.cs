@@ -1,5 +1,6 @@
-using BookingTravelApi.Domains;
+﻿using BookingTravelApi.Domains;
 using BookingTravelApi.DTO.booking;
+using BookingTravelApi.DTO.notification;
 using Microsoft.EntityFrameworkCore;
 using PayOS;
 using PayOS.Models.V2.PaymentRequests;
@@ -9,15 +10,20 @@ namespace BookingTravelApi.Services
     public class ChangeStatusBookingService
     {
         private readonly ApplicationDbContext _context;
+        private readonly FirebaseNotificationService _notificationService;
 
-        public ChangeStatusBookingService(ApplicationDbContext context)
+        public ChangeStatusBookingService(ApplicationDbContext context, FirebaseNotificationService notificationService)
         {
             _context = context;
+            _notificationService = notificationService;
         }
 
         public async Task<Booking?> ChangeStatusOfBooking(UpdateStatusBookingDTO updateStatusBooking)
         {
-            var booking = await _context.Bookings.Include(i => i.Schedule).FirstOrDefaultAsync(s => s.Id == updateStatusBooking.Id);
+            var booking = await _context.Bookings
+                .Include(i => i.User)
+                .Include(i => i.Schedule)
+                .FirstOrDefaultAsync(s => s.Id == updateStatusBooking.Id);
             if (booking == null)
             {
                 return null;
@@ -48,6 +54,27 @@ namespace BookingTravelApi.Services
                     };
 
                     await _context.Actualcashs.AddAsync(actualCash);
+
+                    var type = ""; 
+                    if (updateStatusBooking.StatusId == Status.Paid)
+                    {
+                        type = "Thanh toán toàn bộ";
+                    }
+                    else
+                    {
+                        type = "Đặt cọc";
+                    }
+
+                    var title = $"{type} thành công";
+                    var body = $"Bạn đã {type} thành công cho lịch trình với mã {booking.Code}";
+                    var notification = new CreateNotificationDTO()
+                    {
+                        UserId = booking.UserId,
+                        Content = body
+                    };
+                    await _context.Notifications.AddAsync(notification.Map());
+                    await _context.SaveChangesAsync();
+                    await _notificationService.SendNotification(booking.User.Token, title, body);   
                 }
             }
 
