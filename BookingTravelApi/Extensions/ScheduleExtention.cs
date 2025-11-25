@@ -34,8 +34,7 @@ namespace BookingTravelApi.Extensions
         {
             var paidBooking = schedule.Bookings?.Where(i => i.StatusId != Status.Processing).Select(i => i.NumPeople).Sum() ?? 0;
             var processingBooking = schedule.Bookings?.Where(i => i.StatusId == Status.Processing && i.ExpiredAt > DateTime.UtcNow.AddHours(7)).Select(i => i.NumPeople).Sum() ?? 0;
-            var timeNow = DateTimeHelper.GetVietNamTime();
-
+        
             return new ScheduleDTOOfAccountant()
             {
                 Id = schedule.Id,
@@ -52,7 +51,7 @@ namespace BookingTravelApi.Extensions
 
                 tour = schedule.Tour!.Map(),
 
-                ProcessingBooking = schedule.Bookings!.Where(s => s.StatusId == Status.Processing && s.ExpiredAt >= timeNow).Count(),
+                ProcessingBooking = schedule.Bookings!.Where(s => s.StatusId == Status.Processing && s.ExpiredAt != DateTime.MinValue).Count(),
                 DepositBooking = schedule.Bookings!.Where(s => s.StatusId == Status.Deposit).Count(),
                 PaidBooking = schedule.Bookings!.Where(s => s.StatusId == Status.Paid).Count(),
             };
