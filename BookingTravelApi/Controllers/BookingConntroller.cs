@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Runtime.CompilerServices;
 using BookingTravelApi.Domains;
@@ -150,16 +151,12 @@ namespace BookingTravelApi.Controllers
 
         [HttpGet("bySchedule/{scheduleId}")]
         [ResponseCache(NoStore = true)]
-        public async Task<IActionResult> getBookingSchedule(int? scheduleId = null)
+        public async Task<IActionResult> getBookingSchedule([Required] int scheduleId)
         {
             try
             {
-                if (scheduleId == null)
-                {
-                    return Problem("id not found");
-                }
-
                 var querySchedule = _context.Schedules
+                .Where(i => i.Id == scheduleId)
                 .Include(t => t!.Tour)
                 .ThenInclude(ti => ti!.DayOfTours!)
                 .ThenInclude(d => d.DayActivities!)
