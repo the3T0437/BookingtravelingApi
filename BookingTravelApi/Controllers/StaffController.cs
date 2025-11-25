@@ -17,6 +17,8 @@ namespace BookingTravelApi.Controllers
     {
         private ApplicationDbContext _context;
         private readonly ILogger<StaffController> _logger;
+        private const int costFactor = 12;
+
         public StaffController(ILogger<StaffController> logger, ApplicationDbContext context)
         {
             _context = context;
@@ -145,6 +147,11 @@ namespace BookingTravelApi.Controllers
             try
             {
                 var staff = newStaffDTO.Map();
+
+                string hashedPassword = BCrypt.Net.BCrypt.HashPassword(newStaffDTO.User.Password, costFactor);
+
+                staff.User.Password = hashedPassword;
+
                 var listImages = new List<String>();
                 listImages.Add(newStaffDTO.CCCD_front_image);
                 listImages.Add(newStaffDTO.CCCD_back_image);
